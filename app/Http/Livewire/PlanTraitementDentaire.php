@@ -184,7 +184,13 @@ class PlanTraitementDentaire extends Component
             })
             ->toArray();
 
-        $this->dispatch('conditions-updated', wireId: $this->getId(), conditions: $this->conditionsParDent);
+        // En mode observation seule (Dossier médical), le schéma reste neutre :
+        // le statut du plan de traitement n'a pas sa place dans ce contexte.
+        $this->dispatch(
+            'conditions-updated',
+            wireId: $this->getId(),
+            conditions: $this->modeObservationsSeules ? [] : $this->conditionsParDent
+        );
 
         if ($this->dentSelectionnee) {
             $this->loadHistoriqueDent();
