@@ -107,7 +107,7 @@ class Facture extends Model
 
 	public function details()
 	{
-		return $this->hasMany(DetailFacturePatient::class, 'fkidfacture', 'Idfacture');
+		return $this->hasMany(Detailfacturepatient::class, 'fkidfacture', 'Idfacture');
 	}
 
 	public function medecin()

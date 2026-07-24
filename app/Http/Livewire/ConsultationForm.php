@@ -9,7 +9,7 @@ use App\Models\Acte;
 use App\Models\Assureur;
 use App\Models\Patient;
 use App\Models\Facture;
-use App\Models\DetailFacturePatient;
+use App\Models\Detailfacturepatient;
 use App\Models\CaisseOperation;
 use App\Models\Rendezvou;
 use App\Models\RefTypePaiement;
@@ -513,7 +513,7 @@ class ConsultationForm extends Component
 
     protected function createDetailFacture($facture)
     {
-        return DetailFacturePatient::create([
+        return Detailfacturepatient::create([
             'fkidfacture' => $facture->Idfacture,
             'DtAjout' => Carbon::now(),
             'Actes' => $this->acte_nom,

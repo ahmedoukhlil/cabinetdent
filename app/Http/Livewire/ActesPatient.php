@@ -6,7 +6,7 @@ use App\Traits\HasLazyLoadingPlaceholder;
 use Livewire\Component;
 use App\Models\Acte;
 use App\Models\Facture;
-use App\Models\DetailFacturePatient;
+use App\Models\Detailfacturepatient;
 use App\Models\Patient;
 use App\Models\Medecin;
 use Carbon\Carbon;
@@ -162,7 +162,7 @@ class ActesPatient extends Component
                 // Créer les détails de facture
                 foreach ($this->lignes as $ligne) {
                     $prixLigne = floatval($ligne['prix']) * intval($ligne['quantite']);
-                    DetailFacturePatient::create([
+                    Detailfacturepatient::create([
                         'fkidfacture'    => $facture->Idfacture,
                         'DtAjout'        => Carbon::now(),
                         'Actes'          => $ligne['acte_nom'],
