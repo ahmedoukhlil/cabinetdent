@@ -197,12 +197,24 @@
 
         @forelse($lignesPlan as $ligne)
         <div class="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3">
+            @php $dentsLigne = explode(',', $ligne->num_dent); @endphp
             <div class="flex items-center gap-3">
+                @if(count($dentsLigne) > 1)
+                <span class="w-10 h-10 rounded-lg bg-primary-light text-primary font-bold flex items-center justify-center text-[10px] text-center leading-tight px-1">
+                    {{ count($dentsLigne) }} dents
+                </span>
+                @else
                 <span class="w-10 h-10 rounded-lg bg-primary-light text-primary font-bold flex items-center justify-center text-sm">
                     {{ $ligne->num_dent }}
                 </span>
+                @endif
                 <div>
-                    <div class="font-medium text-sm">{{ $ligne->acte_libelle }}</div>
+                    <div class="font-medium text-sm">
+                        {{ $ligne->acte_libelle }}
+                        @if(count($dentsLigne) > 1)
+                            <span class="text-xs text-gray-400 font-normal">({{ implode(', ', $dentsLigne) }})</span>
+                        @endif
+                    </div>
                     <div class="text-xs text-gray-500">
                         {{ $ligne->medecin->Nom ?? '—' }} ·
                         @if($ligne->prix_ref) {{ number_format($ligne->prix_ref, 0, ',', ' ') }} MRU @endif

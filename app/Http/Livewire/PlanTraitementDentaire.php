@@ -168,11 +168,19 @@ class PlanTraitementDentaire extends Component
             ->orderBy('created_at')
             ->get();
 
-        $this->conditionsParDent = collect($this->lignesPlan)
-            ->groupBy('num_dent')
-            ->map(function ($lignes) {
-                return $lignes->contains('statut', 'planifie') ? 'planifie'
-                    : ($lignes->contains('statut', 'en_cours') ? 'en_cours' : 'termine');
+        // Éclater les lignes groupées (num_dent = "11,12,13...") pour que
+        // chaque dent du groupe soit colorée individuellement sur le schéma,
+        // même si l'acte n'a qu'une seule ligne/facturation en base.
+        $parDent = [];
+        foreach ($this->lignesPlan as $ligne) {
+            foreach (explode(',', $ligne->num_dent) as $numDent) {
+                $parDent[$numDent][] = $ligne->statut;
+            }
+        }
+        $this->conditionsParDent = collect($parDent)
+            ->map(function ($statuts) {
+                return in_array('planifie', $statuts) ? 'planifie'
+                    : (in_array('en_cours', $statuts) ? 'en_cours' : 'termine');
             })
             ->toArray();
 
@@ -322,7 +330,12 @@ class PlanTraitementDentaire extends Component
         }
 
         $actes = PlanTraitementDentaireModel::forPatient($this->patientId)
-            ->where('num_dent', $this->dentSelectionnee)
+            ->where(function ($q) {
+                $q->where('num_dent', $this->dentSelectionnee)
+                    ->orWhere('num_dent', 'like', $this->dentSelectionnee . ',%')
+                    ->orWhere('num_dent', 'like', '%,' . $this->dentSelectionnee . ',%')
+                    ->orWhere('num_dent', 'like', '%,' . $this->dentSelectionnee);
+            })
             ->with('medecin')
             ->get()
             ->map(fn ($ligne) => [
@@ -444,20 +457,22 @@ class PlanTraitementDentaire extends Component
             $medecinId = null;
         }
 
-        foreach ($dents as $numDent) {
-            PlanTraitementDentaireModel::create([
-                'patient_id' => $this->patientId,
-                'num_dent' => $numDent,
-                'acte_id' => $this->selectedActeId,
-                'acte_libelle' => $acte ? $acte->Acte : '',
-                'medecin_id' => $medecinId,
-                'statut' => 'planifie',
-                'prix_ref' => $this->prixRef,
-                'cabinet_id' => Auth::user()->fkidcabinet ?? null,
-                'created_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-            ]);
-        }
+        // Un acte forfaitaire (ex: détartrage) appliqué à plusieurs dents à la
+        // fois ne doit être facturé qu'une seule fois : une seule ligne de
+        // plan est créée, listant toutes les dents concernées, plutôt qu'une
+        // ligne par dent au prix plein répété.
+        PlanTraitementDentaireModel::create([
+            'patient_id' => $this->patientId,
+            'num_dent' => implode(',', $dents),
+            'acte_id' => $this->selectedActeId,
+            'acte_libelle' => $acte ? $acte->Acte : '',
+            'medecin_id' => $medecinId,
+            'statut' => 'planifie',
+            'prix_ref' => $this->prixRef,
+            'cabinet_id' => Auth::user()->fkidcabinet ?? null,
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id(),
+        ]);
 
         $this->fermerActeSelector();
         $this->dentsSelectionnees = [];
@@ -465,7 +480,7 @@ class PlanTraitementDentaire extends Component
         $this->loadPlan();
 
         $message = count($dents) > 1
-            ? 'Acte ajouté à ' . count($dents) . ' dents.'
+            ? 'Acte ajouté à ' . count($dents) . ' dents (forfait unique).'
             : 'Acte ajouté au plan de traitement.';
         session()->flash('message', $message);
     }
