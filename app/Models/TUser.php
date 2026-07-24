@@ -98,7 +98,7 @@ class TUser extends Authenticatable
      */
     public function typeUser()
     {
-        return $this->belongsTo(Typeuser::class, 'IdClasseUser', 'IdClasseUser0');
+        return $this->belongsTo(TypeUser::class, 'IdClasseUser', 'IdClasseUser0');
     }
 
     /**
