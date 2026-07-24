@@ -107,14 +107,14 @@
                                 @endif
 
                                 {{-- Dossier médical --}}
-                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'dossier']) }})"
+                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'dossier', 'IDRdv' => $rdv->IDRdv]) }})"
                                     title="Dossier médical"
                                     class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-sm font-semibold whitespace-nowrap">
                                     <i class="fas fa-folder-open"></i> Dossier
                                 </button>
 
                                 {{-- Plan de traitement --}}
-                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'plan-traitement']) }})"
+                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'plan-traitement', 'IDRdv' => $rdv->IDRdv]) }})"
                                     title="Plan de traitement"
                                     class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/15 text-primary hover:bg-primary/25 text-sm font-semibold whitespace-nowrap">
                                     <i class="fas fa-tooth"></i> Plan

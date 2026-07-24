@@ -47,6 +47,16 @@ class SalleAttente extends Component
 
     public function selectionnerPatient($patientData)
     {
+        $action = $patientData['action'] ?? null;
+        $rdvId = $patientData['IDRdv'] ?? null;
+
+        if ($rdvId && in_array($action, ['dossier', 'plan-traitement'], true)) {
+            $rdv = Rendezvou::find($rdvId);
+            if ($rdv && strtolower($rdv->rdvConfirmer ?? '') !== 'en cours') {
+                $this->demarrerRdv($rdvId);
+            }
+        }
+
         $this->dispatch('patientSelectedFromSalle', $patientData);
     }
 
