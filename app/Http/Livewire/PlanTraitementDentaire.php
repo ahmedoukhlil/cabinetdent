@@ -291,7 +291,7 @@ class PlanTraitementDentaire extends Component
             return;
         }
 
-        $medecinId = Auth::user()->fkidmedecin ?? null;
+        $medecinId = Auth::user()->fkidmedecin ?: null;
         if ($medecinId && !Medecin::where('idMedecin', $medecinId)->exists()) {
             $medecinId = null;
         }
@@ -381,7 +381,7 @@ class PlanTraitementDentaire extends Component
             return;
         }
 
-        $medecinId = Auth::user()->fkidmedecin ?? null;
+        $medecinId = Auth::user()->fkidmedecin ?: null;
         if ($medecinId && !Medecin::where('idMedecin', $medecinId)->exists()) {
             $medecinId = null;
         }
@@ -439,7 +439,7 @@ class PlanTraitementDentaire extends Component
         }
 
         $acte = Acte::find($this->selectedActeId);
-        $medecinId = Auth::user()->fkidmedecin ?? null;
+        $medecinId = Auth::user()->fkidmedecin ?: null;
         if ($medecinId && !Medecin::where('idMedecin', $medecinId)->exists()) {
             $medecinId = null;
         }
