@@ -95,29 +95,29 @@
 
                             {{-- Actions --}}
                             @if($patient)
-                            <div class="flex items-center gap-1 {{ $enCours ? 'opacity-100' : 'opacity-0 group-hover:opacity-100' }} transition-opacity">
+                            <div class="flex items-center gap-2 flex-shrink-0">
 
                                 {{-- Bouton FIN (uniquement si en cours) --}}
                                 @if($enCours)
                                 <button wire:click.stop="terminerRdv({{ $rdv->IDRdv }})"
                                     title="Terminer la consultation"
-                                    class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-green-500 text-white hover:bg-green-600 text-xs font-semibold">
-                                    <i class="fas fa-check text-[10px]"></i> Fin
+                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 text-sm font-semibold">
+                                    <i class="fas fa-check"></i> Fin
                                 </button>
                                 @endif
 
                                 {{-- Dossier médical --}}
                                 <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'dossier']) }})"
                                     title="Dossier médical"
-                                    class="w-7 h-7 flex items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs">
-                                    <i class="fas fa-folder-open"></i>
+                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-sm font-semibold whitespace-nowrap">
+                                    <i class="fas fa-folder-open"></i> Dossier
                                 </button>
 
                                 {{-- Plan de traitement --}}
                                 <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'plan-traitement']) }})"
                                     title="Plan de traitement"
-                                    class="w-7 h-7 flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-xs">
-                                    <i class="fas fa-tooth"></i>
+                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/15 text-primary hover:bg-primary/25 text-sm font-semibold whitespace-nowrap">
+                                    <i class="fas fa-tooth"></i> Plan
                                 </button>
                             </div>
                             @endif
