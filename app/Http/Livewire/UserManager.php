@@ -317,6 +317,7 @@ class UserManager extends Component
                 session()->flash('message', 'Utilisateur supprimé avec succès.');
             }
         } catch (\Exception $e) {
+            \Log::error('UserManager::deleteUser', ['error' => $e->getMessage()]);
             session()->flash('error', 'Une erreur est survenue lors de la suppression.');
         }
         $this->showDeleteModal = false;
