@@ -1,0 +1,209 @@
+name: 🍒 Cherry-pick Manuel
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: 'Hash du commit à cherry-pick (ex: abc1234)'
+        required: true
+        type: string
+      
+      target_repos:
+        description: 'Dépôts cibles'
+        required: true
+        type: choice
+        options:
+          - 'Tous les dépôts'
+          - 'cabinetzemzem'
+          - 'cabinettayba'
+          - 'cabinetmedipole'
+          - 'cabinetorient'
+          - 'Sélection personnalisée'
+      
+      custom_repos:
+        description: 'Si "Sélection personnalisée": repos séparés par des virgules (ex: cabinetzemzem,cabinettayba)'
+        required: false
+        type: string
+      
+      conflict_strategy:
+        description: 'Stratégie en cas de conflit'
+        required: true
+        type: choice
+        default: 'abort'
+        options:
+          - 'abort' # Arrêter en cas de conflit
+          - 'theirs' # Prendre la version du commit source
+          - 'ours' # Garder la version du dépôt cible
+      
+      force_push:
+        description: 'Forcer le push en cas de problème'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      target_list: ${{ steps.repos.outputs.target_list }}
+    steps:
+    - name: Déterminer les dépôts cibles
+      id: repos
+      run: |
+        case "${{ github.event.inputs.target_repos }}" in
+          "Tous les dépôts")
+            echo 'target_list=["cabinetzemzem","cabinettayba","cabinetmedipole","cabinetorient"]' >> $GITHUB_OUTPUT
+            ;;
+          "Sélection personnalisée")
+            # Convertir la liste en format JSON
+            repos="${{ github.event.inputs.custom_repos }}"
+            json_array=$(echo "$repos" | sed 's/,/","/g' | sed 's/^/["/' | sed 's/$/"]/')
+            echo "target_list=$json_array" >> $GITHUB_OUTPUT
+            ;;
+          *)
+            echo 'target_list=["${{ github.event.inputs.target_repos }}"]' >> $GITHUB_OUTPUT
+            ;;
+        esac
+
+  cherry-pick:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo: ${{ fromJson(needs.prepare.outputs.target_list) }}
+      fail-fast: false
+    
+    steps:
+    - name: 📋 Informations de la tâche
+      run: |
+        echo "🍒 Cherry-pick du commit: ${{ github.event.inputs.commit_hash }}"
+        echo "🎯 Vers le dépôt: ${{ matrix.repo }}"
+        echo "⚙️ Stratégie de conflit: ${{ github.event.inputs.conflict_strategy }}"
+        echo "💪 Force push: ${{ github.event.inputs.force_push }}"
+
+    - name: ⚙️ Configuration Git
+      run: |
+        git config --global user.name "Cherry-pick Bot"
+        git config --global user.email "cherry-pick@actions.github.com"
+
+    - name: 📥 Clone du dépôt source (dentalhouse)
+      uses: actions/checkout@v4
+      with:
+        repository: ahmedoukhlil/dentalhouse
+        token: ${{ secrets.SYNC_TOKEN }}
+        fetch-depth: 0
+        path: source-repo
+
+    - name: 📥 Clone du dépôt cible (${{ matrix.repo }})
+      run: |
+        git clone https://${{ secrets.SYNC_TOKEN }}@github.com/ahmedoukhlil/${{ matrix.repo }}.git target-repo
+        cd target-repo
+        git config user.name "Cherry-pick Bot"
+        git config user.email "cherry-pick@actions.github.com"
+
+    - name: 🔗 Ajout du remote source
+      run: |
+        cd target-repo
+        git remote add source ../source-repo
+        git fetch source
+
+    - name: 🍒 Exécution du cherry-pick
+      id: cherry_pick
+      run: |
+        cd target-repo
+        
+        echo "🔍 Vérification du commit..."
+        if ! git cat-file -e ${{ github.event.inputs.commit_hash }}^{commit} 2>/dev/null; then
+          echo "❌ Commit ${{ github.event.inputs.commit_hash }} introuvable"
+          exit 1
+        fi
+        
+        echo "📝 Informations du commit:"
+        git show --no-patch --format="Auteur: %an <%ae>%nDate: %ad%nMessage: %s" ${{ github.event.inputs.commit_hash }}
+        
+        echo "🍒 Tentative de cherry-pick..."
+        if git cherry-pick ${{ github.event.inputs.commit_hash }}; then
+          echo "✅ Cherry-pick réussi!"
+          echo "success=true" >> $GITHUB_OUTPUT
+        else
+          echo "⚠️ Conflit détecté!"
+          echo "📋 Fichiers en conflit:"
+          git status --porcelain
+          
+          case "${{ github.event.inputs.conflict_strategy }}" in
+            "abort")
+              echo "🛑 Abandon du cherry-pick (stratégie: abort)"
+              git cherry-pick --abort
+              echo "success=false" >> $GITHUB_OUTPUT
+              exit 1
+              ;;
+            "theirs")
+              echo "🔧 Résolution automatique (stratégie: theirs)"
+              git status --porcelain | grep "^UU" | cut -c4- | while read file; do
+                echo "   Résolution: $file (version source)"
+                git checkout --theirs "$file"
+                git add "$file"
+              done
+              git cherry-pick --continue
+              echo "success=true" >> $GITHUB_OUTPUT
+              ;;
+            "ours")
+              echo "🔧 Résolution automatique (stratégie: ours)"
+              git status --porcelain | grep "^UU" | cut -c4- | while read file; do
+                echo "   Résolution: $file (version cible)"
+                git checkout --ours "$file"
+                git add "$file"
+              done
+              git cherry-pick --continue
+              echo "success=true" >> $GITHUB_OUTPUT
+              ;;
+          esac
+        fi
+
+    - name: 📤 Push vers le dépôt cible
+      if: steps.cherry_pick.outputs.success == 'true'
+      run: |
+        cd target-repo
+        
+        echo "📤 Push vers ${{ matrix.repo }}..."
+        if [ "${{ github.event.inputs.force_push }}" = "true" ]; then
+          echo "💪 Force push activé"
+          git push origin main --force
+        else
+          git push origin main
+        fi
+        
+        echo "✅ Push réussi vers ${{ matrix.repo }}!"
+
+    - name: 📊 Résumé pour ${{ matrix.repo }}
+      if: always()
+      run: |
+        cd target-repo 2>/dev/null || echo "Dépôt cible non disponible"
+        
+        echo "📊 === RÉSUMÉ POUR ${{ matrix.repo }} ==="
+        echo "🍒 Commit: ${{ github.event.inputs.commit_hash }}"
+        echo "✅ Statut: ${{ steps.cherry_pick.outputs.success == 'true' && 'RÉUSSI' || 'ÉCHEC' }}"
+        
+        if [ "${{ steps.cherry_pick.outputs.success }}" = "true" ]; then
+          echo "🎉 Cherry-pick appliqué avec succès!"
+          echo "📝 Dernier commit:"
+          git log -1 --oneline 2>/dev/null || echo "Log non disponible"
+        else
+          echo "❌ Cherry-pick échoué ou abandonné"
+        fi
+
+  summary:
+    needs: [prepare, cherry-pick]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+    - name: 📊 Résumé global
+      run: |
+        echo "🎯 === RÉSUMÉ GLOBAL DU CHERRY-PICK ==="
+        echo "🍒 Commit cherry-picked: ${{ github.event.inputs.commit_hash }}"
+        echo "📦 Dépôts ciblés: ${{ github.event.inputs.target_repos }}"
+        echo "⚙️ Stratégie de conflit: ${{ github.event.inputs.conflict_strategy }}"
+        echo "💪 Force push: ${{ github.event.inputs.force_push || 'false' }}"
+        echo ""
+        echo "✅ Opération terminée!"
+        echo "🔍 Vérifiez les logs individuels ci-dessus pour les détails."

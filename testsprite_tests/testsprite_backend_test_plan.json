@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "test_login_form_accessibility",
+    "description": "Verify that GET /login returns a 200 status with the login form HTML and does not require authentication."
+  },
+  {
+    "id": "TC002",
+    "title": "test_login_submission_with_valid_credentials",
+    "description": "Verify that POST /login with valid credentials returns a 302 redirect to /accueil-patient and sets an authentication session cookie."
+  },
+  {
+    "id": "TC003",
+    "title": "test_login_submission_with_invalid_credentials",
+    "description": "Verify that POST /login with invalid credentials returns a 302 redirect back to /login with an error flash message or 422 validation errors."
+  },
+  {
+    "id": "TC004",
+    "title": "test_logout_functionality",
+    "description": "Verify that POST /logout with a valid auth session clears the session and returns a 302 redirect to /login."
+  },
+  {
+    "id": "TC005",
+    "title": "test_access_accueil_patient_with_authentication",
+    "description": "Verify that GET /accueil-patient with a valid auth session returns a 200 status with the AccueilPatient Livewire page."
+  },
+  {
+    "id": "TC006",
+    "title": "test_access_accueil_patient_without_authentication",
+    "description": "Verify that GET /accueil-patient without authentication returns a 302 redirect to /login."
+  },
+  {
+    "id": "TC007",
+    "title": "test_access_patients_list_with_authentication",
+    "description": "Verify that GET /patients with a valid auth session returns a 200 status with the patients list HTML."
+  },
+  {
+    "id": "TC008",
+    "title": "test_access_patients_create_form_with_authentication",
+    "description": "Verify that GET /patients/create with a valid auth session returns a 200 status with the patient creation form HTML and Livewire component mounts."
+  },
+  {
+    "id": "TC009",
+    "title": "test_access_patients_routes_without_authentication",
+    "description": "Verify that GET /patients and GET /patients/create without authentication return a 302 redirect to /login."
+  },
+  {
+    "id": "TC010",
+    "title": "test_access_rendez_vous_list_with_authentication",
+    "description": "Verify that GET /rendez-vous with a valid auth session returns a 200 status with the rendez-vous list Livewire page."
+  }
+]

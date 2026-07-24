@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:8000",
+  "loginUser": "moctar",
+  "loginPassword": "123456",
+  "executionArgs": {
+    "projectName": "cabinetsavwa",
+    "projectPath": "c:\\xampp\\htdocs\\cabinetsavwa",
+    "testIds": [],
+    "additionalInstruction": "Laravel : champ de connexion nommé login (pas email). Inclure le jeton CSRF _token pour les formulaires POST. Base URL http://127.0.0.1:8000",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-ONduOsKAqjqxGklM10It66UbZuV1cA73yKXytZbU6ORycA4LdEwg_9kuVS8Y1RWrl1ZM5UdZoB86l844FtDJH_tu7Ao3vXiiSB8C-rqeOwB164Lg9ZEPjHe5VkMobyZ8Yp8"
+    }
+  },
+  "serverPort": 61611,
+  "proxy": "http://a6296ea2-f79c-4915-bd80-cd5261ab35ec:pVr6BUnLizrJ8oYQMJaOaWRkueg6rpZd@tun.testsprite.com:8080"
+}

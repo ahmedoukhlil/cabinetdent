@@ -1,0 +1,159 @@
+version: "2"
+type: frontend
+tech_stack:
+  - PHP
+  - Laravel
+  - Livewire
+  - Blade
+  - Tailwind CSS
+  - Alpine.js (via Livewire)
+routes:
+  - path: /
+    file: routes/web.php
+    auth_required: false
+    description: Redirection vers la page de connexion
+  - path: /login
+    file: resources/views/auth/login.blade.php
+    auth_required: false
+    description: Formulaire de connexion staff
+  - path: /accueil-patient
+    file: resources/views/accueil-patient-page.blade.php
+    auth_required: true
+    description: Accueil patient (Livewire AccueilPatient)
+  - path: /patients
+    file: resources/views/patients/index.blade.php
+    auth_required: true
+    description: Liste des patients
+  - path: /patients/create
+    file: resources/views/patients/index.blade.php
+    auth_required: true
+    description: Création patient (composants Livewire)
+  - path: /rendez-vous
+    file: resources/views/rendez-vous/index.blade.php
+    auth_required: true
+    description: Gestion des rendez-vous (Livewire)
+  - path: /rendez-vous/create
+    file: resources/views/rendez-vous/create.blade.php
+    auth_required: true
+    description: Nouveau rendez-vous
+  - path: /caisse-operations
+    file: resources/views/caisse-operations.blade.php
+    auth_required: true
+    description: Opérations de caisse (Livewire)
+  - path: /reglement-facture
+    file: resources/views/reglement-facture.blade.php
+    auth_required: true
+    description: Règlement de factures (Livewire)
+  - path: /consultations/create
+    file: resources/views/consultations/create.blade.php
+    auth_required: true
+    description: Nouvelle consultation
+  - path: /consultations/search-patient
+    file: resources/views/consultations/create.blade.php
+    auth_required: true
+    description: Recherche patient pour consultation
+  - path: /statistiques
+    file: resources/views/statistiques.blade.php
+    auth_required: true
+    description: Statistiques (Livewire)
+  - path: /users
+    file: resources/views/users/index.blade.php
+    auth_required: true
+    description: Gestion des utilisateurs (Livewire)
+  - path: /patient/rendez-vous/{token}
+    file: resources/views/patient/rendez-vous.blade.php
+    auth_required: false
+    description: Page publique RDV par lien signé
+  - path: /patient/consultation/{token}
+    file: resources/views/patient/consultation.blade.php
+    auth_required: false
+    description: Page publique consultation par lien signé
+features:
+  - name: Connexion staff
+    description: Connexion avec identifiant login et mot de passe
+    files:
+      - resources/views/auth/login.blade.php
+      - app/Http/Controllers/Auth/AuthController.php
+    entry_route: /login
+    user_interactions:
+      - Saisir le champ login
+      - Saisir le mot de passe
+      - Cliquer sur le bouton de connexion
+      - Voir un message d erreur si les identifiants sont incorrects
+    api_calls:
+      - method: POST
+        endpoint: /login
+    auth_required: false
+  - name: Accueil et file d attente patient
+    description: Tableau de bord accueil avec composants Livewire
+    files:
+      - resources/views/accueil-patient-page.blade.php
+      - resources/views/livewire/accueil-patient.blade.php
+    entry_route: /accueil-patient
+    user_interactions:
+      - Naviguer depuis le menu après connexion
+      - Interagir avec les listes et actions Livewire
+    api_calls: []
+    auth_required: true
+  - name: Patients
+    description: Liste et création de patients
+    files:
+      - resources/views/patients/index.blade.php
+      - resources/views/livewire/patient-manager.blade.php
+    entry_route: /patients
+    user_interactions:
+      - Ouvrir la liste des patients
+      - Utiliser recherche ou filtres si présents
+      - Accéder au formulaire de création
+    api_calls: []
+    auth_required: true
+  - name: Rendez-vous
+    description: Planification et suivi des rendez-vous
+    files:
+      - resources/views/rendez-vous/index.blade.php
+      - resources/views/livewire/rendez-vous-manager.blade.php
+    entry_route: /rendez-vous
+    user_interactions:
+      - Consulter le calendrier ou la liste
+      - Créer ou modifier un rendez-vous selon permissions
+    api_calls: []
+    auth_required: true
+  - name: Caisse et règlements
+    description: Saisie des opérations de caisse et règlement des factures
+    files:
+      - resources/views/livewire/caisse-operations-manager.blade.php
+      - resources/views/livewire/reglement-facture.blade.php
+    entry_route: /caisse-operations
+    user_interactions:
+      - Saisir une opération de caisse
+      - Ouvrir la page règlement facture et enregistrer un paiement
+    api_calls: []
+    auth_required: true
+  - name: Consultations
+    description: Parcours médical et facturation
+    files:
+      - resources/views/consultations/create.blade.php
+      - resources/views/livewire/consultation-form.blade.php
+    entry_route: /consultations/create
+    user_interactions:
+      - Rechercher un patient
+      - Remplir la consultation et valider
+    api_calls:
+      - method: POST
+        endpoint: /consultations
+    auth_required: true
+  - name: Interface patient publique
+    description: Consultation des infos RDV ou consultation via token
+    files:
+      - resources/views/patient/rendez-vous.blade.php
+      - resources/views/patient/consultation.blade.php
+    entry_route: /patient/rendez-vous/{token}
+    user_interactions:
+      - Ouvrir le lien reçu (QR ou email)
+      - Lire les informations affichées
+    api_calls: []
+    auth_required: false
+known_limitations:
+  - issue: Pas d API REST dédiée pour le front ; les actions passent par routes web et Livewire
+    location: routes/web.php
+    impact: Les tests navigateur doivent cibler le HTML et les requêtes Livewire, pas des endpoints JSON séparés

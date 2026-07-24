@@ -1,0 +1,2339 @@
+-- MySQL dump 10.13  Distrib 8.0.45, for Linux (x86_64)
+--
+-- Host: localhost    Database: jasmins
+-- ------------------------------------------------------
+-- Server version	8.0.45-0ubuntu0.24.04.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `actes`
+--
+
+DROP TABLE IF EXISTS `actes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `actes` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Acte` varchar(255) DEFAULT NULL,
+  `PrixRef` double NOT NULL DEFAULT '0',
+  `fkidTypeActe` int unsigned NOT NULL DEFAULT '0',
+  `nordre` int NOT NULL DEFAULT '1',
+  `user` varchar(255) NOT NULL DEFAULT '1',
+  `fkidassureur` int unsigned NOT NULL DEFAULT '1',
+  `ActeArab` varchar(245) DEFAULT NULL,
+  `Masquer` int unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `Index_2` (`fkidassureur`),
+  KEY `Index_3` (`Masquer`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `actes`
+--
+
+LOCK TABLES `actes` WRITE;
+/*!40000 ALTER TABLE `actes` DISABLE KEYS */;
+INSERT INTO `actes` VALUES (1,'Consultation',700,0,1,'system',1,NULL,0),(2,'Consultation specialiste',1000,0,2,'system',1,NULL,0),(3,'Extraction d\'un corps étranger ',1000,0,3,'system',1,NULL,0),(4,'Sutures',600,0,4,'system',1,'',0),(5,'Nébulisation',500,0,5,'system',1,'',0),(6,'Surveillance',300,0,6,'system',1,'',0);
+/*!40000 ALTER TABLE `actes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `affectationactes`
+--
+
+DROP TABLE IF EXISTS `affectationactes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `affectationactes` (
+  `idAffectationActes` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidfacture` int unsigned NOT NULL DEFAULT '0',
+  `fkidpatient` int unsigned NOT NULL DEFAULT '0',
+  `DtActe` datetime DEFAULT NULL,
+  `MontantActe` double NOT NULL DEFAULT '0',
+  `fkidMedecin` int unsigned NOT NULL DEFAULT '0',
+  `DescriptionActe` varchar(145) DEFAULT NULL,
+  PRIMARY KEY (`idAffectationActes`),
+  KEY `Index_2` (`fkidpatient`),
+  KEY `Index_3` (`fkidfacture`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `affectationactes`
+--
+
+LOCK TABLES `affectationactes` WRITE;
+/*!40000 ALTER TABLE `affectationactes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `affectationactes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `analyses_patient`
+--
+
+DROP TABLE IF EXISTS `analyses_patient`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `analyses_patient` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidPatient` int unsigned NOT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidConsultation` int unsigned DEFAULT NULL,
+  `libelle` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `type` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'biologie',
+  `fichier_path` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `fichier_nom` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `fichier_mime` varchar(191) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `fichier_taille` bigint unsigned DEFAULT NULL,
+  `date_analyse` date DEFAULT NULL,
+  `notes` text COLLATE utf8mb3_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `analyses_patient_fkidpatient_index` (`fkidPatient`),
+  KEY `analyses_patient_fkidcabinet_index` (`fkidCabinet`),
+  KEY `analyses_patient_fkidconsultation_index` (`fkidConsultation`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `analyses_patient`
+--
+
+LOCK TABLES `analyses_patient` WRITE;
+/*!40000 ALTER TABLE `analyses_patient` DISABLE KEYS */;
+/*!40000 ALTER TABLE `analyses_patient` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `assureurs`
+--
+
+DROP TABLE IF EXISTS `assureurs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `assureurs` (
+  `IDAssureur` int NOT NULL AUTO_INCREMENT,
+  `LibAssurance` varchar(255) DEFAULT NULL,
+  `TauxdePEC` double DEFAULT NULL,
+  `SeuilDevis` double NOT NULL DEFAULT '0',
+  `ISTP` int NOT NULL DEFAULT '0',
+  `DtConvention` datetime DEFAULT NULL,
+  `ContactAssureur` varchar(255) DEFAULT NULL,
+  `AdresseMail` varchar(255) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `Adresse` varchar(45) DEFAULT NULL,
+  `fkidtypeTiers` int unsigned NOT NULL DEFAULT '4',
+  PRIMARY KEY (`IDAssureur`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `assureurs`
+--
+
+LOCK TABLES `assureurs` WRITE;
+/*!40000 ALTER TABLE `assureurs` DISABLE KEYS */;
+INSERT INTO `assureurs` VALUES (1,'Sans Assurance',0,0,0,'2015-01-01 00:00:00','Aucun','Aucun',NULL,'Aucun',4),(11,'Personne de connaissance ',10,0,0,NULL,NULL,NULL,NULL,NULL,4),(12,'Famille',100,0,0,NULL,NULL,NULL,NULL,NULL,4),(13,'VIP ',15,0,0,NULL,NULL,NULL,NULL,NULL,4);
+/*!40000 ALTER TABLE `assureurs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `boncommande`
+--
+
+DROP TABLE IF EXISTS `boncommande`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `boncommande` (
+  `idBC` int unsigned NOT NULL AUTO_INCREMENT,
+  `NumBC` varchar(45) NOT NULL DEFAULT '',
+  `DtCreation` datetime DEFAULT NULL,
+  `num` int unsigned NOT NULL DEFAULT '0',
+  `Annee` double NOT NULL DEFAULT '0',
+  `fkidfournisseur` int unsigned NOT NULL DEFAULT '0',
+  `fournisseur` varchar(145) DEFAULT NULL,
+  `TypeDemande` varchar(45) NOT NULL DEFAULT 'Bon de commande',
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idBC`),
+  KEY `Index_2` (`NumBC`),
+  KEY `Index_4` (`TypeDemande`),
+  KEY `Index_3` (`fkidfournisseur`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `boncommande`
+--
+
+LOCK TABLES `boncommande` WRITE;
+/*!40000 ALTER TABLE `boncommande` DISABLE KEYS */;
+INSERT INTO `boncommande` VALUES (1,'1/2022','2022-06-05 00:00:00',1,2022,951,'Moctar','Bon de commande',1);
+/*!40000 ALTER TABLE `boncommande` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `bordereauxfactures`
+--
+
+DROP TABLE IF EXISTS `bordereauxfactures`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `bordereauxfactures` (
+  `IDBordFacture` int NOT NULL AUTO_INCREMENT,
+  `NumBord` varchar(255) DEFAULT NULL,
+  `nordre` int DEFAULT NULL,
+  `anneeBord` int DEFAULT NULL,
+  `PeriodeFacture` varchar(255) DEFAULT NULL,
+  `DtCreation` datetime DEFAULT NULL,
+  `DtGeneration` datetime DEFAULT NULL,
+  `MontantFacture` double DEFAULT NULL,
+  `MontantPatient` double DEFAULT NULL,
+  `MontantPEC` double DEFAULT NULL,
+  `MontantPayeAssureur` double DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`IDBordFacture`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bordereauxfactures`
+--
+
+LOCK TABLES `bordereauxfactures` WRITE;
+/*!40000 ALTER TABLE `bordereauxfactures` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bordereauxfactures` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `caisse_operations`
+--
+
+DROP TABLE IF EXISTS `caisse_operations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `caisse_operations` (
+  `cle` int NOT NULL AUTO_INCREMENT,
+  `dateoper` datetime DEFAULT NULL,
+  `MontantOperation` double DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
+  `fkidTiers` double DEFAULT NULL,
+  `entreEspece` double NOT NULL DEFAULT '0',
+  `retraitEspece` double NOT NULL DEFAULT '0',
+  `pourPatFournisseur` double NOT NULL DEFAULT '0',
+  `pourCabinet` double NOT NULL DEFAULT '0',
+  `fkiduser` int NOT NULL DEFAULT '1',
+  `exercice` double DEFAULT NULL,
+  `fkIdTypeTiers` int unsigned NOT NULL DEFAULT '0',
+  `fkidfacturebord` double NOT NULL DEFAULT '0',
+  `DtCr` datetime DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidtypePaie` int unsigned NOT NULL DEFAULT '1',
+  `TypePAie` varchar(45) NOT NULL DEFAULT 'CASH',
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '1',
+  `medecin` varchar(45) NOT NULL DEFAULT 'Dr Moud',
+  PRIMARY KEY (`cle`),
+  KEY `Index_2` (`fkidTiers`),
+  KEY `Index_3` (`dateoper`),
+  KEY `Index_4` (`fkiduser`),
+  KEY `Index_5` (`exercice`),
+  KEY `Index_6` (`fkIdTypeTiers`),
+  KEY `Index_7` (`fkidfacturebord`),
+  KEY `Index_8` (`fkidtypePaie`),
+  KEY `Index_9` (`TypePAie`),
+  KEY `Index_10` (`fkidmedecin`),
+  KEY `Index_11` (`medecin`)
+) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `caisse_operations`
+--
+
+LOCK TABLES `caisse_operations` WRITE;
+/*!40000 ALTER TABLE `caisse_operations` DISABLE KEYS */;
+INSERT INTO `caisse_operations` VALUES (1,'2026-04-19 02:47:00',500,'Consultation N°1-2026 chez Dr. INES ',1,500,0,0,1,1,2026,1,3,'2026-04-19 02:47:00',1,1,'CASH',7,'INES '),(2,'2026-04-19 21:18:54',500,'Consultation N°2-2026 chez Dr. INES ',1,500,0,0,1,1,2026,1,6,'2026-04-19 21:18:54',1,1,'CASH',7,'INES '),(4,'2026-04-19 21:20:01',-10,'Remboursement facture N°2-2026',1,0,10,0,1,1,2026,1,6,'2026-04-19 21:20:01',1,1,'CASH',7,'INES '),(5,'2026-04-19 21:23:23',10,'Règlement facture N°2-2026',1,10,0,0,1,1,2026,1,6,'2026-04-19 21:23:23',1,1,'CASH',7,'INES '),(6,'2026-04-20 17:59:13',500,'Consultation N°4-2026 chez Dr. INES ISSAOUI',1,500,0,0,1,1,2026,1,9,'2026-04-20 17:59:13',1,1,'CASH',7,'INES ISSAOUI'),(9,'2026-04-20 20:28:13',500,'Consultation N°6-2026 chez Dr. INES ISSAOUI',5,500,0,0,1,1,2026,1,13,'2026-04-20 20:28:13',1,1,'CASH',7,'INES ISSAOUI'),(10,'2026-04-20 20:35:26',200,'Règlement facture N°6-2026',5,200,0,0,1,1,2026,1,13,'2026-04-20 20:35:26',1,2,'BANKILY',7,'INES ISSAOUI'),(11,'2026-04-20 22:47:09',500,'Consultation N°1-2026 chez Dr. INES ISSAOUI',6,500,0,0,1,19,2026,1,15,'2026-04-20 22:47:09',1,1,'CASH',7,'INES ISSAOUI'),(12,'2026-02-04 00:00:00',1760,'T’es Karim : Gant nitrile + Draps d’examen',0,0,1760,0,0,1,2026,7,0,'2026-05-12 17:29:37',1,1,'CASH',1,'Aucun'),(13,'2026-03-31 00:00:00',1700,'Madaris : étiquettes + registre + pochettes + intercalaires + classeurs ',0,0,1700,0,0,1,2026,7,0,'2026-05-12 17:32:57',1,1,'CASH',1,'Aucun'),(14,'2026-02-03 00:00:00',99600,'Rim médical : matériel salle de soin',0,0,99600,0,0,1,2026,7,0,'2026-05-12 17:35:11',1,1,'CASH',1,'Aucun'),(15,'2026-02-27 00:00:00',34000,'Salaires employés',0,0,34000,0,0,1,2026,5,0,'2026-05-12 17:37:11',1,1,'CASH',1,'Aucun'),(16,'2026-02-27 00:00:00',10000,'Eau + Electricité',0,0,10000,0,0,1,2026,7,0,'2026-05-12 17:38:15',1,1,'CASH',1,'Aucun'),(17,'2026-02-10 00:00:00',100000,'Alucobon',0,0,100000,0,0,1,2026,7,0,'2026-05-12 17:40:09',1,1,'CASH',1,'Aucun'),(18,'2026-02-04 00:00:00',6820,'Rim Médical : Matériel médical',0,0,6820,0,0,1,2026,7,0,'2026-05-12 17:41:56',1,1,'CASH',1,'Aucun'),(19,'2026-02-04 00:00:00',6820,'Rim Médical : Matériel médical',0,0,6820,0,0,1,2026,7,0,'2026-05-12 17:52:05',1,1,'CASH',1,'Aucun'),(20,'2026-03-28 00:00:00',34000,'Salaires',0,0,34000,0,0,1,2026,5,0,'2026-05-12 19:20:37',1,1,'CASH',1,'Aucun'),(21,'2026-03-16 00:00:00',4500,'Eau - Electricité',0,0,4500,0,0,1,2026,7,0,'2026-05-12 19:21:31',1,1,'BANKILY',1,'Aucun'),(22,'2026-03-30 00:00:00',140000,'Alucobon + Totem',0,0,140000,0,0,1,2026,7,0,'2026-05-12 19:22:23',1,1,'CASH',1,'Aucun'),(23,'2026-03-01 00:00:00',1000,'Internet\n',0,0,1000,0,0,1,2026,7,0,'2026-05-12 19:28:41',1,1,'BANKILY',1,'Aucun'),(24,'2026-02-01 00:00:00',99300,'Saad Raslan Mall  : Bureautique ',0,0,99300,0,0,1,2026,7,0,'2026-05-12 19:30:55',1,1,'CASH',1,'Aucun'),(25,'2026-03-02 00:00:00',6240,'GDS : Fourniture de bureau',0,0,6240,0,0,1,2026,7,0,'2026-05-12 19:34:12',1,1,'CASH',1,'Aucun'),(26,'2026-04-30 00:00:00',34000,'Salaires employés',0,0,34000,0,0,1,2026,5,0,'2026-05-12 19:36:42',1,1,'CASH',1,'Aucun'),(27,'2026-04-10 00:00:00',1000,'Internet',0,0,1000,0,0,1,2026,7,0,'2026-05-12 19:37:41',1,1,'BANKILY',1,'Aucun'),(28,'2026-04-02 00:00:00',5000,'Eau - Electricité',0,0,5000,0,0,1,2026,7,0,'2026-05-12 19:48:58',1,1,'BANKILY',1,'Aucun'),(29,'2026-04-04 00:00:00',7750,'Rim Medical : médicaments',0,0,7750,0,0,1,2026,3,0,'2026-05-12 19:53:54',1,1,'BANKILY',1,'Aucun'),(30,'2026-04-04 00:00:00',3087,'Somaphar : médicaments',0,0,3087,0,0,1,2026,3,0,'2026-05-12 19:54:45',1,1,'BANKILY',1,'Aucun'),(31,'2026-04-05 00:00:00',3000,'Teyssir Pharma : médicaments',0,0,3000,0,0,1,2026,3,0,'2026-05-12 19:55:27',1,1,'BANKILY',1,'Aucun'),(32,'2026-05-06 00:00:00',9960,'Teyssir Pharma : médicaments',0,0,9960,0,0,1,2026,3,0,'2026-05-12 19:56:17',1,1,'BANKILY',1,'Aucun'),(33,'2026-05-11 00:00:00',10750,'Fournisseur Infirmier : médicaments',0,0,10750,0,0,1,2026,3,0,'2026-05-12 19:58:55',1,1,'BANKILY',1,'Aucun'),(34,'2026-05-05 00:00:00',20000,'Matériel informatique ',0,0,20000,0,0,1,2026,7,0,'2026-05-12 20:00:40',1,1,'BANKILY',1,'Aucun'),(36,'2026-05-14 16:41:02',700,'Consultation N°2-2026 chez Dr. INES ISSAOUI',114,700,0,0,1,1,2026,1,17,'2026-05-14 16:41:02',1,1,'CASH',7,'INES ISSAOUI'),(38,'2026-05-15 18:28:58',700,'Consultation N°4-2026 chez Dr. INES ISSAOUI',112,700,0,0,1,1,2026,1,19,'2026-05-15 18:28:58',1,1,'CASH',7,'INES ISSAOUI'),(39,'2026-05-15 18:50:18',4120,'Acompte facture N°4-2026',112,4120,0,0,1,1,2026,1,19,'2026-05-15 18:50:18',1,1,'CASH',7,'INES ISSAOUI'),(40,'2026-05-15 18:51:55',-700,'Remboursement facture N°4-2026',112,0,700,0,1,1,2026,1,19,'2026-05-15 18:51:55',1,1,'CASH',7,'INES ISSAOUI'),(41,'2026-05-15 19:33:23',700,'Consultation N°5-2026 chez Dr. INES ISSAOUI',117,700,0,0,1,21,2026,1,20,'2026-05-15 19:33:23',1,1,'CASH',7,'INES ISSAOUI'),(42,'2026-05-15 20:06:06',1090,'Règlement facture N°5-2026',117,1090,0,0,1,21,2026,1,20,'2026-05-15 20:06:06',1,1,'CASH',7,'INES ISSAOUI'),(44,'2026-05-16 09:49:44',700,'Consultation N°6-2026 chez Dr. INES ISSAOUI',118,700,0,0,1,21,2026,1,22,'2026-05-16 09:49:44',1,1,'CASH',7,'INES ISSAOUI'),(45,'2026-05-16 10:35:34',1630,'Règlement facture N°6-2026',118,1630,0,0,1,21,2026,1,22,'2026-05-16 10:35:34',1,1,'CASH',7,'INES ISSAOUI'),(46,'2026-05-16 10:38:33',700,'Consultation N°7-2026 chez Dr. INES ISSAOUI',118,700,0,0,1,21,2026,1,23,'2026-05-16 10:38:33',1,1,'CASH',7,'INES ISSAOUI'),(47,'2026-05-16 13:09:12',700,'Consultation N°8-2026 chez Dr. INES ISSAOUI',119,700,0,0,1,1,2026,1,24,'2026-05-16 13:09:12',1,1,'CASH',7,'INES ISSAOUI'),(48,'2026-05-16 17:20:58',700,'Consultation N°9-2026 chez Dr. INES ISSAOUI',120,700,0,0,1,21,2026,1,25,'2026-05-16 17:20:58',1,1,'BIM BANK',7,'INES ISSAOUI'),(51,'2026-05-16 18:52:51',2560,'Règlement facture N°9-2026',120,2560,0,0,1,21,2026,1,25,'2026-05-16 18:52:51',1,5,'BIM BANK',7,'INES ISSAOUI'),(52,'2026-05-16 18:55:41',1710,'Règlement facture N°10-2026',122,1710,0,0,1,21,2026,1,28,'2026-05-16 18:55:41',1,5,'BIM BANK',7,'INES ISSAOUI'),(54,'2026-05-18 09:56:08',700,'Consultation N°12-2026 chez Dr. INES ISSAOUI',63,700,0,0,1,21,2026,1,30,'2026-05-18 09:56:08',1,1,'BIM BANK',7,'INES ISSAOUI'),(56,'2026-05-18 10:44:19',700,'Consultation N°14-2026 chez Dr. INES ISSAOUI',123,700,0,0,1,21,2026,1,32,'2026-05-18 10:44:19',1,1,'BIM BANK',7,'INES ISSAOUI'),(58,'2026-05-18 11:54:44',700,'Consultation N°15-2026 chez Dr. INES ISSAOUI',124,700,0,0,1,1,2026,1,33,'2026-05-18 11:54:44',1,1,'CASH',7,'INES ISSAOUI'),(59,'2026-05-18 13:58:03',700,'Consultation N°16-2026 chez Dr. INES ISSAOUI',74,700,0,0,1,21,2026,1,34,'2026-05-18 13:58:03',1,1,'BIM BANK',7,'INES ISSAOUI'),(60,'2026-05-18 19:30:33',700,'Consultation N°17-2026 chez Dr. INES ISSAOUI',125,700,0,0,1,21,2026,1,35,'2026-05-18 19:30:33',1,1,'CASH',7,'INES ISSAOUI'),(61,'2026-05-18 20:01:04',700,'Consultation N°17-2026 chez Dr. INES ISSAOUI',126,700,0,0,1,21,2026,1,36,'2026-05-18 20:01:04',1,1,'CASH',7,'INES ISSAOUI'),(62,'2026-05-19 16:58:47',700,'Consultation N°18-2026 chez Dr. INES ISSAOUI',128,700,0,0,1,21,2026,1,37,'2026-05-19 16:58:47',1,1,'BIM BANK',7,'INES ISSAOUI'),(63,'2026-05-20 09:06:01',700,'Consultation N°19-2026 chez Dr. INES ISSAOUI',129,700,0,0,1,21,2026,1,38,'2026-05-20 09:06:01',1,1,'CASH',7,'INES ISSAOUI'),(64,'2026-05-20 09:10:53',700,'Consultation N°20-2026 chez Dr. INES ISSAOUI',129,700,0,0,1,21,2026,1,39,'2026-05-20 09:10:53',1,1,'CASH',7,'INES ISSAOUI'),(65,'2026-05-20 09:40:35',700,'Consultation N°19-2026 chez Dr. INES ISSAOUI',130,700,0,0,1,21,2026,1,40,'2026-05-20 09:40:35',1,1,'CASH',7,'INES ISSAOUI'),(66,'2026-05-20 11:50:11',700,'Consultation N°20-2026 chez Dr. INES ISSAOUI',115,700,0,0,1,21,2026,1,41,'2026-05-20 11:50:11',1,1,'CASH',7,'INES ISSAOUI'),(67,'2026-05-20 11:55:20',700,'Consultation N°21-2026 chez Dr. INES ISSAOUI',35,700,0,0,1,21,2026,1,42,'2026-05-20 11:55:20',1,1,'CASH',7,'INES ISSAOUI'),(68,'2026-05-20 17:50:30',700,'Consultation N°22-2026 chez Dr. INES ISSAOUI',102,700,0,0,1,21,2026,1,43,'2026-05-20 17:50:30',1,1,'BIM BANK',7,'INES ISSAOUI'),(69,'2026-05-20 18:02:25',700,'Consultation N°23-2026 chez Dr. INES ISSAOUI',102,700,0,0,1,21,2026,1,44,'2026-05-20 18:02:25',1,1,'CASH',7,'INES ISSAOUI'),(70,'2026-05-20 18:13:28',1730,'Règlement facture N°22-2026',102,1730,0,0,1,21,2026,1,43,'2026-05-20 18:13:28',1,1,'CASH',7,'INES ISSAOUI'),(71,'2026-05-20 18:46:33',700,'Consultation N°24-2026 chez Dr. INES ISSAOUI',132,700,0,0,1,21,2026,1,45,'2026-05-20 18:46:33',1,1,'CASH',7,'INES ISSAOUI'),(72,'2026-05-21 12:02:11',700,'Consultation N°25-2026 chez Dr. INES ISSAOUI',133,700,0,0,1,21,2026,1,46,'2026-05-21 12:02:11',1,1,'BIM BANK',7,'INES ISSAOUI'),(73,'2026-05-21 16:49:12',700,'Consultation N°26-2026 chez Dr. INES ISSAOUI',96,700,0,0,1,21,2026,1,47,'2026-05-21 16:49:12',1,1,'BIM BANK',7,'INES ISSAOUI'),(74,'2026-05-22 09:05:15',700,'Consultation N°27-2026 chez Dr. INES ISSAOUI',135,700,0,0,1,21,2026,1,48,'2026-05-22 09:05:15',1,1,'CASH',7,'INES ISSAOUI'),(75,'2026-05-22 09:57:26',700,'Consultation N°28-2026 chez Dr. INES ISSAOUI',136,700,0,0,1,21,2026,1,49,'2026-05-22 09:57:26',1,1,'CASH',7,'INES ISSAOUI'),(76,'2026-05-22 19:25:06',700,'Consultation N°29-2026 chez Dr. INES ISSAOUI',137,700,0,0,1,21,2026,1,50,'2026-05-22 19:25:06',1,1,'BANKILY',7,'INES ISSAOUI'),(77,'2026-05-22 19:29:27',700,'Consultation N°30-2026 chez Dr. INES ISSAOUI',86,700,0,0,1,21,2026,1,51,'2026-05-22 19:29:27',1,1,'CASH',7,'INES ISSAOUI'),(78,'2026-05-22 21:27:47',2450,'Règlement facture N°30-2026',86,2450,0,0,1,21,2026,1,51,'2026-05-22 21:27:47',1,1,'CASH',7,'INES ISSAOUI'),(79,'2026-05-22 22:18:26',2420,'Règlement facture N°29-2026',137,2420,0,0,1,21,2026,1,50,'2026-05-22 22:18:26',1,2,'BANKILY',7,'INES ISSAOUI'),(80,'2026-05-23 12:34:02',700,'Consultation N°31-2026 chez Dr. INES ISSAOUI',138,700,0,0,1,21,2026,1,52,'2026-05-23 12:34:02',1,1,'CASH',7,'INES ISSAOUI'),(82,'2026-05-23 18:50:05',700,'Consultation N°33-2026 chez Dr. INES ISSAOUI',139,700,0,0,1,21,2026,1,54,'2026-05-23 18:50:05',1,1,'CASH',7,'INES ISSAOUI'),(83,'2026-05-23 19:18:50',700,'Consultation N°34-2026 chez Dr. INES ISSAOUI',141,700,0,0,1,21,2026,1,55,'2026-05-23 19:18:50',1,1,'CASH',7,'INES ISSAOUI'),(84,'2026-05-23 19:22:39',4780,'Règlement facture N°31-2026',138,4780,0,0,1,1,2026,1,52,'2026-05-23 19:22:39',1,1,'CASH',7,'INES ISSAOUI'),(85,'2026-05-23 19:30:41',700,'Consultation N°35-2026 chez Dr. INES ISSAOUI',142,700,0,0,1,21,2026,1,56,'2026-05-23 19:30:41',1,1,'BANKILY',7,'INES ISSAOUI'),(86,'2026-05-23 19:31:54',3040,'Règlement facture N°33-2026',139,3040,0,0,1,1,2026,1,54,'2026-05-23 19:31:54',1,1,'CASH',7,'INES ISSAOUI'),(87,'2026-05-23 20:34:01',2460,'Règlement facture N°35-2026',142,2460,0,0,1,21,2026,1,56,'2026-05-23 20:34:01',1,2,'BANKILY',7,'INES ISSAOUI'),(88,'2026-05-23 20:42:49',0,'Règlement facture N°35-2026',142,0,0,0,1,1,2026,1,56,'2026-05-23 20:42:49',1,2,'BANKILY',7,'INES ISSAOUI'),(89,'2026-05-23 20:43:36',3160,'Acompte facture N°35-2026',142,3160,0,0,1,1,2026,1,56,'2026-05-23 20:43:36',1,2,'BANKILY',7,'INES ISSAOUI'),(90,'2026-05-25 18:08:39',700,'Consultation N°36-2026 chez Dr. INES ISSAOUI',143,700,0,0,1,21,2026,1,57,'2026-05-25 18:08:39',1,1,'BANKILY',7,'INES ISSAOUI'),(91,'2026-05-25 18:21:26',2750,'Règlement facture N°36-2026',143,2750,0,0,1,21,2026,1,57,'2026-05-25 18:21:26',1,2,'BANKILY',7,'INES ISSAOUI'),(92,'2026-05-25 18:25:03',0,'Règlement facture N°36-2026',143,0,0,0,1,21,2026,1,57,'2026-05-25 18:25:03',1,2,'BANKILY',7,'INES ISSAOUI'),(93,'2026-05-25 19:46:35',700,'Consultation N°37-2026 chez Dr. INES ISSAOUI',144,700,0,0,1,21,2026,1,58,'2026-05-25 19:46:35',1,1,'CASH',7,'INES ISSAOUI'),(94,'2026-05-25 20:18:23',1040,'Règlement facture N°37-2026',144,1040,0,0,1,21,2026,1,58,'2026-05-25 20:18:23',1,1,'CASH',7,'INES ISSAOUI'),(97,'2026-05-26 08:30:31',700,'Consultation N°39-2026 chez Dr. INES ISSAOUI',146,700,0,0,1,21,2026,1,62,'2026-05-26 08:30:31',1,1,'BIM BANK',7,'INES ISSAOUI'),(98,'2026-05-26 10:28:08',2580,'Règlement facture N°39-2026',146,2580,0,0,1,21,2026,1,62,'2026-05-26 10:28:08',1,5,'BIM BANK',7,'INES ISSAOUI'),(99,'2026-05-26 10:49:47',700,'Consultation N°40-2026 chez Dr. INES ISSAOUI',147,700,0,0,1,21,2026,1,63,'2026-05-26 10:49:47',1,1,'BANKILY',7,'INES ISSAOUI'),(100,'2026-05-26 12:35:07',300,'Règlement facture N°39-2026',146,300,0,0,1,21,2026,1,62,'2026-05-26 12:35:07',1,2,'BANKILY',7,'INES ISSAOUI'),(101,'2026-05-26 12:43:35',2880,'Acompte facture N°39-2026',146,2880,0,0,1,21,2026,1,62,'2026-05-26 12:43:35',1,2,'BANKILY',7,'INES ISSAOUI'),(102,'2026-05-26 12:49:58',0,'Acompte facture N°39-2026',146,0,0,0,1,21,2026,1,62,'2026-05-26 12:49:58',1,5,'BIM BANK',7,'INES ISSAOUI'),(103,'2026-05-26 13:48:53',700,'Consultation N°41-2026 chez Dr. INES ISSAOUI',148,700,0,0,1,21,2026,1,64,'2026-05-26 13:48:53',1,1,'BIM BANK',7,'INES ISSAOUI'),(104,'2026-05-26 14:18:50',500,'Règlement facture N°41-2026',148,500,0,0,1,21,2026,1,64,'2026-05-26 14:18:50',1,5,'BIM BANK',7,'INES ISSAOUI'),(105,'2026-05-26 16:39:23',700,'Consultation N°42-2026 chez Dr. INES ISSAOUI',149,700,0,0,1,21,2026,1,65,'2026-05-26 16:39:23',1,1,'BANKILY',7,'INES ISSAOUI'),(106,'2026-05-26 16:50:53',2360,'Règlement facture N°42-2026',149,2360,0,0,1,21,2026,1,65,'2026-05-26 16:50:53',1,2,'BANKILY',7,'INES ISSAOUI'),(107,'2026-05-26 18:23:22',700,'Consultation N°43-2026 chez Dr. INES ISSAOUI',148,700,0,0,1,21,2026,1,66,'2026-05-26 18:23:22',1,1,'BIM BANK',7,'INES ISSAOUI'),(108,'2026-05-26 18:25:35',1000,'Consultation N°44-2026 chez Dr. Abdallahi Mohamed Abe',148,1000,0,0,1,21,2026,1,67,'2026-05-26 18:25:35',1,1,'BIM BANK',10,'Abdallahi Mohamed Abe'),(109,'2026-05-26 19:15:20',0,'Règlement facture N°41-2026',148,0,0,0,1,21,2026,1,64,'2026-05-26 19:15:20',1,1,'CASH',7,'INES ISSAOUI'),(110,'2026-05-26 19:19:00',700,'Règlement facture N°44-2026',148,700,0,0,1,19,2026,1,67,'2026-05-26 19:19:00',1,1,'CASH',10,'Abdallahi Mohamed Abe'),(111,'2026-05-26 19:24:16',2810,'Acompte facture N°42-2026',149,2810,0,0,1,19,2026,1,65,'2026-05-26 19:24:16',1,1,'CASH',7,'INES ISSAOUI'),(112,'2026-05-26 19:28:37',3510,'Acompte facture N°42-2026',149,3510,0,0,1,19,2026,1,65,'2026-05-26 19:28:37',1,2,'BANKILY',7,'INES ISSAOUI'),(113,'2026-05-28 17:41:19',700,'Règlement facture N°44-2026',148,700,0,0,1,19,2026,1,67,'2026-05-28 17:41:19',1,5,'BIM BANK',10,'Abdallahi Mohamed Abe'),(114,'2026-05-29 11:15:24',700,'Consultation N°45-2026 chez Dr. INES ISSAOUI',151,700,0,0,1,21,2026,1,68,'2026-05-29 11:15:24',1,1,'CASH',7,'INES ISSAOUI'),(115,'2026-05-29 12:37:37',700,'Consultation N°46-2026 chez Dr. INES ISSAOUI',152,700,0,0,1,21,2026,1,69,'2026-05-29 12:37:37',1,1,'CASH',7,'INES ISSAOUI'),(116,'2026-05-29 14:12:37',3340,'Règlement facture N°46-2026',152,3340,0,0,1,21,2026,1,69,'2026-05-29 14:12:37',1,5,'BIM BANK',7,'INES ISSAOUI'),(117,'2026-06-01 10:25:57',700,'Consultation N°47-2026 chez Dr. INES ISSAOUI',153,700,0,0,1,21,2026,1,70,'2026-06-01 10:25:57',1,1,'BANKILY',7,'INES ISSAOUI'),(118,'2026-06-01 10:31:20',700,'Consultation N°48-2026 chez Dr. INES ISSAOUI',154,700,0,0,1,21,2026,1,71,'2026-06-01 10:31:20',1,1,'CASH',7,'INES ISSAOUI'),(119,'2026-06-01 11:02:26',700,'Consultation N°49-2026 chez Dr. INES ISSAOUI',154,700,0,0,1,21,2026,1,72,'2026-06-01 11:02:26',1,1,'CASH',7,'INES ISSAOUI'),(120,'2026-06-01 11:10:43',700,'Consultation N°50-2026 chez Dr. INES ISSAOUI',154,700,0,0,1,21,2026,1,73,'2026-06-01 11:10:43',1,1,'CASH',7,'INES ISSAOUI');
+/*!40000 ALTER TABLE `caisse_operations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `caisse_operationsimp`
+--
+
+DROP TABLE IF EXISTS `caisse_operationsimp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `caisse_operationsimp` (
+  `cle` int NOT NULL AUTO_INCREMENT,
+  `dateoper` datetime DEFAULT NULL,
+  `MontantOperation` double DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
+  `Tiers` varchar(255) DEFAULT NULL,
+  `entreEspece` double NOT NULL DEFAULT '0',
+  `retraitEspece` double NOT NULL DEFAULT '0',
+  `pourPatFournisseur` double NOT NULL DEFAULT '0',
+  `pourCabinet` double NOT NULL DEFAULT '0',
+  `fkiduser` int NOT NULL DEFAULT '1',
+  `exercice` double DEFAULT NULL,
+  `TypeTiers` varchar(200) DEFAULT NULL,
+  `fkidfacturebord` double NOT NULL DEFAULT '0',
+  `DtCr` datetime DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidtypePaie` int unsigned NOT NULL DEFAULT '1',
+  `TypePAie` varchar(45) NOT NULL DEFAULT 'CASH',
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '1',
+  `medecin` varchar(45) NOT NULL DEFAULT 'Dr Moud',
+  PRIMARY KEY (`cle`),
+  KEY `Index_3` (`dateoper`),
+  KEY `Index_4` (`fkiduser`),
+  KEY `Index_5` (`exercice`),
+  KEY `Index_7` (`fkidfacturebord`),
+  KEY `Index_8` (`fkidtypePaie`),
+  KEY `Index_9` (`TypePAie`),
+  KEY `Index_6` (`TypeTiers`) USING BTREE,
+  KEY `Index_2` (`Tiers`) USING BTREE,
+  KEY `Index_10` (`fkidmedecin`),
+  KEY `Index_11` (`medecin`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `caisse_operationsimp`
+--
+
+LOCK TABLES `caisse_operationsimp` WRITE;
+/*!40000 ALTER TABLE `caisse_operationsimp` DISABLE KEYS */;
+/*!40000 ALTER TABLE `caisse_operationsimp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `categories`
+--
+
+DROP TABLE IF EXISTS `categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categories` (
+  `idCategorie` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `LiblCat` varchar(200) DEFAULT NULL,
+  `etat` double DEFAULT NULL,
+  `Code_user` int DEFAULT NULL,
+  `type` int DEFAULT NULL,
+  PRIMARY KEY (`idCategorie`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categories`
+--
+
+LOCK TABLES `categories` WRITE;
+/*!40000 ALTER TABLE `categories` DISABLE KEYS */;
+INSERT INTO `categories` VALUES (1,'Autre',NULL,NULL,NULL),(3,'Dents',NULL,NULL,NULL),(4,'Prothéses',NULL,NULL,NULL),(5,'radio panoramique',NULL,NULL,NULL);
+/*!40000 ALTER TABLE `categories` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `consommables`
+--
+
+DROP TABLE IF EXISTS `consommables`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `consommables` (
+  `idConsommables` int unsigned NOT NULL AUTO_INCREMENT,
+  `Libelle` varchar(45) NOT NULL DEFAULT '',
+  `Quantite` double NOT NULL DEFAULT '1',
+  `PrixUnit` double NOT NULL DEFAULT '0',
+  `SousTotal` double NOT NULL DEFAULT '0',
+  `DtAchat` datetime DEFAULT NULL,
+  `fkidFournisseur` double NOT NULL DEFAULT '1',
+  `fkidUser` int unsigned NOT NULL DEFAULT '1',
+  `Designation` varchar(145) DEFAULT NULL,
+  `fkidFacturePat` double NOT NULL DEFAULT '0',
+  `IscommandePat` int unsigned NOT NULL DEFAULT '0',
+  `fkidProduit` int unsigned NOT NULL DEFAULT '0',
+  `NumfactFourniss` varchar(45) NOT NULL DEFAULT 'Non Renseigne',
+  PRIMARY KEY (`idConsommables`),
+  KEY `Index_2` (`IscommandePat`),
+  KEY `Index_3` (`fkidFacturePat`),
+  KEY `Index_4` (`fkidFournisseur`),
+  KEY `Index_5` (`fkidProduit`),
+  KEY `Index_6` (`DtAchat`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `consommables`
+--
+
+LOCK TABLES `consommables` WRITE;
+/*!40000 ALTER TABLE `consommables` DISABLE KEYS */;
+INSERT INTO `consommables` VALUES (2,'Prothese',2,320,640,'2021-11-02 00:00:00',951,100,'Prothesee',0,0,13,'54855');
+/*!40000 ALTER TABLE `consommables` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `consultation_medicale`
+--
+
+DROP TABLE IF EXISTS `consultation_medicale`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `consultation_medicale` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidPatient` int unsigned NOT NULL,
+  `fkidMedecin` int unsigned DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidFacture` int unsigned DEFAULT NULL,
+  `date_consultation` datetime NOT NULL,
+  `motif` text COLLATE utf8mb3_unicode_ci,
+  `temperature` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `tension_arterielle` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `frequence_cardiaque` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `spo2` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `gad` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `poids` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `taille` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `examen_clinique` text COLLATE utf8mb3_unicode_ci,
+  `diagnostic` text COLLATE utf8mb3_unicode_ci,
+  `conduite_a_tenir` text COLLATE utf8mb3_unicode_ci,
+  `medicaments_prescrits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `examens_demandes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `ordonnances_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `notes` text COLLATE utf8mb3_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `consultation_medicale_fkidpatient_index` (`fkidPatient`),
+  KEY `consultation_medicale_fkidmedecin_index` (`fkidMedecin`),
+  KEY `consultation_medicale_fkidcabinet_index` (`fkidCabinet`),
+  CONSTRAINT `consultation_medicale_chk_1` CHECK (json_valid(`medicaments_prescrits`)),
+  CONSTRAINT `consultation_medicale_chk_2` CHECK (json_valid(`examens_demandes`)),
+  CONSTRAINT `consultation_medicale_chk_3` CHECK (json_valid(`ordonnances_ids`))
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `consultation_medicale`
+--
+
+LOCK TABLES `consultation_medicale` WRITE;
+/*!40000 ALTER TABLE `consultation_medicale` DISABLE KEYS */;
+INSERT INTO `consultation_medicale` VALUES (3,8741,6,1,NULL,'2026-04-15 02:17:00','Fièvre ','39','12/8','80','99',NULL,'100','182','Angine','Angine','','[]','[]','[]','','2026-04-15 02:19:49','2026-04-15 02:19:49'),(4,8434,6,1,NULL,'2026-04-15 02:36:00','FIEVRE','37','12/8','80','99',NULL,'80','189','','','','[]','[]','[]','','2026-04-15 02:37:21','2026-04-15 02:37:21'),(5,112,7,1,NULL,'2026-05-14 15:49:00','toux productive evoluant depuis 15 jours','36.5','12/7','99bpm','86%',NULL,'66','','BEG \nAP rales ronflants basales bi-lateraux','bronchite sur-infectee','','[]','[{\"type\":\"imagerie\",\"libelle\":\"TDM THORACIQUE\"},{\"type\":\"biologie\",\"libelle\":\"NFS CRP PCT \"}]','[]','','2026-05-14 16:00:59','2026-05-14 16:00:59'),(6,117,7,1,NULL,'2026-05-15 19:37:00','céphalée','37','12/7','99','98','1.02','50kg','157','','','','[]','[]','[]','','2026-05-15 19:44:29','2026-05-15 19:44:29'),(7,118,7,1,NULL,'2026-05-16 10:12:00','douleurs abdominales','36.4','140/90','66bpm','98%','','55kg','158cm','sensibilite epigastrique+ HCDt, le reste de l\'abdomen est souple depressible\nconjonctives normo-colorées','coliques hepatiques?\n','faire une écho abdominale + bilan infectieux et hépatique','[]','[]','[]','','2026-05-16 10:17:47','2026-05-16 10:17:47'),(8,119,7,1,NULL,'2026-05-16 13:25:00','suivi Mounjaro','35.4','120/80','60bpm','99%','','121kg','184cm','','IMC 35.74\nobesite grade 2','','[]','[]','[]','','2026-05-16 13:29:34','2026-05-16 13:29:34'),(9,120,7,1,NULL,'2026-05-16 17:23:00','syndrome grippal','37.4','110/70','100bpm','99%','','84kg','','gorge érythémateuse\nAP râles sibilants bilatéraux','','','[]','[]','[]','','2026-05-16 17:36:19','2026-05-16 17:36:19'),(10,122,7,1,NULL,'2026-05-16 17:42:00','','36.5','','','','','10kg','','enfoncement des globes oculaires\nAP: râles bronchiques basales gauche','bronchite ','','[]','[]','[]','','2026-05-16 17:48:44','2026-05-16 17:48:44'),(11,123,7,1,NULL,'2026-05-18 09:51:00','dyspnée','36.7','170/90','100bpm','98%','1022g/l','55kg','','AP râles sibilants bilateraux','','','[]','[]','[]','','2026-05-18 09:54:03','2026-05-18 09:54:03'),(12,124,7,1,NULL,'2026-05-18 11:55:00','toux persistante productive verdatre','36.3','120/70','85bpm','99%','','101kg','181cm','râles bronchiques bilatérales','bronchite','','[]','[]','[]','','2026-05-18 12:04:41','2026-05-18 12:04:41'),(13,74,7,1,NULL,'2026-05-18 13:59:00','sd grippal, toux nocturne productive','36.4','','116bpm','','','15kg','','gorge érythémateuse\nAP libre\nabdomen souple \napyreteique','angine','','[]','[]','[]','','2026-05-18 14:10:36','2026-05-18 14:10:36'),(14,128,7,1,NULL,'2026-05-19 17:01:00','suivi mounjaro','36.6','130/80','82bpm','99%','','124.6','','RAS','','hba1c 7.2le 23/4/26\ncholesterol tot 2.8','[]','[]','[]','premiere prise mounjaro2.5 le 08/05/26\ndeuxiem dose 2.5 le 15/05/26','2026-05-19 17:09:45','2026-05-19 17:09:45'),(16,130,7,1,NULL,'2026-05-20 09:41:00','vertiges asthenie','36','120/80','49bpm','99%','','87kg','','bouchons de cérumen bilatéral','','','[]','[]','[]','','2026-05-20 09:42:57','2026-05-20 09:42:57'),(17,102,7,1,NULL,'2026-05-20 17:51:00','asthenie','37.8','9/5','89bpm','99%','','','','RAS','','','[]','[]','[]','','2026-05-20 17:57:47','2026-05-20 17:57:47'),(18,132,7,1,NULL,'2026-05-20 18:55:00','routine','36.3','120/70','84bpm','99%','','102','189cm','RAS','','','[]','[]','[]','','2026-05-20 19:00:31','2026-05-20 19:00:31'),(19,133,7,1,NULL,'2026-05-21 12:02:00','psoriasis','37.2','120/80','88bpm','99%','','88kg','','psoriasis','','','[]','[]','[]','','2026-05-21 12:13:39','2026-05-21 12:13:39'),(20,135,7,1,NULL,'2026-05-22 09:06:00','crise d\'asthme','37','','99bpm','97%','','12kg','','râles sibilants bilatéraux\ntirage inter costal\nTRC immédiat\nle reste de l\'examen est sans particularité','crise d\'asthme modéré','','[]','[]','[]','','2026-05-22 09:15:21','2026-05-22 09:15:21'),(21,136,7,1,NULL,'2026-05-22 10:08:00','asthénie angiome du 1/3 supérieur cuisse droite','36.7','110/60','80bpm','99%','','68kg','','RAS','depression','','[]','[]','[]','','2026-05-22 10:19:58','2026-05-22 10:19:58'),(22,137,7,1,NULL,'2026-05-22 19:25:00','vertiges asthénie depression','35.9','120/70','85bpm','99%','1.10','96kg','173cm','RAS','','','[]','[]','[]','','2026-05-22 19:39:59','2026-05-22 19:39:59'),(23,86,7,1,NULL,'2026-05-22 19:59:00','céphalée nausées vertiges','37','09/05','60bpm','99%','','56kg','','ras','grossesse de 06SA+3J ','','[]','[]','[]','DDR 05/04/2026\ngrosesse de 6SA+3j','2026-05-22 20:18:54','2026-05-22 20:18:54'),(24,138,7,1,NULL,'2026-05-23 12:34:00','crise d\'asthme','37.6','','155bpm','98%','','20kg','','sibilants bilatéraux ','crise d\'asthme modérée évoluant depuis 24h','nébulisation *3 \nATB\noxygénothérapie\ncorticothérapie','[]','[]','[]','','2026-05-23 12:41:46','2026-05-23 12:41:46'),(25,139,7,1,NULL,'2026-05-23 18:45:00','asthénie sd grippal','36.3','90/50','90bpm','99%','','96kg','183cm','nausée','','','[]','[]','[]','tabagique 30PA','2026-05-23 18:56:08','2026-05-23 18:56:08'),(26,142,7,1,NULL,'2026-05-23 19:38:00','toux','36.5','120/80','77bpm','99%','','95kg','','râles sibilants','','','[]','[]','[]','','2026-05-23 19:43:08','2026-05-23 19:43:08'),(27,143,7,1,NULL,'2026-05-25 18:09:00','céphalée vomissent ','37.3','110/80','101bpm','99%','','60kg','','asthénie abdomen souple dépressible','','','[]','[]','[]','','2026-05-25 18:14:08','2026-05-25 18:14:08'),(28,144,7,1,NULL,'2026-05-25 19:50:00','angine','37.7','110/60','86bpm','99%','','74kg','','angine','','','[]','[]','[]','','2026-05-25 19:55:16','2026-05-25 19:55:16'),(29,146,7,1,NULL,'2026-05-26 10:08:00','entorse','37.5','90/50','105bpm','99%','','89kg','','pas d\'impotence fonctionnelle\npas d\'ecchymose\n ','entorse','','[]','[]','[]','','2026-05-26 10:11:37','2026-05-26 10:11:37'),(30,147,7,1,NULL,'2026-05-26 10:52:00','routine','36.9','120/90','75bpm','99%','','87kg','167cm','RAS','','','[]','[]','[]','','2026-05-26 10:59:13','2026-05-26 10:59:13'),(31,148,7,1,NULL,'2026-05-26 13:58:00','plaie infectée','36.8','120/80','93bpm','99%','','100kg','','plaie surinfectée','','','[]','[]','[]','','2026-05-26 14:16:52','2026-05-26 14:16:52'),(32,151,7,1,NULL,'2026-05-29 11:19:00','douleur FLdte constipation ','36.9','130/70','98bpm','99%','','73kg','165cm','abdomen souple depressible\nsensibilite fidte\n','','','[]','[]','[]','','2026-05-29 11:28:00','2026-05-29 11:28:00'),(33,152,7,1,NULL,'2026-05-29 12:39:00','asthme','','','','','','','','','','','[]','[]','[]','','2026-05-29 12:39:46','2026-05-29 12:39:46'),(34,153,7,1,NULL,'2026-06-01 10:29:00','epigastralgie','36.4','110/80','74bpm','99%','','68kg','','allus valgus\n','','','[]','[]','[]','','2026-06-01 10:56:58','2026-06-01 10:56:58'),(35,154,7,1,NULL,'2026-06-01 11:08:00','céphalées épigastralgies','36.6','140/80','75bpm','99%','','67kg','','RAS','','','[]','[]','[]','','2026-06-01 11:14:34','2026-06-01 11:14:34');
+/*!40000 ALTER TABLE `consultation_medicale` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `currentuser`
+--
+
+DROP TABLE IF EXISTS `currentuser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `currentuser` (
+  `User_code` int NOT NULL DEFAULT '0',
+  `User_Nom_Connect` varchar(10) DEFAULT NULL,
+  `User_Pwd` varchar(10) DEFAULT NULL,
+  `User_fonction` varchar(255) DEFAULT NULL,
+  `User_NomPren` varchar(50) DEFAULT NULL,
+  `visibleuser` double DEFAULT NULL,
+  PRIMARY KEY (`User_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `currentuser`
+--
+
+LOCK TABLES `currentuser` WRITE;
+/*!40000 ALTER TABLE `currentuser` DISABLE KEYS */;
+INSERT INTO `currentuser` VALUES (100,'Moctar','1234','Administrateur','Moctar Dedahi',1);
+/*!40000 ALTER TABLE `currentuser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `currentuser_enregistrement`
+--
+
+DROP TABLE IF EXISTS `currentuser_enregistrement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `currentuser_enregistrement` (
+  `iduser` double NOT NULL,
+  `typeoperation` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`iduser`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `currentuser_enregistrement`
+--
+
+LOCK TABLES `currentuser_enregistrement` WRITE;
+/*!40000 ALTER TABLE `currentuser_enregistrement` DISABLE KEYS */;
+/*!40000 ALTER TABLE `currentuser_enregistrement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dentspatients`
+--
+
+DROP TABLE IF EXISTS `dentspatients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dentspatients` (
+  `idDentsPatients` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidfacture` int unsigned NOT NULL DEFAULT '0',
+  `NumDent` varchar(45) NOT NULL DEFAULT '',
+  `DtAjout` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `fkidpatient` int unsigned NOT NULL DEFAULT '0',
+  `FkidActe` int unsigned NOT NULL DEFAULT '0',
+  `acte` varchar(245) NOT NULL DEFAULT '',
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idDentsPatients`),
+  KEY `Index_2` (`fkidfacture`),
+  KEY `Index_3` (`NumDent`),
+  KEY `Index_4` (`fkidpatient`),
+  KEY `Index_5` (`FkidActe`)
+) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dentspatients`
+--
+
+LOCK TABLES `dentspatients` WRITE;
+/*!40000 ALTER TABLE `dentspatients` DISABLE KEYS */;
+INSERT INTO `dentspatients` VALUES (91,85,'Autre','2021-12-06 16:35:00',20,44,'Consultation',1);
+/*!40000 ALTER TABLE `dentspatients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `detailbc`
+--
+
+DROP TABLE IF EXISTS `detailbc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `detailbc` (
+  `idDetailBC` int unsigned NOT NULL AUTO_INCREMENT,
+  `FkidBC` int unsigned NOT NULL DEFAULT '0',
+  `Designation` varchar(345) DEFAULT NULL,
+  `Qte` double NOT NULL DEFAULT '0',
+  `DtCr` datetime DEFAULT NULL,
+  `MontantTotal` double NOT NULL DEFAULT '0',
+  `PU` double NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idDetailBC`),
+  KEY `Index_2` (`FkidBC`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `detailbc`
+--
+
+LOCK TABLES `detailbc` WRITE;
+/*!40000 ALTER TABLE `detailbc` DISABLE KEYS */;
+INSERT INTO `detailbc` VALUES (1,1,'test 1',100,'2022-06-05 21:29:48',0,0);
+/*!40000 ALTER TABLE `detailbc` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `detailfacturepatient`
+--
+
+DROP TABLE IF EXISTS `detailfacturepatient`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `detailfacturepatient` (
+  `idDetfacture` int NOT NULL AUTO_INCREMENT,
+  `fkidfacture` int NOT NULL DEFAULT '0',
+  `DtAjout` datetime DEFAULT NULL,
+  `Actes` varchar(255) DEFAULT NULL,
+  `PrixRef` double DEFAULT NULL,
+  `PrixFacture` double DEFAULT NULL,
+  `Quantite` double DEFAULT NULL,
+  `fkidMedecin` int DEFAULT NULL,
+  `DTajout2` datetime DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `Dents` varchar(145) DEFAULT NULL,
+  `DtActe` datetime DEFAULT NULL,
+  `fkidacte` double DEFAULT NULL,
+  `IsAct` int unsigned NOT NULL DEFAULT '1',
+  `ActesArab` varchar(245) DEFAULT NULL,
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidmedicament` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idDetfacture`),
+  KEY `Index_2` (`fkidfacture`),
+  KEY `Index_3` (`fkidMedecin`)
+) ENGINE=InnoDB AUTO_INCREMENT=335 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `detailfacturepatient`
+--
+
+LOCK TABLES `detailfacturepatient` WRITE;
+/*!40000 ALTER TABLE `detailfacturepatient` DISABLE KEYS */;
+INSERT INTO `detailfacturepatient` VALUES (23,17,'2026-05-14 16:41:02','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(27,19,'2026-05-15 18:28:58','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(28,19,'2026-05-15 18:33:52','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(29,19,'2026-05-15 18:33:52','Augmentin',480,480,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,33),(30,19,'2026-05-15 18:33:52','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(31,19,'2026-05-15 18:33:52','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(32,19,'2026-05-15 18:33:52','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(33,19,'2026-05-15 18:34:09','Nébulisation',500,500,3,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(34,19,'2026-05-15 18:34:55','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(35,19,'2026-05-15 18:48:43','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(36,19,'2026-05-15 18:48:43','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(37,20,'2026-05-15 19:33:23','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(38,20,'2026-05-15 19:48:45','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(39,20,'2026-05-15 19:48:45','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(40,20,'2026-05-15 19:49:06','NFS',350,350,1,7,NULL,'1',NULL,NULL,NULL,3,NULL,1,4),(41,20,'2026-05-15 20:04:25','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(48,22,'2026-05-16 09:49:44','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(49,22,'2026-05-16 09:58:53','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(50,22,'2026-05-16 09:58:53','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(51,22,'2026-05-16 09:58:53','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(52,22,'2026-05-16 09:58:53','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(53,22,'2026-05-16 09:58:53','Spasfon',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,45),(54,22,'2026-05-16 10:09:15','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(55,22,'2026-05-16 10:11:13','Spasfon',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,45),(56,23,'2026-05-16 10:38:33','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(57,24,'2026-05-16 13:09:12','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(58,25,'2026-05-16 17:20:58','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(73,28,'2026-05-16 18:12:19','Nébulisation',500,500,1,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(74,28,'2026-05-16 18:12:19','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(75,25,'2026-05-16 18:15:34','Claforan',400,400,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,34),(76,25,'2026-05-16 18:15:34','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(77,25,'2026-05-16 18:15:34','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(78,25,'2026-05-16 18:15:34','Dexa',250,250,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(79,25,'2026-05-16 18:15:34','Acupan',170,170,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,19),(80,25,'2026-05-16 18:15:45','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(81,25,'2026-05-16 18:15:45','Nébulisation',500,500,1,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(82,28,'2026-05-16 18:18:00','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(83,28,'2026-05-16 18:18:00','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(84,28,'2026-05-16 18:18:00','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(85,28,'2026-05-16 18:18:00','Duoclav',220,220,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,9),(86,25,'2026-05-16 18:29:23','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(105,32,'2026-05-18 10:44:19','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(106,33,'2026-05-18 11:54:44','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(107,33,'2026-05-18 12:07:12','Dexa',250,250,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(108,33,'2026-05-18 12:07:24','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(109,33,'2026-05-18 12:07:35','Nébulisation',500,500,1,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(110,33,'2026-05-18 12:07:38','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(111,33,'2026-05-18 12:09:46','Seringue',50,50,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(112,32,'2026-05-18 13:12:06','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(113,32,'2026-05-18 13:12:06','Dexa',250,250,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(114,32,'2026-05-18 13:12:06','Duoclav',220,220,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,9),(115,32,'2026-05-18 13:12:06','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(116,32,'2026-05-18 13:12:06','NACL',100,100,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(117,32,'2026-05-18 13:12:06','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(118,32,'2026-05-18 13:12:07','calcium',100,100,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(119,32,'2026-05-18 13:12:07','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(120,32,'2026-05-18 13:12:07','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(121,32,'2026-05-18 13:12:07','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(122,32,'2026-05-18 13:12:07','Seringue',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(123,32,'2026-05-18 13:12:07','loxen',480,480,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,61),(124,32,'2026-05-18 13:12:23','Nébulisation',500,500,3,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(125,32,'2026-05-18 13:12:23','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(126,34,'2026-05-18 13:58:03','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(127,34,'2026-05-18 14:12:23','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(128,34,'2026-05-18 14:12:32','Seringue',50,50,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(129,34,'2026-05-18 14:12:43','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(131,36,'2026-05-18 20:01:04','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(132,37,'2026-05-19 16:58:47','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(137,40,'2026-05-20 09:40:35','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(138,40,'2026-05-20 09:43:18','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(139,40,'2026-05-20 09:43:18','Seringue 10CC',50,50,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,63),(140,41,'2026-05-20 11:50:11','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(141,42,'2026-05-20 11:55:20','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(142,43,'2026-05-20 17:50:30','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(143,43,'2026-05-20 17:59:32','fer',350,350,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,6),(144,43,'2026-05-20 17:59:32','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(145,43,'2026-05-20 17:59:32','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(146,43,'2026-05-20 18:00:30','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(147,43,'2026-05-20 18:00:30','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(148,43,'2026-05-20 18:00:30','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(149,43,'2026-05-20 18:00:30','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(150,43,'2026-05-20 18:00:30','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(151,43,'2026-05-20 18:00:44','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(152,43,'2026-05-20 18:00:58','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(153,44,'2026-05-20 18:02:25','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(154,45,'2026-05-20 18:46:33','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(155,46,'2026-05-21 12:02:11','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(156,47,'2026-05-21 16:49:12','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(157,48,'2026-05-22 09:05:14','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(158,48,'2026-05-22 09:16:35','Duoclav',220,220,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,9),(159,48,'2026-05-22 09:16:35','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(160,48,'2026-05-22 09:16:52','Nébulisation',500,500,3,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(161,48,'2026-05-22 09:16:52','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(162,48,'2026-05-22 09:17:20','Salbutamol',180,180,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(163,48,'2026-05-22 09:29:06','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(164,48,'2026-05-22 09:29:06','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(165,49,'2026-05-22 09:57:26','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(166,49,'2026-05-22 10:21:54','fer',350,350,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,6),(167,49,'2026-05-22 10:21:54','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(168,49,'2026-05-22 10:21:54','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(169,49,'2026-05-22 10:21:54','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(170,49,'2026-05-22 10:21:54','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(171,49,'2026-05-22 10:21:54','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(172,49,'2026-05-22 10:21:54','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(173,49,'2026-05-22 10:21:54','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(174,49,'2026-05-22 10:21:54','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(175,49,'2026-05-22 10:22:03','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(176,49,'2026-05-22 10:43:26','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(177,49,'2026-05-22 10:43:26','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(178,49,'2026-05-22 10:43:26','Dexa',250,250,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(179,49,'2026-05-22 10:43:26','Seringue 5CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(180,50,'2026-05-22 19:25:06','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(181,51,'2026-05-22 19:29:27','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(182,50,'2026-05-22 19:53:22','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(183,50,'2026-05-22 19:53:22','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(184,50,'2026-05-22 19:53:22','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(185,50,'2026-05-22 19:53:22','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(186,50,'2026-05-22 19:53:22','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(187,50,'2026-05-22 19:53:30','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(188,50,'2026-05-22 19:56:58','diazépam',520,520,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,227),(189,50,'2026-05-22 19:56:58','Seringue 5CC',50,50,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(190,50,'2026-05-22 19:57:21','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(191,51,'2026-05-22 20:22:09','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(192,51,'2026-05-22 20:27:05','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(193,51,'2026-05-22 20:27:05','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(194,51,'2026-05-22 20:27:05','NACL',100,100,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(195,51,'2026-05-22 20:27:05','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(196,51,'2026-05-22 20:27:05','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(197,51,'2026-05-22 20:27:05','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(198,51,'2026-05-22 20:27:05','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(199,51,'2026-05-22 20:27:05','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(200,51,'2026-05-22 20:27:05','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(201,51,'2026-05-22 20:27:05','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(202,51,'2026-05-22 20:27:05','Seringue 5CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(203,51,'2026-05-22 20:30:13','Ringer lactate',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,228),(204,52,'2026-05-23 12:34:02','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(205,52,'2026-05-23 12:45:14','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(206,52,'2026-05-23 12:45:14','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(207,52,'2026-05-23 12:45:14','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(208,52,'2026-05-23 12:45:14','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(209,52,'2026-05-23 12:45:14','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(210,52,'2026-05-23 12:45:14','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(211,52,'2026-05-23 12:45:14','Seringue 5CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(212,52,'2026-05-23 12:45:14','Claforan',400,400,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,34),(213,52,'2026-05-23 12:45:14','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(214,52,'2026-05-23 12:45:14','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(215,52,'2026-05-23 12:45:14','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(216,52,'2026-05-23 12:45:14','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(217,52,'2026-05-23 12:45:14','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(218,52,'2026-05-23 12:45:14','fer',350,350,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,6),(219,52,'2026-05-23 12:45:14','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(220,52,'2026-05-23 12:45:31','Nébulisation',500,500,3,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(221,52,'2026-05-23 12:45:31','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(223,54,'2026-05-23 18:50:05','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(224,54,'2026-05-23 18:59:25','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(225,54,'2026-05-23 18:59:31','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(226,54,'2026-05-23 19:03:30','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(227,54,'2026-05-23 19:03:30','Acupan',170,170,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,19),(228,54,'2026-05-23 19:03:30','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(229,54,'2026-05-23 19:03:30','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(230,54,'2026-05-23 19:03:30','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(231,54,'2026-05-23 19:03:30','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(232,54,'2026-05-23 19:03:30','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(233,54,'2026-05-23 19:03:30','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(234,54,'2026-05-23 19:03:30','vitamine D 200 000 IM',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,59),(235,54,'2026-05-23 19:03:30','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(236,54,'2026-05-23 19:03:30','Seringue 10CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,63),(237,54,'2026-05-23 19:03:40','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(238,54,'2026-05-23 19:06:12','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(239,55,'2026-05-23 19:18:50','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(240,56,'2026-05-23 19:30:41','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(241,56,'2026-05-23 19:46:37','Claforan',400,400,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,34),(242,56,'2026-05-23 19:46:37','Salbutamol',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,32),(243,56,'2026-05-23 19:46:37','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(244,56,'2026-05-23 19:46:37','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(245,56,'2026-05-23 19:46:37','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(246,56,'2026-05-23 19:46:37','Seringue 5CC',50,50,2,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(247,56,'2026-05-23 19:46:51','Nébulisation',500,500,1,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(248,56,'2026-05-23 19:46:51','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(249,56,'2026-05-23 19:48:36','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(250,57,'2026-05-25 18:08:39','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(251,57,'2026-05-25 18:17:13','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(252,57,'2026-05-25 18:17:13','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(253,57,'2026-05-25 18:17:13','Metronidazole',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,47),(254,57,'2026-05-25 18:17:13','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(255,57,'2026-05-25 18:17:13','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(256,57,'2026-05-25 18:17:13','Acupan',170,170,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,19),(257,57,'2026-05-25 18:17:13','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(258,57,'2026-05-25 18:17:13','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(259,57,'2026-05-25 18:17:13','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(260,57,'2026-05-25 18:17:13','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(261,57,'2026-05-25 18:17:13','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(262,57,'2026-05-25 18:17:13','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(263,57,'2026-05-25 18:17:13','Seringue 5CC',50,50,5,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(264,57,'2026-05-25 18:17:31','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(265,57,'2026-05-25 18:20:30','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(266,58,'2026-05-25 19:46:35','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(267,58,'2026-05-25 19:56:10','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(268,58,'2026-05-25 19:56:10','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(269,58,'2026-05-25 19:56:10','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(270,58,'2026-05-25 19:56:10','Seringue 5CC',50,50,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(271,58,'2026-05-25 19:56:18','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(279,61,'2026-05-25 21:17:47','Surveillance',300,300,1,1,NULL,'Sonia','Acte',NULL,6,1,NULL,1,1),(280,61,'2026-05-25 21:18:29','Ringer lactate',150,150,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,228),(281,61,'2026-05-25 21:18:29','Kit Voie',200,200,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,44),(282,61,'2026-05-25 21:18:29','Seringue 10CC',50,50,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,63),(283,61,'2026-05-25 21:18:29','SSI',150,150,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,24),(284,62,'2026-05-26 08:30:31','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(285,62,'2026-05-26 10:15:38','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(286,62,'2026-05-26 10:15:38','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(287,62,'2026-05-26 10:15:38','Acupan',170,170,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,19),(288,62,'2026-05-26 10:15:38','Profenid',260,260,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,5),(289,62,'2026-05-26 10:15:38','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(290,62,'2026-05-26 10:15:38','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(291,62,'2026-05-26 10:15:38','SG 5%',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,25),(292,62,'2026-05-26 10:15:38','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(293,62,'2026-05-26 10:15:38','KCL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,18),(294,62,'2026-05-26 10:15:38','calcium',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,60),(295,62,'2026-05-26 10:15:38','hpv',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,50),(296,62,'2026-05-26 10:15:38','Seringue 5CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(297,62,'2026-05-26 10:15:58','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(298,62,'2026-05-26 10:17:05','NACL',100,100,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,28),(299,63,'2026-05-26 10:49:47','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(300,62,'2026-05-26 12:33:16','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(301,64,'2026-05-26 13:48:53','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(302,64,'2026-05-26 14:17:19','Nébulisation',500,500,1,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(303,65,'2026-05-26 16:39:23','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(304,65,'2026-05-26 16:45:50','Oméprazole',280,280,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,21),(305,65,'2026-05-26 16:45:50','Dislep',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,31),(306,65,'2026-05-26 16:45:50','perfalgan',240,240,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,3),(307,65,'2026-05-26 16:45:50','Acupan',170,170,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,19),(308,65,'2026-05-26 16:45:50','Profenid',260,260,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,5),(309,65,'2026-05-26 16:45:50','SSI',150,150,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,24),(310,65,'2026-05-26 16:45:50','Spasfon',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,45),(311,65,'2026-05-26 16:45:50','Spasfon',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,45),(312,65,'2026-05-26 16:45:50','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(313,65,'2026-05-26 16:45:50','Seringue 10CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,63),(314,65,'2026-05-26 16:45:58','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(315,65,'2026-05-26 17:49:12','Ciprofloxacine',450,450,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,35),(316,66,'2026-05-26 18:23:22','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(317,67,'2026-05-26 18:25:35','Consultation specialiste',1000,1000,1,10,NULL,NULL,'Cons',NULL,2,1,'NR',1,1),(318,67,'2026-05-26 19:17:50','Pansement chirurgie plastique',700,700,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,235),(319,67,'2026-05-28 17:40:36','Pansement chirurgie plastique',700,700,1,1,NULL,'19',NULL,NULL,NULL,2,NULL,1,235),(320,68,'2026-05-29 11:15:24','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(321,69,'2026-05-29 12:37:37','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(322,69,'2026-05-29 12:41:13','bricanyl',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,229),(323,69,'2026-05-29 12:41:13','bricanyl',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,229),(324,69,'2026-05-29 12:41:13','bricanyl',180,180,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,229),(325,69,'2026-05-29 12:41:13','Dexa',250,250,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,16),(326,69,'2026-05-29 12:41:13','Claforan',400,400,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,34),(327,69,'2026-05-29 12:41:13','Kit Voie',200,200,1,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,44),(328,69,'2026-05-29 12:41:13','Seringue 5CC',50,50,3,7,NULL,'1',NULL,NULL,NULL,2,NULL,1,36),(329,69,'2026-05-29 12:41:27','Surveillance',300,300,1,7,NULL,'INES ISSAOUI','Acte',NULL,6,1,NULL,1,1),(330,69,'2026-05-29 12:41:27','Nébulisation',500,500,3,7,NULL,'INES ISSAOUI','Acte',NULL,5,1,NULL,1,1),(331,70,'2026-06-01 10:25:57','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(332,71,'2026-06-01 10:31:20','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(333,72,'2026-06-01 11:02:26','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1),(334,73,'2026-06-01 11:10:43','Consultation',700,700,1,7,NULL,NULL,'Cons',NULL,1,1,'NR',1,1);
+/*!40000 ALTER TABLE `detailfacturepatient` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `detailpaiefacture`
+--
+
+DROP TABLE IF EXISTS `detailpaiefacture`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `detailpaiefacture` (
+  `idDetailPaieFacture` int unsigned NOT NULL AUTO_INCREMENT,
+  `Nfacture` varchar(45) DEFAULT NULL,
+  `NomContact` varchar(145) DEFAULT NULL,
+  `Telephone1` varchar(145) DEFAULT NULL,
+  `totalReglment` double NOT NULL DEFAULT '0',
+  `entre` double NOT NULL DEFAULT '0',
+  `sortie` double NOT NULL DEFAULT '0',
+  `TotalfactPatient` double NOT NULL DEFAULT '0',
+  `Designation` varchar(245) DEFAULT NULL,
+  `dtoperat` datetime DEFAULT NULL,
+  PRIMARY KEY (`idDetailPaieFacture`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `detailpaiefacture`
+--
+
+LOCK TABLES `detailpaiefacture` WRITE;
+/*!40000 ALTER TABLE `detailpaiefacture` DISABLE KEYS */;
+/*!40000 ALTER TABLE `detailpaiefacture` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `donneesmedicales`
+--
+
+DROP TABLE IF EXISTS `donneesmedicales`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `donneesmedicales` (
+  `idDonneesMedicales` int unsigned NOT NULL AUTO_INCREMENT,
+  `DonneesMedicale` varchar(245) NOT NULL DEFAULT '',
+  `fkidpatient` int unsigned NOT NULL DEFAULT '1',
+  `ObservationMedicale` varchar(245) DEFAULT NULL,
+  `DtAjout` datetime DEFAULT NULL,
+  `DtPatho` datetime DEFAULT NULL,
+  PRIMARY KEY (`idDonneesMedicales`),
+  KEY `Index_2` (`fkidpatient`),
+  KEY `Index_3` (`DonneesMedicale`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `donneesmedicales`
+--
+
+LOCK TABLES `donneesmedicales` WRITE;
+/*!40000 ALTER TABLE `donneesmedicales` DISABLE KEYS */;
+/*!40000 ALTER TABLE `donneesmedicales` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dossier_medical`
+--
+
+DROP TABLE IF EXISTS `dossier_medical`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dossier_medical` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidPatient` int unsigned NOT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `antecedents_personnels` text COLLATE utf8mb3_unicode_ci,
+  `antecedents_familiaux` text COLLATE utf8mb3_unicode_ci,
+  `antecedents_chirurgicaux` text COLLATE utf8mb3_unicode_ci,
+  `groupe_sanguin` varchar(10) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `allergies` text COLLATE utf8mb3_unicode_ci,
+  `maladies_chroniques` text COLLATE utf8mb3_unicode_ci,
+  `traitements_permanents` text COLLATE utf8mb3_unicode_ci,
+  `notes` text COLLATE utf8mb3_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `dossier_medical_fkidpatient_index` (`fkidPatient`),
+  KEY `dossier_medical_fkidcabinet_index` (`fkidCabinet`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dossier_medical`
+--
+
+LOCK TABLES `dossier_medical` WRITE;
+/*!40000 ALTER TABLE `dossier_medical` DISABLE KEYS */;
+INSERT INTO `dossier_medical` VALUES (1,8434,1,'Hostiptalisation','Asthme','Appendicite ','A+','Aspirine ','','','','2026-04-11 00:55:33','2026-04-11 00:55:33'),(2,8741,1,'Neant','','Appendicite ','AB+','Non','HTA','Amlodipine 10mg','','2026-04-15 02:18:39','2026-04-15 02:18:39'),(3,8573,1,'Neant','Neant','Neant','AB+','pénicilline ','','','','2026-04-15 02:49:03','2026-04-15 02:49:03'),(4,112,1,'tabagique 50 PA','','','','','Diabète type 2','Diamicron 60mg et Janumet 50/1000','','2026-05-14 15:52:03','2026-05-15 02:21:59'),(5,117,1,'ras','cancer diabet','appendicite','A+','','','ras','','2026-05-15 19:42:19','2026-05-15 19:42:19'),(6,118,1,'','cancer','hysterectomie 2013 \ncalculs salivaire 2023','O+','','HTA','valaciclovir 5001/2 matin et soir\namlodipine 5mg un comprime par jour','','2026-05-16 09:55:44','2026-05-16 09:55:44'),(7,119,1,'hernie discale L5-S1\nobésité ','HTA\n','lithiases rénale gauche 2007\nongle incarnée 1987','O+','RAS','HTA','tareg 80 un comprime/ J\nAlopurinol 200mg un comprime / J \nCardensiel 0.5mg un comprime / J','','2026-05-16 13:16:31','2026-05-16 13:16:31'),(8,120,1,'RAS','dyslipidémie','césarienne','O+','rhinite allergique','','','','2026-05-16 17:30:36','2026-05-16 17:30:36'),(9,122,1,'RAS','RAS','RAS','','','','','','2026-05-16 17:43:15','2026-05-16 17:43:15'),(10,123,1,'BPCO','','RAS','','RAS','BPCO','','faire un bilan rénale et infectieux\nRX pulmonaire\n','2026-05-18 09:52:27','2026-05-18 10:19:56'),(11,124,1,'tabagique 40PA','diabète\nHTA\ndyslipidémie','ablation polypes cordes voccales','AB+','rhinite allergique','Dyslipidémie','','','2026-05-18 11:58:11','2026-05-18 11:58:11'),(12,74,1,'','asthme','RAS','','rhinite allergique','Asthme','','','2026-05-18 14:02:58','2026-05-18 14:02:58'),(14,128,1,'','HTA\ndiabete','réduction mammaire 2026','A+','ras','Diabète type 2','metformine 850 un comprime 3*/J','','2026-05-19 17:03:24','2026-05-19 17:03:24'),(16,130,1,'glaucome','','','','','','','','2026-05-20 09:41:42','2026-05-20 09:41:42'),(17,102,1,'drépanocytose','','césarienne','O+','','HTA','','','2026-05-20 17:53:01','2026-05-20 17:53:01'),(18,132,1,'','dyslipidémie','','','','','','','2026-05-20 18:57:51','2026-05-20 18:57:51'),(19,133,1,'PSORIASIS','HTA','cholécystectomie\nappendicectomie\ncésarienne','A-','RAS','','','','2026-05-21 12:06:50','2026-05-21 12:06:50'),(20,135,1,'bronchiolite admise en réa a 3 mois de vie','DIABET\nhta\nCORONAROPATHIES\nCANCER SEIN \nMALADIES CONGENITALES FAMILIALE','RAS','O+','rhinite allergique','','','','2026-05-22 09:11:46','2026-05-22 09:11:46'),(21,136,1,'angiome 1/3 sup cuisse droite','ulcère estomac','appendicectomie\ncésariennes *3','B+','RAS','','','','2026-05-22 10:13:56','2026-05-22 10:13:56'),(22,137,1,'sinusite\neczéma','AVC\nHYPOTHYROIDIE\nHTA\nDIABETE','ablation testicule gh\nkyste pyolonidale\nrupture tendon d\'achille','A-','RAS','Diabète type 1','Lentus 32 UI /J\nnovorapide 30 UI /J','','2026-05-22 19:29:40','2026-05-22 19:30:11'),(23,86,1,'RAS','RAS','','','RAS','','','','2026-05-22 20:03:36','2026-05-22 20:03:36'),(24,138,1,'asthme\ndrépanocytose AS','drépanocytose','RAS','O+','rhinite allergique','Asthme','fluxotide + ventoline','','2026-05-23 12:38:29','2026-05-23 12:38:29'),(25,139,1,'RAS','HTA','fracture bimalléolaire 2020 cheville gauche','A+','RAS','','','vaccine covid Pfizer 2 doses','2026-05-23 18:48:46','2026-05-23 18:48:46'),(26,142,1,'dislepidemie','','appendicectomie','A-','dogmatil','Dyslipidémie','Tahor 10mg\ncreso\nflagyl ovules','','2026-05-23 19:40:38','2026-05-23 19:40:38'),(27,143,1,'','','','','','VIH','traittement anti viraux HIV','','2026-05-25 18:11:48','2026-05-25 18:11:48'),(28,144,1,'RAS','HTA\ncoronarien\ndiabete type 1','RAS','O+','RAS','','','','2026-05-25 19:51:50','2026-05-25 19:51:50'),(29,146,1,'gastrite','RAS','amygdalectomie','','RAS','','lutenyl','','2026-05-26 10:09:29','2026-05-26 10:09:29'),(30,147,1,'endométriose ','hypothyroïdie\ncancer sein mère\ncancer cerebral','ongle incarnée\n','','','','','','2026-05-26 10:58:13','2026-05-26 10:58:13'),(31,148,1,'ras','ras','cholécystectomie\nabdominoplastie21/04/ 2026','O+','RAS','','ATB Augementin 1g*3 depuis 3jours','','2026-05-26 14:01:21','2026-05-26 14:01:21'),(32,151,1,'','dislepidemie\nhta\n','','A+','','Dyslipidémie','tahor 40mg\ncardiocine 100mg\ntherapril 5mg','','2026-05-29 11:21:40','2026-05-29 11:21:40'),(33,153,1,'tabac 30PA','HTA','RAS','B+','allergie a la penicilline ','HTA','amlodipine 5 mg\niberstan 150mg','colopathie fonctionelle','2026-06-01 10:40:19','2026-06-01 10:50:46'),(34,154,1,'rhenite allergique\ngastrite','','cholécystectomie 2016\ncésariennes','O+','','','','','2026-06-01 11:10:36','2026-06-01 11:10:36');
+/*!40000 ALTER TABLE `dossier_medical` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `etat_facture`
+--
+
+DROP TABLE IF EXISTS `etat_facture`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `etat_facture` (
+  `idetatfacture` int NOT NULL AUTO_INCREMENT,
+  `idetatfact` double DEFAULT NULL,
+  `libelle` varchar(255) DEFAULT NULL,
+  `niveau` varchar(255) DEFAULT NULL,
+  `iscaisse` double DEFAULT NULL,
+  `isvisibledevis` double DEFAULT NULL,
+  PRIMARY KEY (`idetatfacture`),
+  KEY `Index_2` (`idetatfact`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `etat_facture`
+--
+
+LOCK TABLES `etat_facture` WRITE;
+/*!40000 ALTER TABLE `etat_facture` DISABLE KEYS */;
+INSERT INTO `etat_facture` VALUES (1,1,'En cours','Facturation',1,1),(2,2,'Valider','Facturation',1,1),(3,3,'Paiement : Partiel','Facturation',1,0),(4,4,'Payé','Facturation',1,0),(5,5,'Annuler','Administrateur',0,0),(6,6,'Retour','Caisse',0,0),(7,7,'Suppression détail','Facturation',0,0),(9,0,'Tout','Facturation',1,1),(10,8,'Livraison :En cours','Facturation',0,0),(11,9,'Livré','Facturation',0,0),(12,10,'Livraison : Prête','Facturation',0,0);
+/*!40000 ALTER TABLE `etat_facture` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `facture`
+--
+
+DROP TABLE IF EXISTS `facture`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `facture` (
+  `Idfacture` int NOT NULL AUTO_INCREMENT,
+  `Nfacture` varchar(255) DEFAULT NULL,
+  `anneeFacture` int DEFAULT NULL,
+  `nordre` int DEFAULT NULL,
+  `DtFacture` datetime DEFAULT NULL,
+  `IDPatient` int DEFAULT NULL,
+  `ISTP` int DEFAULT NULL,
+  `fkidEtsAssurance` int DEFAULT NULL,
+  `TXPEC` double NOT NULL DEFAULT '0',
+  `TotFacture` double NOT NULL DEFAULT '0',
+  `TotalPEC` double NOT NULL DEFAULT '0',
+  `TotalfactPatient` double NOT NULL DEFAULT '0',
+  `TotReglPatient` double NOT NULL DEFAULT '0',
+  `ReglementPEC` double NOT NULL DEFAULT '0',
+  `ModeReglement` varchar(255) DEFAULT NULL,
+  `Areglepar` varchar(255) DEFAULT NULL,
+  `DtReglement` datetime DEFAULT NULL,
+  `fkidbordfacture` double NOT NULL DEFAULT '0',
+  `ispayerAssureur` int NOT NULL DEFAULT '0',
+  `user` varchar(255) DEFAULT NULL,
+  `estfacturer` int unsigned NOT NULL DEFAULT '0',
+  `FkidMedecinInitiateur` int unsigned NOT NULL DEFAULT '1',
+  `PartLaboratoire` double NOT NULL DEFAULT '0',
+  `MontantAffectation` double NOT NULL DEFAULT '0',
+  `Type` varchar(45) NOT NULL DEFAULT 'Devis',
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `IDRdv` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`Idfacture`),
+  KEY `Index_2` (`Nfacture`),
+  KEY `Index_3` (`anneeFacture`),
+  KEY `Index_4` (`nordre`),
+  KEY `Index_5` (`DtFacture`),
+  KEY `Index_6` (`IDPatient`),
+  KEY `Index_7` (`ISTP`),
+  KEY `Index_8` (`fkidEtsAssurance`),
+  KEY `Index_9` (`fkidbordfacture`),
+  KEY `Index_10` (`ispayerAssureur`),
+  KEY `Index_11` (`FkidMedecinInitiateur`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `facture`
+--
+
+LOCK TABLES `facture` WRITE;
+/*!40000 ALTER TABLE `facture` DISABLE KEYS */;
+INSERT INTO `facture` VALUES (17,'2-2026',2026,2,'2026-05-14 16:41:02',114,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-14 16:41:02',0,0,'INES ISSAOUI',0,7,0,0,'Devis',1,NULL),(19,'4-2026',2026,4,'2026-05-15 18:28:58',112,0,1,0,4120,0,4120,4120,0,'CASH',NULL,'2026-05-15 18:28:58',0,0,'INES ISSAOUI',0,7,0,0,'Devis',1,NULL),(20,'5-2026',2026,5,'2026-05-15 19:33:23',117,0,1,0,1790,0,1790,1790,0,'CASH',NULL,'2026-05-15 19:33:23',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(22,'6-2026',2026,6,'2026-05-16 09:49:44',118,0,1,0,2330,0,2330,2330,0,'CASH',NULL,'2026-05-16 09:49:44',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(23,'7-2026',2026,7,'2026-05-16 10:38:33',118,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-16 10:38:33',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(24,'8-2026',2026,8,'2026-05-16 13:09:12',119,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-16 13:09:12',0,0,'INES ISSAOUI',0,7,0,0,'Devis',1,NULL),(25,'9-2026',2026,9,'2026-05-16 17:20:58',120,0,1,0,3260,0,3260,3260,0,'BIM BANK',NULL,'2026-05-16 17:20:58',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(28,'10-2026',2026,10,'2026-05-16 18:12:19',122,0,1,0,1710,0,1710,1710,0,NULL,NULL,NULL,0,0,'INES ISSAOUI',0,7,0,0,'Facture',1,NULL),(32,'14-2026',2026,14,'2026-05-18 10:44:19',123,0,1,0,5700,0,5700,700,0,'BIM BANK',NULL,'2026-05-18 10:44:19',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(33,'15-2026',2026,15,'2026-05-18 11:54:44',124,0,1,0,2500,0,2500,700,0,'CASH',NULL,'2026-05-18 11:54:44',0,0,'INES ISSAOUI',0,7,0,0,'Devis',1,NULL),(34,'16-2026',2026,16,'2026-05-18 13:58:03',74,0,1,0,1300,0,1300,700,0,'BIM BANK',NULL,'2026-05-18 13:58:03',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(36,'17-2026',2026,17,'2026-05-18 20:01:04',126,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-18 20:01:04',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(37,'18-2026',2026,18,'2026-05-19 16:58:47',128,0,1,0,700,0,700,700,0,'BIM BANK',NULL,'2026-05-19 16:58:47',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(40,'19-2026',2026,19,'2026-05-20 09:40:35',130,0,1,0,1200,0,1200,700,0,'CASH',NULL,'2026-05-20 09:40:35',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(41,'20-2026',2026,20,'2026-05-20 11:50:11',115,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-20 11:50:11',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(42,'21-2026',2026,21,'2026-05-20 11:55:20',35,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-20 11:55:20',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(43,'22-2026',2026,22,'2026-05-20 17:50:30',102,0,1,0,2430,0,2430,2430,0,'BIM BANK',NULL,'2026-05-20 17:50:30',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(44,'23-2026',2026,23,'2026-05-20 18:02:25',102,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-20 18:02:25',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(45,'24-2026',2026,24,'2026-05-20 18:46:33',132,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-20 18:46:33',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(46,'25-2026',2026,25,'2026-05-21 12:02:11',133,0,1,0,700,0,700,700,0,'BIM BANK',NULL,'2026-05-21 12:02:11',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(47,'26-2026',2026,26,'2026-05-21 16:49:12',96,0,1,0,700,0,700,700,0,'BIM BANK',NULL,'2026-05-21 16:49:12',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(48,'27-2026',2026,27,'2026-05-22 09:05:14',135,0,1,0,3950,0,3950,700,0,'CASH',NULL,'2026-05-22 09:05:14',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(49,'28-2026',2026,28,'2026-05-22 09:57:26',136,0,1,0,3960,0,3960,700,0,'CASH',NULL,'2026-05-22 09:57:26',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(50,'29-2026',2026,29,'2026-05-22 19:25:06',137,0,1,0,3120,0,3120,3120,0,'BANKILY',NULL,'2026-05-22 19:25:06',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(51,'30-2026',2026,30,'2026-05-22 19:29:27',86,0,1,0,3150,0,3150,3150,0,'CASH',NULL,'2026-05-22 19:29:27',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(52,'31-2026',2026,31,'2026-05-23 12:34:02',138,0,1,0,5480,0,5480,5480,0,'CASH',NULL,'2026-05-23 12:34:02',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(54,'33-2026',2026,33,'2026-05-23 18:50:05',139,0,1,0,3740,0,3740,3740,0,'CASH',NULL,'2026-05-23 18:50:05',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(55,'34-2026',2026,34,'2026-05-23 19:18:50',141,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-23 19:18:50',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(56,'35-2026',2026,35,'2026-05-23 19:30:41',142,0,1,0,3160,0,3160,6320,0,'BANKILY',NULL,'2026-05-23 19:30:41',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(57,'36-2026',2026,36,'2026-05-25 18:08:39',143,0,1,0,3450,0,3450,3450,0,'BANKILY',NULL,'2026-05-25 18:08:39',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(58,'37-2026',2026,37,'2026-05-25 19:46:35',144,0,1,0,1740,0,1740,1740,0,'CASH',NULL,'2026-05-25 19:46:35',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(61,'38-2026',2026,38,'2026-05-25 21:17:47',145,0,1,0,850,0,850,0,0,NULL,NULL,NULL,0,0,'Sonia',0,1,0,0,'Facture',1,NULL),(62,'39-2026',2026,39,'2026-05-26 08:30:30',146,0,1,0,3580,0,3580,6460,0,'BIM BANK',NULL,'2026-05-26 08:30:30',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(63,'40-2026',2026,40,'2026-05-26 10:49:47',147,0,1,0,700,0,700,700,0,'BANKILY',NULL,'2026-05-26 10:49:47',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(64,'41-2026',2026,41,'2026-05-26 13:48:53',148,0,1,0,1200,0,1200,1200,0,'BIM BANK',NULL,'2026-05-26 13:48:53',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(65,'42-2026',2026,42,'2026-05-26 16:39:23',149,0,1,0,3510,0,3510,9380,0,'BANKILY',NULL,'2026-05-26 16:39:23',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(66,'43-2026',2026,43,'2026-05-26 18:23:22',148,0,1,0,700,0,700,700,0,'BIM BANK',NULL,'2026-05-26 18:23:22',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(67,'44-2026',2026,44,'2026-05-26 18:25:35',148,0,1,0,2400,0,2400,2400,0,'BIM BANK',NULL,'2026-05-26 18:25:35',0,0,'Marwa',0,10,0,0,'Devis',1,NULL),(68,'45-2026',2026,45,'2026-05-29 11:15:24',151,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-05-29 11:15:24',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(69,'46-2026',2026,46,'2026-05-29 12:37:37',152,0,1,0,4040,0,4040,4040,0,'CASH',NULL,'2026-05-29 12:37:37',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(70,'47-2026',2026,47,'2026-06-01 10:25:57',153,0,1,0,700,0,700,700,0,'BANKILY',NULL,'2026-06-01 10:25:57',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(71,'48-2026',2026,48,'2026-06-01 10:31:20',154,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-06-01 10:31:20',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(72,'49-2026',2026,49,'2026-06-01 11:02:25',154,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-06-01 11:02:25',0,0,'Marwa',0,7,0,0,'Devis',1,NULL),(73,'50-2026',2026,50,'2026-06-01 11:10:43',154,0,1,0,700,0,700,700,0,'CASH',NULL,'2026-06-01 11:10:43',0,0,'Marwa',0,7,0,0,'Devis',1,NULL);
+/*!40000 ALTER TABLE `facture` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `factureaimprimer`
+--
+
+DROP TABLE IF EXISTS `factureaimprimer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `factureaimprimer` (
+  `IDDetail` int unsigned NOT NULL DEFAULT '0',
+  `Numfacture` varchar(45) DEFAULT NULL,
+  `DtFacture` datetime DEFAULT NULL,
+  `NomPatient` varchar(145) DEFAULT NULL,
+  `Assureur` varchar(145) DEFAULT NULL,
+  `Actes` varchar(145) DEFAULT NULL,
+  `Dents` varchar(145) DEFAULT NULL,
+  `TelephonePatient` varchar(145) DEFAULT NULL,
+  `Qte` double DEFAULT NULL,
+  `PU` double DEFAULT NULL,
+  `Soustotal` double DEFAULT NULL,
+  `TotFacture` double DEFAULT NULL,
+  `TotalPEC` double DEFAULT NULL,
+  `TotalFactPatient` double DEFAULT NULL,
+  `IntituleTotal` varchar(145) DEFAULT NULL,
+  `EnLettre` varchar(245) DEFAULT NULL,
+  `DtNaissance` datetime DEFAULT NULL,
+  `Genre` varchar(45) DEFAULT NULL,
+  `NumDossierPat` double NOT NULL DEFAULT '0',
+  `Type` varchar(45) DEFAULT NULL,
+  `Medecin` varchar(145) DEFAULT NULL,
+  `TelCabinet` varchar(145) DEFAULT NULL,
+  `TotReglPat` double DEFAULT NULL,
+  `ActesAr` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci NOT NULL DEFAULT 'NR',
+  `TypeAr` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci NOT NULL DEFAULT 'NR',
+  `NomAr` varchar(45) CHARACTER SET cp1256 COLLATE cp1256_general_ci NOT NULL DEFAULT 'NR',
+  `remise` double NOT NULL DEFAULT '0',
+  `User` varchar(45) NOT NULL DEFAULT 'NR',
+  `DtImp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`IDDetail`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `factureaimprimer`
+--
+
+LOCK TABLES `factureaimprimer` WRITE;
+/*!40000 ALTER TABLE `factureaimprimer` DISABLE KEYS */;
+INSERT INTO `factureaimprimer` VALUES (9835,'0364-25','2025-04-02 17:45:46','SAADBOUH','Snim','Detontarage',',Arc Maxillaire,Arc Mandibule','36357310',2,1200,2400,9900,9900,0,'Neuf mille neuf cent   Ouguiya','Neuf mille neuf cent   Ouguiya','1972-12-31 00:00:00','H',985365,'FACTURE','Dr Moud','555',0,'NR','NR','SAADBOUH',0,'Moctar Dedahi','2025-05-27 17:36:16',1),(9836,'0364-25','2025-04-02 17:45:46','SAADBOUH','Snim','Composite','47,46,48,37,38','36357310',5,1500,7500,9900,9900,0,'Neuf mille neuf cent   Ouguiya','Neuf mille neuf cent   Ouguiya','1972-12-31 00:00:00','H',985365,'FACTURE','Dr Moud','555',0,'NR','NR','SAADBOUH',0,'Moctar Dedahi','2025-05-27 17:36:16',1);
+/*!40000 ALTER TABLE `factureaimprimer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `failed_jobs`
+--
+
+DROP TABLE IF EXISTS `failed_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `failed_jobs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `failed_jobs`
+--
+
+LOCK TABLES `failed_jobs` WRITE;
+/*!40000 ALTER TABLE `failed_jobs` DISABLE KEYS */;
+/*!40000 ALTER TABLE `failed_jobs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ficheaimprimerautrefois`
+--
+
+DROP TABLE IF EXISTS `ficheaimprimerautrefois`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ficheaimprimerautrefois` (
+  `idFicheAImprimer` int unsigned NOT NULL AUTO_INCREMENT,
+  `Traitement` varchar(45) DEFAULT NULL,
+  `DateTraitement` datetime DEFAULT NULL,
+  `Prix` double DEFAULT NULL,
+  `NumLigneAImprimer` int unsigned NOT NULL DEFAULT '0',
+  `fkidfacture` int unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idFicheAImprimer`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ficheaimprimerautrefois`
+--
+
+LOCK TABLES `ficheaimprimerautrefois` WRITE;
+/*!40000 ALTER TABLE `ficheaimprimerautrefois` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ficheaimprimerautrefois` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fichetraitement`
+--
+
+DROP TABLE IF EXISTS `fichetraitement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fichetraitement` (
+  `idFicheTraitement` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidfacture` int unsigned DEFAULT '0',
+  `fkidPatient` int unsigned DEFAULT NULL,
+  `fkidacte` int unsigned NOT NULL DEFAULT '0',
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '0',
+  `Acte` varchar(145) NOT NULL DEFAULT 'ok',
+  `Traitement` varchar(245) NOT NULL DEFAULT 'ok',
+  `MotifConsultation` text,
+  `Antecedents` text,
+  `ExamenClinique` text,
+  `Temperature` varchar(20) DEFAULT NULL,
+  `TensionArterielle` varchar(20) DEFAULT NULL,
+  `SPO2` varchar(20) DEFAULT NULL,
+  `FrequenceCardiaque` varchar(20) DEFAULT NULL,
+  `Resume` text,
+  `Prix` double NOT NULL DEFAULT '0',
+  `dateTraite` datetime DEFAULT NULL,
+  `NomMedecin` varchar(45) NOT NULL DEFAULT 'Medecin',
+  `Ordre` int unsigned NOT NULL DEFAULT '0',
+  `IsImprimer` int unsigned NOT NULL DEFAULT '0',
+  `IsSupprimer` int unsigned NOT NULL DEFAULT '0',
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idFicheTraitement`),
+  KEY `Index_2` (`fkidfacture`),
+  KEY `Index_3` (`fkidacte`),
+  KEY `Index_4` (`fkidmedecin`),
+  KEY `Index_Patient` (`fkidPatient`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fichetraitement`
+--
+
+LOCK TABLES `fichetraitement` WRITE;
+/*!40000 ALTER TABLE `fichetraitement` DISABLE KEYS */;
+INSERT INTO `fichetraitement` VALUES (1,3,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-19 02:47:00','INES ',1,0,0,1),(2,6,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-19 21:18:54','INES ',1,0,0,1),(3,9,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-20 17:59:13','INES ISSAOUI',1,0,0,1),(4,11,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-20 18:08:58','INES ISSAOUI',1,0,0,1),(5,13,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-20 20:28:13','INES ISSAOUI',1,0,0,1),(6,15,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,500,'2026-04-20 22:47:09','INES ISSAOUI',1,0,0,1),(7,16,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-14 15:48:19','INES ISSAOUI',1,0,0,1),(8,17,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-14 16:41:02','INES ISSAOUI',1,0,0,1),(9,18,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-15 02:40:55','INES ISSAOUI',1,0,0,1),(10,19,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-15 18:28:58','INES ISSAOUI',1,0,0,1),(11,20,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-15 19:33:23','INES ISSAOUI',1,0,0,1),(12,21,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 02:32:44','INES ISSAOUI',1,0,0,1),(13,22,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 09:49:44','INES ISSAOUI',1,0,0,1),(14,23,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 10:38:33','INES ISSAOUI',1,0,0,1),(15,24,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 13:09:12','INES ISSAOUI',1,0,0,1),(16,25,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 17:20:58','INES ISSAOUI',1,0,0,1),(17,26,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 17:28:32','INES ISSAOUI',1,0,0,1),(18,27,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-16 17:38:04','INES ISSAOUI',1,0,0,1),(19,29,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 09:47:36','INES ISSAOUI',1,0,0,1),(20,30,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 09:56:08','INES ISSAOUI',1,0,0,1),(21,31,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 10:09:01','INES ISSAOUI',1,0,0,1),(22,32,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 10:44:19','INES ISSAOUI',1,0,0,1),(23,33,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 11:54:44','INES ISSAOUI',1,0,0,1),(24,34,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 13:58:03','INES ISSAOUI',1,0,0,1),(25,35,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 19:30:33','INES ISSAOUI',1,0,0,1),(26,36,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-18 20:01:04','INES ISSAOUI',1,0,0,1),(27,37,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-19 16:58:47','INES ISSAOUI',1,0,0,1),(28,38,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 09:06:01','INES ISSAOUI',1,0,0,1),(29,39,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 09:10:53','INES ISSAOUI',1,0,0,1),(30,40,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 09:40:35','INES ISSAOUI',1,0,0,1),(31,41,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 11:50:11','INES ISSAOUI',1,0,0,1),(32,42,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 11:55:20','INES ISSAOUI',1,0,0,1),(33,43,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 17:50:30','INES ISSAOUI',1,0,0,1),(34,44,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 18:02:25','INES ISSAOUI',1,0,0,1),(35,45,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-20 18:46:33','INES ISSAOUI',1,0,0,1),(36,46,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-21 12:02:11','INES ISSAOUI',1,0,0,1),(37,47,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-21 16:49:12','INES ISSAOUI',1,0,0,1),(38,48,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-22 09:05:14','INES ISSAOUI',1,0,0,1),(39,49,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-22 09:57:26','INES ISSAOUI',1,0,0,1),(40,50,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-22 19:25:06','INES ISSAOUI',1,0,0,1),(41,51,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-22 19:29:27','INES ISSAOUI',1,0,0,1),(42,52,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-23 12:34:02','INES ISSAOUI',1,0,0,1),(43,53,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-23 18:44:19','INES ISSAOUI',1,0,0,1),(44,54,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-23 18:50:05','INES ISSAOUI',1,0,0,1),(45,55,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-23 19:18:50','INES ISSAOUI',1,0,0,1),(46,56,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-23 19:30:41','INES ISSAOUI',1,0,0,1),(47,57,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-25 18:08:39','INES ISSAOUI',1,0,0,1),(48,58,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-25 19:46:35','INES ISSAOUI',1,0,0,1),(49,59,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-25 21:09:25','INES ISSAOUI',1,0,0,1),(50,60,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-25 21:14:00','INES ISSAOUI',1,0,0,1),(51,62,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-26 08:30:31','INES ISSAOUI',1,0,0,1),(52,63,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-26 10:49:47','INES ISSAOUI',1,0,0,1),(53,64,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-26 13:48:53','INES ISSAOUI',1,0,0,1),(54,65,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-26 16:39:23','INES ISSAOUI',1,0,0,1),(55,66,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-26 18:23:22','INES ISSAOUI',1,0,0,1),(56,67,NULL,2,10,'Consultation specialiste','Consultation specialiste',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1000,'2026-05-26 18:25:35','Abdallahi Mohamed Abe',1,0,0,1),(57,68,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-29 11:15:24','INES ISSAOUI',1,0,0,1),(58,69,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-05-29 12:37:37','INES ISSAOUI',1,0,0,1),(59,70,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-06-01 10:25:57','INES ISSAOUI',1,0,0,1),(60,71,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-06-01 10:31:20','INES ISSAOUI',1,0,0,1),(61,72,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-06-01 11:02:26','INES ISSAOUI',1,0,0,1),(62,73,NULL,1,7,'Consultation','Consultation',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,700,'2026-06-01 11:10:43','INES ISSAOUI',1,0,0,1);
+/*!40000 ALTER TABLE `fichetraitement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fichierscanne`
+--
+
+DROP TABLE IF EXISTS `fichierscanne`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fichierscanne` (
+  `idfichier` int NOT NULL AUTO_INCREMENT,
+  `NomFichier` varchar(255) DEFAULT NULL,
+  `Chemindaccess` mediumtext,
+  `Numfacture` varchar(255) DEFAULT NULL,
+  `Fkidfacture` double DEFAULT NULL,
+  `fkidpatient` int DEFAULT NULL,
+  `dtajoutPJ` datetime DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `CategoriePJ` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`idfichier`),
+  KEY `Index_2` (`Fkidfacture`),
+  KEY `Index_3` (`fkidpatient`),
+  KEY `Index_4` (`NomFichier`)
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fichierscanne`
+--
+
+LOCK TABLES `fichierscanne` WRITE;
+/*!40000 ALTER TABLE `fichierscanne` DISABLE KEYS */;
+INSERT INTO `fichierscanne` VALUES (24,'AAFO3702.JPG','C:UserspcPicturesiphonephotosAAFO3702.JPG',NULL,NULL,20,'2022-07-02 17:25:03',NULL,'Autre'),(25,'EXCEL.EXE','C:Program FilesMicrosoft Office\rootOffice16EXCEL.EXE',NULL,NULL,20,'2022-10-23 23:36:57',NULL,'Autre'),(26,'gcapi.dll','C:UsersLENOVODesktopgcapi.dll',NULL,NULL,20,'2022-10-23 23:41:45',NULL,'Dents'),(27,'index.jpg','C:UsersPCDesktopNouveau dossierindex.jpg',NULL,NULL,3688,'2022-10-26 12:17:16',NULL,'Autre'),(28,'index2.jpg','C:UsersPCDesktopNouveau dossierindex2.jpg',NULL,NULL,3680,'2022-10-26 12:21:19',NULL,'Autre'),(29,'index3.jpg','C:UsersPCDesktopNouveau dossierindex3.jpg',NULL,NULL,3681,'2022-10-26 12:22:22',NULL,'Autre'),(30,'index4.jpg','C:UsersPCDesktopNouveau dossierindex4.jpg',NULL,NULL,3682,'2022-10-26 12:22:44',NULL,'Autre'),(31,'index5.jpg','C:UsersPCDesktopNouveau dossierindex5.jpg',NULL,NULL,3683,'2022-10-26 12:23:24',NULL,'Autre'),(32,'index6.jpg','C:UsersPCDesktopNouveau dossierindex6.jpg',NULL,NULL,3684,'2022-10-26 12:24:06',NULL,'Autre'),(33,'rx 1.jpg','C:UsersPCDesktopNouveau dossier\rx 1.jpg',NULL,NULL,3665,'2022-10-26 12:24:25',NULL,'Autre'),(34,'rx3.jpg','C:UsersPCDesktopNouveau dossier\rx3.jpg',NULL,NULL,3657,'2022-10-26 12:31:38',NULL,'Autre'),(35,'rx2.jpg','C:UsersPCDesktopNouveau dossier\rx2.jpg',NULL,NULL,3682,'2022-10-26 12:31:55',NULL,'Autre'),(38,'index8.jpg','C:UsersPCDesktopNouveau dossierindex8.jpg',NULL,NULL,3708,'2022-10-26 21:01:08',NULL,'Autre'),(39,'index9.jpg','C:UsersPCDesktopNouveau dossierindex9.jpg',NULL,NULL,3709,'2022-10-26 21:01:31',NULL,'Autre'),(40,'index10.jpg','C:UsersPCDesktopNouveau dossierindex10.jpg',NULL,NULL,3705,'2022-10-26 21:02:06',NULL,'Autre'),(41,'index11.jpg','C:UsersPCDesktopNouveau dossierindex11.jpg',NULL,NULL,3691,'2022-10-26 21:02:49',NULL,'Autre'),(42,'rx4.jpg','C:UsersPCDesktopNouveau dossier\rx4.jpg',NULL,NULL,3714,'2022-10-26 21:03:11',NULL,'Autre'),(43,'index7.jpg','C:UsersPCDesktopNouveau dossierindex7.jpg',NULL,NULL,3703,'2022-10-26 21:03:55',NULL,'Autre'),(44,'index 3.jpg','C:UsersPCDesktopNouveau dossierindex 3.jpg',NULL,NULL,3703,'2022-10-26 21:04:03',NULL,'Autre'),(45,'dou 1.jpg','C:UsersPCDesktopNouveau dossierdou 1.jpg',NULL,NULL,3643,'2022-10-27 11:39:32',NULL,'Autre'),(46,'d2.jpg','C:UsersPCDesktopNouveau dossierd2.jpg',NULL,NULL,3644,'2022-10-27 11:41:50',NULL,'Autre'),(47,'d3.jpg','C:UsersPCDesktopNouveau dossierd3.jpg',NULL,NULL,3645,'2022-10-27 11:43:22',NULL,'Autre'),(48,'f1.jpg','C:UsersPCDesktopNouveau dossierf1.jpg',NULL,NULL,3723,'2022-10-27 11:43:55',NULL,'Autre'),(49,'F2.jpg','C:UsersPCDesktopNouveau dossierF2.jpg',NULL,NULL,3738,'2022-10-27 20:54:15',NULL,'Autre'),(51,'F3.jpg','C:UsersPCDesktopNouveau dossierF3.jpg',NULL,NULL,3744,'2022-10-27 20:55:47',NULL,'Autre'),(52,'F4.jpg','C:UsersPCDesktopNouveau dossierF4.jpg',NULL,NULL,3739,'2022-10-27 20:56:28',NULL,'Autre'),(53,'F5.jpg','C:UsersPCDesktopNouveau dossierF5.jpg',NULL,NULL,3748,'2022-10-27 20:56:45',NULL,'Autre'),(54,'R5.jpg','C:UsersPCDesktopNouveau dossierR5.jpg',NULL,NULL,3736,'2022-10-27 20:58:16',NULL,'Autre'),(55,'WINWORD.EXE','C:Program FilesMicrosoft Office\rootOffice16WINWORD.EXE',NULL,NULL,20,'2022-10-28 20:33:26',NULL,'Autre'),(56,'DSC00956.JPG','C:UsersPCDesktopNouveau dossierDSC00956.JPG',NULL,NULL,3751,'2022-10-29 10:33:05',NULL,'Autre'),(57,'F6.jpg','C:UsersPCDesktopNouveau dossierF6.jpg',NULL,NULL,3753,'2022-10-29 12:44:29',NULL,'Autre'),(58,'f7.jpg','C:UsersPCDesktopNouveau dossierf7.jpg',NULL,NULL,3751,'2022-10-29 12:44:51',NULL,'Autre'),(59,'r6.jpg','C:UsersPCDesktopNouveau dossier\r6.jpg',NULL,NULL,3754,'2022-10-29 12:45:31',NULL,'Autre'),(62,'f9.jpg','C:UsersPCDesktopNouveau dossierf9.jpg',NULL,NULL,3758,'2022-10-29 17:16:05',NULL,'Autre'),(63,'ph1.jpg','C:UsersPCDesktopNouveau dossierph1.jpg',NULL,NULL,3757,'2022-10-29 17:17:23',NULL,'Autre'),(65,'f10.jpg','C:UsersPCDesktopNouveau dossierf10.jpg',NULL,NULL,3782,'2022-10-30 12:32:25',NULL,'Autre'),(66,'r7.jpg','C:UsersPCDesktopNouveau dossier\r7.jpg',NULL,NULL,3782,'2022-10-30 12:32:53',NULL,'Autre'),(70,'f13.jpg','C:UsersPCDesktopNouveau dossierf13.jpg',NULL,NULL,3762,'2022-10-30 12:40:07',NULL,'Autre'),(71,'soukhna.jpg','C:UsersPCDesktopNouveau dossiersoukhna.jpg',NULL,NULL,3757,'2022-10-30 12:48:13',NULL,'Autre'),(72,'sokh.jpg','C:UsersPCDesktopNouveau dossiersokh.jpg',NULL,NULL,3757,'2022-10-30 12:48:46',NULL,'Autre'),(73,'R14.jpg','C:UsersPCDesktopecolR14.jpg',NULL,NULL,3757,'2022-10-30 19:38:21',NULL,'Autre'),(74,'MOUHAMED.jpg','C:UsersPCDesktopecolMOUHAMED.jpg',NULL,NULL,3760,'2022-10-31 21:06:18',NULL,'Autre'),(75,'NEVISS.jpg','C:UsersPCDesktopecolNEVISS.jpg',NULL,NULL,3796,'2022-10-31 21:07:54',NULL,'Autre'),(76,'s o.jpg','C:UsersPCDesktopecols o.jpg',NULL,NULL,3757,'2022-11-01 19:51:27',NULL,'Autre'),(77,'v.jpg','C:UsersPCDesktopecolv.jpg',NULL,NULL,3821,'2022-11-02 11:35:34',NULL,'Autre');
+/*!40000 ALTER TABLE `fichierscanne` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `genre`
+--
+
+DROP TABLE IF EXISTS `genre`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `genre` (
+  `Genre` varchar(255) DEFAULT NULL,
+  `idGenre` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idGenre`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `genre`
+--
+
+LOCK TABLES `genre` WRITE;
+/*!40000 ALTER TABLE `genre` DISABLE KEYS */;
+INSERT INTO `genre` VALUES ('Homme',1),('Femme',2);
+/*!40000 ALTER TABLE `genre` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `infocabinet`
+--
+
+DROP TABLE IF EXISTS `infocabinet`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `infocabinet` (
+  `idEntete` int unsigned NOT NULL DEFAULT '0',
+  `NomCabFr` varchar(145) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `NomCabAr` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `Specialite1Fr` varchar(45) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `Specialite2fr` varchar(45) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `Specialite3Fr` varchar(45) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `Specialite1Ar` varchar(45) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `Specialite2Ar` varchar(45) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `Specialite3Ar` varchar(45) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `AdresseL1AR` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `AdresseL2AR` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `AdresseFr1` varchar(145) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `AdresseFr2` varchar(145) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `ContactAR` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `AdresseMail` varchar(245) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `ContactFR` varchar(45) DEFAULT NULL,
+  `TelephonePublic` varchar(45) DEFAULT NULL,
+  `DrAr` varchar(145) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `DrFr` varchar(145) DEFAULT NULL,
+  `logo` varchar(500) DEFAULT NULL,
+  `piedPage` text,
+  PRIMARY KEY (`idEntete`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `infocabinet`
+--
+
+LOCK TABLES `infocabinet` WRITE;
+/*!40000 ALTER TABLE `infocabinet` DISABLE KEYS */;
+INSERT INTO `infocabinet` VALUES (1,'Cabinet medical des Jasmins','عيادة  الياسمين','Médecine générale','',NULL,' الطب العام',NULL,NULL,'شارع محمد ولد همدي','تفرغ زينة','Avenue Mohamed Ould Hamody','Tevragh Zeina','+222 27006802','contact.jasmins@gmail.com','+222 27006802','+222 38833808','د.إيناس العيساوي','  Dr. Ines Aissaoui','uploads/logos/logo_1_1778875076.jpeg','');
+/*!40000 ALTER TABLE `infocabinet` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lots_medicaments`
+--
+
+DROP TABLE IF EXISTS `lots_medicaments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `lots_medicaments` (
+  `idLot` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidStock` int unsigned NOT NULL,
+  `fkidMedicament` int unsigned NOT NULL,
+  `numeroLot` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'Numéro de lot fournisseur',
+  `quantiteInitiale` double NOT NULL DEFAULT '0' COMMENT 'Quantité initiale du lot',
+  `quantiteRestante` double NOT NULL DEFAULT '0' COMMENT 'Quantité restante dans le lot',
+  `dateExpiration` date DEFAULT NULL COMMENT 'Date d''expiration du lot',
+  `dateEntree` datetime DEFAULT NULL COMMENT 'Date d''entrée du lot',
+  `prixAchatUnitaire` double NOT NULL DEFAULT '0' COMMENT 'Prix d''achat unitaire du lot',
+  `fournisseur` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'Nom du fournisseur',
+  `referenceFacture` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'Référence facture fournisseur',
+  `fkidUser` int unsigned NOT NULL DEFAULT '1' COMMENT 'Utilisateur qui a créé le lot',
+  `Masquer` int unsigned NOT NULL DEFAULT '0' COMMENT '0=Actif, 1=Masqué',
+  PRIMARY KEY (`idLot`),
+  KEY `idx_stock` (`fkidStock`),
+  KEY `idx_medicament` (`fkidMedicament`),
+  KEY `idx_date_expiration` (`dateExpiration`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `lots_medicaments`
+--
+
+LOCK TABLES `lots_medicaments` WRITE;
+/*!40000 ALTER TABLE `lots_medicaments` DISABLE KEYS */;
+INSERT INTO `lots_medicaments` VALUES (1,38,2,NULL,100,100,'2026-04-30','2026-04-19 22:03:43',100,NULL,NULL,1,0),(2,45,11,'210659',5,5,'2027-01-01','2026-04-21 17:02:26',50,NULL,NULL,1,0),(3,45,11,'210659',5,5,'2027-12-01','2026-04-21 17:04:04',50,NULL,NULL,1,0),(4,23,45,'210659',5,5,'2027-12-01','2026-04-21 17:05:43',50,NULL,NULL,1,0),(5,12,19,'D919',4,4,'2027-12-03','2026-04-21 17:07:50',50,NULL,NULL,1,0),(6,22,23,'24A0453',6,6,'2028-12-08','2026-04-21 17:08:45',26.98,NULL,NULL,1,0),(7,55,46,'APD-2401',11,11,'2027-12-08','2026-04-21 17:17:03',65,NULL,NULL,1,0),(8,51,21,'25141',10,10,'2028-12-05','2026-04-21 17:27:46',80,NULL,NULL,1,0),(9,6,28,'E2425',5,5,'2027-12-12','2026-04-21 17:29:05',25,NULL,NULL,1,0),(10,41,6,'5EB03227C',3,3,'2027-12-04','2026-04-21 17:33:19',100,NULL,NULL,1,0),(11,49,17,'A24FP001',2,2,'2027-12-03','2026-04-21 17:34:51',40,NULL,NULL,1,0),(12,11,48,'230-B(H)',10,10,'2027-12-08','2026-04-21 17:39:57',50,NULL,NULL,1,0),(13,44,9,'PACI6003',6,6,'2028-12-06','2026-04-21 17:44:39',65,NULL,NULL,1,0),(14,19,49,'A24FP001',36,36,'2026-12-01','2026-05-06 19:14:56',56,NULL,'AC489511',19,0),(15,15,16,'ME23300',100,100,'2027-12-01','2026-05-07 17:44:58',80,NULL,'AC489511',19,0),(16,56,50,'gn5430',20,20,'2028-03-03','2026-05-11 18:03:18',50,NULL,NULL,20,0),(17,65,59,NULL,19,19,'2029-12-12','2026-05-18 10:02:53',250,'TUNISIE',NULL,1,0);
+/*!40000 ALTER TABLE `lots_medicaments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `medecins`
+--
+
+DROP TABLE IF EXISTS `medecins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `medecins` (
+  `idMedecin` int NOT NULL AUTO_INCREMENT,
+  `Nom` varchar(255) DEFAULT NULL,
+  `Contact` varchar(45) NOT NULL DEFAULT 'Aucun',
+  `DtAjout` datetime DEFAULT NULL,
+  `cachetmedecin` blob,
+  `ordre` int unsigned NOT NULL DEFAULT '1',
+  `Masquer` int unsigned NOT NULL DEFAULT '0',
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idMedecin`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `medecins`
+--
+
+LOCK TABLES `medecins` WRITE;
+/*!40000 ALTER TABLE `medecins` DISABLE KEYS */;
+INSERT INTO `medecins` VALUES (7,'INES ISSAOUI','38833808','2026-04-18 12:29:41',NULL,1,0,1),(10,'Abdallahi Mohamed Abe','22802120','2026-05-26 17:59:49',NULL,1,0,1);
+/*!40000 ALTER TABLE `medecins` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `medicaments`
+--
+
+DROP TABLE IF EXISTS `medicaments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `medicaments` (
+  `IDMedic` int unsigned NOT NULL AUTO_INCREMENT,
+  `LibelleMedic` varchar(245) NOT NULL DEFAULT '',
+  `fkidtype` int unsigned NOT NULL DEFAULT '1' COMMENT '1 medic 2  Matériel Labo   3 Consommable',
+  `OrdreI` int unsigned NOT NULL DEFAULT '100',
+  `PrixRef` double NOT NULL DEFAULT '0',
+  `estInterne` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`IDMedic`)
+) ENGINE=InnoDB AUTO_INCREMENT=236 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `medicaments`
+--
+
+LOCK TABLES `medicaments` WRITE;
+/*!40000 ALTER TABLE `medicaments` DISABLE KEYS */;
+INSERT INTO `medicaments` VALUES (3,'perfalgan',1,100,240,0),(4,'NFS',2,100,350,0),(5,'Profenid',1,100,260,0),(6,'fer',1,100,350,0),(9,'Duoclav',1,100,220,0),(10,'Paracetamol',1,100,190,0),(14,'Perfuser',1,100,100,0),(16,'Dexa',1,100,250,0),(17,'Ketofon',1,100,150,0),(18,'KCL',1,100,100,0),(19,'Acupan',1,100,170,0),(20,'Metoclopramide',1,100,180,0),(21,'Oméprazole',1,100,280,0),(23,'Tramadis',1,100,250,0),(24,'SSI',1,100,150,0),(25,'SG 5%',1,100,150,0),(26,'SG 10%',1,100,150,0),(28,'NACL',1,100,100,0),(29,'Diclofénac',1,100,120,0),(30,'Ceftriaxone',1,100,400,0),(31,'Dislep',1,100,250,0),(32,'Salbutamol',1,100,180,0),(34,'Claforan',1,100,400,0),(35,'Ciprofloxacine',1,100,450,0),(36,'Seringue 5CC',1,100,50,0),(37,'Gants stériles',1,100,60,0),(38,'Band Velpeau',1,100,100,0),(39,'Gants NS',1,100,50,0),(40,'Compresses',1,100,50,0),(41,'Bétadine Jaune',1,100,40,0),(42,'Bétadine Rouge',1,100,40,0),(43,'Alcool',1,100,40,0),(44,'Kit Voie',1,100,200,0),(45,'Spasfon',1,100,180,0),(46,'Shefaclav',1,100,220,0),(47,'Metronidazole',1,100,180,0),(48,'Methylprednisolone Inj',1,100,180,0),(49,'PARA-Lux 1g',1,100,200,0),(50,'hpv',1,100,180,0),(51,'Nébulisation ',1,100,500,0),(52,'MED1',1,100,100,0),(55,'Intranule 24',1,100,100,0),(56,'Intranule 22',1,100,100,0),(58,'MP-40',1,100,250,0),(59,'vitamine D 200 000 IM',1,100,450,0),(60,'calcium',1,100,100,0),(61,'loxen',1,100,480,0),(62,'adrenaline',1,100,350,0),(63,'Seringue 10CC',1,100,50,0),(65,'HBS',2,100,500,0),(66,'Calcium',2,100,300,0),(67,'CHO',2,100,300,0),(68,'CREA',2,100,200,0),(69,'GSRH',2,100,300,0),(70,'GLY',2,100,100,0),(71,'IONO',2,100,800,0),(72,'NFS',2,100,300,0),(73,'TCA',2,100,500,0),(74,'TP (Taux de prothrombine)',2,100,300,0),(75,'Urée',2,100,200,0),(76,'VS (Vitesse de Sédimentation)',2,100,400,0),(77,'LDL',2,100,400,0),(78,'HDL',2,100,400,0),(79,'ASLO',2,100,500,0),(80,'TRIG',2,100,300,0),(81,'CRP',2,100,500,0),(82,'AU (Acide urique)',2,100,400,0),(83,'HIV',2,100,500,0),(84,'TROPO',2,100,1000,0),(85,'PAL',2,100,300,0),(86,'GGT',2,100,500,0),(87,'Bilirubine',2,100,600,0),(88,'PU24',2,100,500,0),(89,'Magnesium',2,100,400,0),(90,'GE (Goutte épaisse)',2,100,400,0),(91,'PT (Protides totaux)',2,100,500,0),(92,'BNP',2,100,1700,0),(93,'D-dimères',2,100,1200,0),(94,'PH (Phosphore)',2,100,500,0),(95,'HBA1C',2,100,650,0),(96,'TSH',2,100,700,0),(97,'FT4',2,100,700,0),(98,'PSAT',2,100,900,0),(99,'VITD',2,100,1500,0),(100,'IGE',2,100,1100,0),(101,'PCT',2,100,1000,0),(102,'TPHA',2,100,500,0),(103,'VDRL',2,100,500,0),(104,'FERR',2,100,900,0),(105,'Hémoculture',2,100,1700,0),(106,'ECBU',2,100,700,0),(107,'RF (Arthritest)',2,100,500,0),(108,'MALB',2,100,600,0),(109,'PL (Ponction lombaire)',2,100,1000,0),(110,'PP (Ponction Pleurale)',2,100,900,0),(111,'PA (Ponction d\'Ascite)',2,100,1200,0),(112,'PUS (Ponction du pus)',2,100,1100,0),(113,'TP (Temps de prothrombine)',2,100,500,0),(114,'TCA (Temps de céphaline activée )',2,100,500,0),(115,'ANTIHBCT',2,100,800,0),(116,'ASAT',2,100,250,0),(117,'ALAT',2,100,250,0),(118,'AMY',2,100,700,0),(119,'LDH',2,100,800,0),(120,'IONOURINAIRE',2,100,500,0),(121,'CREA URINAIRE',2,100,350,0),(122,'ALBUT',2,100,200,0),(123,'GLUT',2,100,150,0),(124,'ALBUMINE',2,100,500,0),(125,'GPP',2,100,200,0),(126,'PTH',2,100,2100,0),(127,'FSH',2,100,700,0),(128,'LH (Hormone lutéinisante)',2,100,700,0),(129,'Prolactine',2,100,700,0),(130,'BHCG',2,100,700,0),(131,'E2 (Estradiole)',2,100,1400,0),(132,'AMH',2,100,2500,0),(133,'COR',2,100,1200,0),(134,'AFP',2,100,1300,0),(135,'ACE',2,100,1300,0),(136,'CA 19-9',2,100,1500,0),(137,'CA 125',2,100,1400,0),(138,'Dengue',2,100,600,0),(139,'HCV ',2,100,500,0),(140,'Syphilis',2,100,500,0),(141,'AG Covid',2,100,500,0),(142,'TOXOG',2,100,800,0),(143,'TOXOM',2,100,800,0),(144,'RUBM',2,100,800,0),(145,'RUBG',2,100,800,0),(146,'ACTH',2,100,5300,0),(147,'ACCP',2,100,1600,0),(148,'AAN',2,100,2150,0),(149,'CA 15-3',2,100,1400,0),(150,'CPK',2,100,700,0),(151,'HAP',2,100,800,0),(152,'IGA',2,100,1000,0),(153,'Lipase',2,100,900,0),(154,'PRO-BNP',2,100,1400,0),(155,'VIT B12',2,100,1600,0),(156,'VIT B9',2,100,1800,0),(157,'TRANS',2,100,1400,0),(158,'EHB',2,100,1100,0),(159,'EPP',2,100,1100,0),(160,'FER',2,100,600,0),(161,'ADNV',2,100,4000,0),(162,'ADNA',2,100,1450,0),(163,'TESTO',2,100,1400,0),(164,'FT3',2,100,700,0),(165,'FIB',2,100,600,0),(166,'WIDAL',2,100,700,0),(167,'ANTIHBS',2,100,1100,0),(168,'HBE',2,100,1000,0),(169,'ANTIHBE',2,100,900,0),(170,'HP (Helicobacter pylori)',2,100,2300,0),(171,'PROG',2,100,1400,0),(172,'C3 (Complément C3)',2,100,700,0),(173,'C4 (Complément C4)',2,100,700,0),(174,'SPG',2,100,1100,0),(175,'SPC',2,100,900,0),(176,'KOP',2,100,600,0),(177,'COPRO',2,100,700,0),(178,'ANTIPHOS',2,100,1900,0),(179,'DELTA',2,100,1900,0),(180,'RAI',2,100,1000,0),(181,'FS (Frottis Sanguin)',2,100,1000,0),(182,'Taux R',2,100,700,0),(183,'CULOT',2,100,500,0),(184,'ALDOLASE',2,100,1100,0),(185,'ANTI THYROPEROXYDASE',2,100,1500,0),(186,'ANTI THYROGLOBULINE',2,100,1500,0),(187,'ANTI THYRO',2,100,2900,0),(188,'PSA LIBRE',2,100,1100,0),(189,'ATPO',2,100,1400,0),(190,'ATG',2,100,1400,0),(191,'HVAM',2,100,1300,0),(192,'HGPO',2,100,600,0),(193,'PRP',2,100,550,0),(194,'Prélèvement Vaginal + recherches de Mycoplasmes',2,100,1700,0),(195,'AHBC',2,100,900,0),(196,'IHC',2,100,7000,0),(197,'Biopsie peritoneale',2,100,3900,0),(198,'ANTI TSH',2,100,1500,0),(199,'RATION',2,100,800,0),(200,'CHU',2,100,150,0),(201,'RA (Reseve Alcaline)',2,100,1000,0),(202,'QU (Quantiféron)',2,100,3700,0),(203,'TG (THYROGLOBULINE)',2,100,900,0),(204,'CL (Calcium libre)',2,100,800,0),(205,'CH (chlamydia)',2,100,2600,0),(206,'ECT',2,100,2200,0),(207,'CB (COOMBS DIRECT)',2,100,900,0),(208,'LA (Liquide ARTICULAIRE)',2,100,1200,0),(209,'PE (Proteinurie sur échantillon)',2,100,500,0),(210,'BK - Bacilles de koch',2,100,400,0),(211,'Liquide Ponction',2,100,1200,0),(212,'Synacthene 250 Ug',2,100,2000,0),(213,'Synacthene 250 Ug Complet',2,100,4500,0),(214,'GAD',2,100,3900,0),(215,'PCR BK',2,100,2800,0),(216,'DCH',2,100,3800,0),(217,'PAL',2,100,700,0),(218,'CYTO',2,100,2000,0),(219,'MBG',2,100,2100,0),(220,'PHYN',2,100,5800,0),(221,'Biopsie du col',2,100,2600,0),(222,'EMM',2,100,700,0),(223,'Biopsie gastrique',2,100,2800,0),(224,'BIOPSIE COLIQUE',2,100,2800,0),(225,'Insuline',2,100,1000,0),(226,'IGF1',2,100,2300,0),(227,'diazépam',1,100,520,0),(228,'Ringer lactate',1,100,150,0),(229,'bricanyl',1,100,180,0),(230,'KA (Potassium)',1,100,120,0),(231,'Tulle Gras',1,100,50,0),(232,'Pansement simple',1,100,200,0),(233,'Pansement brûlures ',1,100,500,0),(234,'Pansement post-opératoire ',1,100,500,0),(235,'Pansement chirurgie plastique',1,100,700,0);
+/*!40000 ALTER TABLE `medicaments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `migrations` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `migrations`
+--
+
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+INSERT INTO `migrations` VALUES (1,'2014_10_12_000000_create_users_table',1),(2,'2014_10_12_100000_create_password_resets_table',1),(3,'2019_08_19_000000_create_failed_jobs_table',1),(4,'2019_12_14_000001_create_personal_access_tokens_table',1),(5,'2026_01_24_121922_add_medical_fields_to_fichetraitement_table',2),(6,'2026_01_24_124128_add_patient_to_fichetraitement_and_make_facture_nullable',3),(7,'2026_04_07_000001_create_dossier_medical_table',4),(8,'2026_04_07_000002_create_analyses_patient_table',5),(9,'2024_03_19_add_fkidfacture_to_rendezvous',6),(10,'2024_03_19_add_idrdv_to_facture',6),(11,'2025_05_06_164335_create_actes_table',6),(12,'2025_05_06_164335_create_affectationactes_table',6),(13,'2025_05_06_164335_create_assureurs_table',6),(14,'2025_05_06_164335_create_boncommande_table',6),(15,'2025_05_06_164335_create_bordereauxfactures_table',6),(16,'2025_05_06_164335_create_caisse_operations_table',6),(17,'2025_05_06_164335_create_caisse_operationsimp_table',6),(18,'2025_05_06_164335_create_categories_table',6),(19,'2025_05_06_164335_create_consommables_table',6),(20,'2025_05_06_164335_create_currentuser_enregistrement_table',6),(21,'2025_05_06_164335_create_currentuser_table',6),(22,'2025_05_06_164335_create_dentspatients_table',6),(23,'2025_05_06_164335_create_detailbc_table',6),(24,'2025_05_06_164335_create_detailfacturepatient_table',6),(25,'2025_05_06_164335_create_etat_facture_table',6),(26,'2025_05_06_164335_create_facture_table',6),(27,'2025_05_06_164335_create_factureaimprimer_table',6),(28,'2025_05_06_164335_create_ficheaimprimerautrefois_table',6),(29,'2025_05_06_164335_create_fichetraitement_table',6),(30,'2025_05_06_164335_create_fichierscanne_table',6),(31,'2025_05_06_164335_create_genre_table',6),(32,'2025_05_06_164335_create_infocabinet_table',6),(33,'2025_05_06_164335_create_medecins_table',6),(34,'2025_05_06_164335_create_medicaments_table',6),(35,'2025_05_06_164335_create_ordonnanceref_table',6),(36,'2025_05_06_164335_create_ordonnances_table',6),(37,'2025_05_06_164335_create_patients_table',6),(38,'2025_05_06_164335_create_periodes_table',6),(39,'2025_05_06_164335_create_pjconvention_table',6),(40,'2025_05_06_164335_create_probl__mes_table',6),(41,'2025_05_06_164335_create_recuaimprimer_table',6),(42,'2025_05_06_164335_create_ref_type_paiement_table',6),(43,'2025_05_06_164335_create_reglements_table',6),(44,'2025_05_06_164335_create_rendezvous_table',6),(45,'2025_05_06_164335_create_solde_par_jour_table',6),(46,'2025_05_06_164335_create_t_arret_compte_table',6),(47,'2025_05_06_164335_create_t_arret_situation_compte_table',6),(48,'2025_05_06_164335_create_t_banque_table',6),(49,'2025_05_06_164335_create_t_campagnie_table',6),(50,'2025_05_06_164335_create_t_categorie_compte_client_table',6),(51,'2025_05_06_164335_create_t_currentexercice_table',6),(52,'2025_05_06_164335_create_t_depenses_recette_table',6),(53,'2025_05_06_164335_create_t_exercice_table',6),(54,'2025_05_06_164335_create_t_fournisseur_personnel_table',6),(55,'2025_05_06_164335_create_t_solde_caisse_table',6),(56,'2025_05_06_164335_create_t_souscompte_table',6),(57,'2025_05_06_164335_create_t_type_operation_table',6),(58,'2025_05_06_164335_create_t_user_table',6),(59,'2025_05_06_164335_create_typeactes_table',6),(60,'2025_05_06_164335_create_typerecettesdepenses_table',6),(61,'2025_05_06_164335_create_typereglements_table',6),(62,'2025_05_06_164335_create_typetiers_table',6),(63,'2025_05_06_164335_create_typeuser_table',6),(64,'2025_11_14_012554_add_medicament_support_to_detailfacturepatient_table',6),(65,'2025_11_14_014310_add_prix_ref_to_medicaments_table',6),(66,'2026_04_11_010820_add_ordonnances_ids_to_consultation_medicale',7),(67,'2026_04_11_100000_create_permissions_tables',8),(68,'2026_04_14_193659_add_est_interne_to_medicaments_table',9),(69,'2026_04_15_022432_add_est_interne_to_ordonnances_table',10),(70,'2026_04_15_212329_add_statut_soin_to_ordonnanceref_table',11),(71,'2026_04_18_021602_add_logo_piedpage_to_infocabinet',12),(72,'2026_04_18_100000_create_missing_tables',13),(73,'2026_05_16_142330_add_quantite_to_ordonnances_table',14);
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mouvements_stock`
+--
+
+DROP TABLE IF EXISTS `mouvements_stock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mouvements_stock` (
+  `idMouvement` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidStock` int unsigned NOT NULL,
+  `fkidMedicament` int unsigned NOT NULL,
+  `fkidLot` int unsigned DEFAULT NULL COMMENT 'Référence au lot si applicable',
+  `typeMouvement` enum('ENTREE','SORTIE','AJUSTEMENT') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `quantite` double NOT NULL COMMENT 'Quantité du mouvement (positive pour entrée, négative pour sortie)',
+  `prixUnitaire` double NOT NULL DEFAULT '0' COMMENT 'Prix unitaire au moment du mouvement',
+  `montantTotal` double NOT NULL DEFAULT '0' COMMENT 'Montant total du mouvement',
+  `motif` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'Raison du mouvement',
+  `fkidFacture` int unsigned DEFAULT NULL COMMENT 'Si sortie liée à une vente',
+  `fkidDetailFacture` int unsigned DEFAULT NULL COMMENT 'Référence au détail de facture',
+  `fkidPatient` int unsigned DEFAULT NULL COMMENT 'Patient concerné si vente',
+  `fkidUser` int unsigned NOT NULL COMMENT 'Utilisateur qui a effectué le mouvement',
+  `dateMouvement` datetime DEFAULT NULL,
+  `reference` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL COMMENT 'N° facture fournisseur, N° facture vente, etc.',
+  `notes` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci COMMENT 'Notes additionnelles',
+  PRIMARY KEY (`idMouvement`),
+  KEY `idx_stock` (`fkidStock`),
+  KEY `idx_medicament` (`fkidMedicament`),
+  KEY `idx_lot` (`fkidLot`),
+  KEY `idx_type` (`typeMouvement`),
+  KEY `idx_facture` (`fkidFacture`),
+  KEY `idx_detail_facture` (`fkidDetailFacture`),
+  KEY `idx_patient` (`fkidPatient`),
+  KEY `idx_user` (`fkidUser`),
+  KEY `idx_date` (`dateMouvement`)
+) ENGINE=InnoDB AUTO_INCREMENT=300 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mouvements_stock`
+--
+
+LOCK TABLES `mouvements_stock` WRITE;
+/*!40000 ALTER TABLE `mouvements_stock` DISABLE KEYS */;
+INSERT INTO `mouvements_stock` VALUES (1,38,2,1,'ENTREE',100,100,10000,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-19 22:03:43',NULL,'Ajout depuis la liste des médicaments'),(2,39,3,NULL,'ENTREE',10,70,700,'Entrée de stock',NULL,NULL,NULL,19,'2026-04-20 18:04:28',NULL,'Ajout depuis la liste des médicaments'),(5,45,11,2,'ENTREE',5,50,250,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:02:26',NULL,'Ajout depuis la liste des médicaments'),(6,45,11,3,'ENTREE',5,50,250,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:04:04',NULL,'Ajout depuis la liste des médicaments'),(7,23,45,4,'ENTREE',5,50,250,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:05:43',NULL,'Ajout depuis la liste des médicaments'),(8,12,19,5,'ENTREE',4,50,200,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:07:50',NULL,'Ajout depuis la liste des médicaments'),(9,22,23,6,'ENTREE',6,26.98,161.88,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:08:45',NULL,'Ajout depuis la liste des médicaments'),(10,55,46,7,'ENTREE',11,65,715,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:17:03',NULL,'Ajout depuis la liste des médicaments'),(11,51,21,8,'ENTREE',10,80,800,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:27:46',NULL,'Ajout depuis la liste des médicaments'),(12,6,28,9,'ENTREE',5,25,125,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:29:05',NULL,'Ajout depuis la liste des médicaments'),(13,41,6,10,'ENTREE',3,100,300,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:33:19',NULL,'Ajout depuis la liste des médicaments'),(14,49,17,11,'ENTREE',2,40,80,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:34:51',NULL,'Ajout depuis la liste des médicaments'),(15,11,48,12,'ENTREE',10,50,500,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:39:57',NULL,'Ajout depuis la liste des médicaments'),(16,44,9,13,'ENTREE',6,65,390,'Entrée de stock',NULL,NULL,NULL,1,'2026-04-21 17:44:39',NULL,'Ajout depuis la liste des médicaments'),(17,19,49,14,'ENTREE',36,56,2016,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-06 19:14:56','AC489511','Ajout depuis la liste des médicaments'),(18,15,16,15,'ENTREE',100,80,8000,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-07 17:44:58','AC489511','Ajout depuis la liste des médicaments'),(19,56,50,16,'ENTREE',20,50,1000,'Entrée de stock',NULL,NULL,NULL,20,'2026-05-11 18:03:18',NULL,'Ajout depuis la liste des médicaments'),(20,13,24,NULL,'ENTREE',10,59,590,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-12 17:08:34',NULL,'Ajout depuis la liste des médicaments'),(21,31,33,NULL,'ENTREE',10,42,420,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-14 16:15:15',NULL,'Ajout depuis la liste des médicaments'),(28,48,14,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-14 16:20:05',NULL,'Ajout depuis la liste des médicaments'),(31,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0010',19,28,112,1,'2026-05-15 18:33:52','ORD-2026-0010',NULL),(32,31,33,NULL,'SORTIE',1,480,480,'Ordonnance ORD-2026-0010',19,29,112,1,'2026-05-15 18:33:52','ORD-2026-0010',NULL),(33,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0010',19,30,112,1,'2026-05-15 18:33:52','ORD-2026-0010',NULL),(34,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0010',19,31,112,1,'2026-05-15 18:33:52','ORD-2026-0010',NULL),(35,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0010',19,32,112,1,'2026-05-15 18:33:52','ORD-2026-0010',NULL),(36,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0012',19,35,112,1,'2026-05-15 18:48:43','ORD-2026-0012',NULL),(37,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0012',19,36,112,1,'2026-05-15 18:48:43','ORD-2026-0012',NULL),(38,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0013',20,38,117,1,'2026-05-15 19:48:45','ORD-2026-0013',NULL),(39,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0013',20,39,117,1,'2026-05-15 19:48:45','ORD-2026-0013',NULL),(42,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0019',22,49,118,1,'2026-05-16 09:58:53','ORD-2026-0019',NULL),(43,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0019',22,50,118,1,'2026-05-16 09:58:53','ORD-2026-0019',NULL),(44,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0019',22,51,118,1,'2026-05-16 09:58:53','ORD-2026-0019',NULL),(45,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0019',22,52,118,1,'2026-05-16 09:58:53','ORD-2026-0019',NULL),(46,23,45,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0019',22,53,118,1,'2026-05-16 09:58:53','ORD-2026-0019',NULL),(47,23,45,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0022',22,55,118,1,'2026-05-16 10:11:13','ORD-2026-0022',NULL),(56,16,34,NULL,'SORTIE',1,400,400,'Ordonnance ORD-2026-0026',25,75,120,1,'2026-05-16 18:15:34','ORD-2026-0026',NULL),(57,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0026',25,76,120,1,'2026-05-16 18:15:34','ORD-2026-0026',NULL),(58,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0026',25,77,120,1,'2026-05-16 18:15:34','ORD-2026-0026',NULL),(59,15,16,NULL,'SORTIE',2,250,500,'Ordonnance ORD-2026-0026',25,78,120,1,'2026-05-16 18:15:34','ORD-2026-0026',NULL),(60,12,19,NULL,'SORTIE',1,170,170,'Ordonnance ORD-2026-0026',25,79,120,1,'2026-05-16 18:15:35','ORD-2026-0026',NULL),(61,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0027',28,82,122,1,'2026-05-16 18:18:00','ORD-2026-0027',NULL),(62,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0027',28,83,122,1,'2026-05-16 18:18:00','ORD-2026-0027',NULL),(63,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0027',28,84,122,1,'2026-05-16 18:18:00','ORD-2026-0027',NULL),(64,44,9,NULL,'SORTIE',1,220,220,'Ordonnance ORD-2026-0027',28,85,122,1,'2026-05-16 18:18:00','ORD-2026-0027',NULL),(65,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0028',25,86,120,1,'2026-05-16 18:29:23','ORD-2026-0028',NULL),(66,65,59,17,'ENTREE',19,250,4750,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-18 10:02:53',NULL,'Ajout depuis la liste des médicaments'),(67,66,60,NULL,'ENTREE',6,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-18 10:09:38',NULL,'Ajout depuis la liste des médicaments'),(68,50,18,NULL,'ENTREE',6,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-18 10:10:06',NULL,'Ajout depuis la liste des médicaments'),(80,15,16,NULL,'SORTIE',2,250,500,'Ordonnance ORD-2026-0030',33,107,124,1,'2026-05-18 12:07:12','ORD-2026-0030',NULL),(81,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0031',33,108,124,1,'2026-05-18 12:07:24','ORD-2026-0031',NULL),(82,34,36,NULL,'SORTIE',1,50,50,'Ordonnance ORD-2026-0032',33,111,124,1,'2026-05-18 12:09:46','ORD-2026-0032',NULL),(83,67,61,NULL,'ENTREE',5,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-18 13:09:47',NULL,'Ajout depuis la liste des médicaments'),(84,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0035',32,112,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(85,15,16,NULL,'SORTIE',2,250,500,'Ordonnance ORD-2026-0035',32,113,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(86,44,9,NULL,'SORTIE',2,220,440,'Ordonnance ORD-2026-0035',32,114,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(87,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0035',32,115,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(88,6,28,NULL,'SORTIE',2,100,200,'Ordonnance ORD-2026-0035',32,116,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(89,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0035',32,117,123,1,'2026-05-18 13:12:06','ORD-2026-0035',NULL),(90,66,60,NULL,'SORTIE',2,100,200,'Ordonnance ORD-2026-0035',32,118,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(91,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0035',32,119,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(92,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0035',32,120,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(93,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0035',32,121,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(94,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0035',32,122,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(95,67,61,NULL,'SORTIE',1,480,480,'Ordonnance ORD-2026-0035',32,123,123,1,'2026-05-18 13:12:07','ORD-2026-0035',NULL),(96,34,36,NULL,'ENTREE',5,56.3,281.5,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-18 14:11:38',NULL,'Ajout depuis la liste des médicaments'),(97,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0036',34,127,74,1,'2026-05-18 14:12:23','ORD-2026-0036',NULL),(98,34,36,NULL,'SORTIE',1,50,50,'Ordonnance ORD-2026-0037',34,128,74,1,'2026-05-18 14:12:32','ORD-2026-0037',NULL),(99,53,29,NULL,'ENTREE',4,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:17:08',NULL,NULL),(100,61,55,NULL,'ENTREE',1003,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:18:24',NULL,NULL),(101,62,56,NULL,'ENTREE',35,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:18:59',NULL,NULL),(102,63,57,NULL,'ENTREE',25,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:21:11',NULL,NULL),(103,64,58,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:22:25',NULL,NULL),(104,12,19,NULL,'AJUSTEMENT',-20,33.579348579349,671.58697158698,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:26:03',NULL,'Ajustement d\'inventaire'),(105,39,3,NULL,'AJUSTEMENT',34,70,2380,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:26:31',NULL,'Ajustement d\'inventaire'),(106,48,14,NULL,'AJUSTEMENT',16,0,0,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:27:31',NULL,'Ajustement d\'inventaire'),(107,23,45,NULL,'AJUSTEMENT',-19,12,228,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:28:18',NULL,'Ajustement d\'inventaire'),(108,15,16,NULL,'AJUSTEMENT',-27,66.560431654676,1797.1316546763,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:28:46',NULL,'Ajustement d\'inventaire'),(109,34,36,NULL,'AJUSTEMENT',53,56.3,2983.9,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:30:12',NULL,'Ajustement d\'inventaire'),(110,49,17,NULL,'AJUSTEMENT',19,40,760,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:30:39',NULL,'Ajustement d\'inventaire'),(111,9,47,NULL,'AJUSTEMENT',-254,8.9,2260.6,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:31:39',NULL,'Ajustement d\'inventaire'),(112,51,21,NULL,'AJUSTEMENT',-1,80,80,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:32:39',NULL,'Ajustement d\'inventaire'),(113,22,23,NULL,'AJUSTEMENT',7,26.98,188.86,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:33:24',NULL,'Ajustement d\'inventaire'),(114,33,37,NULL,'AJUSTEMENT',27,150,4050,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:33:53',NULL,'Ajustement d\'inventaire'),(115,13,24,NULL,'AJUSTEMENT',3,59,177,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:34:17',NULL,'Ajustement d\'inventaire'),(116,4,25,NULL,'AJUSTEMENT',11,51.4,565.4,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:34:41',NULL,'Ajustement d\'inventaire'),(117,29,26,NULL,'AJUSTEMENT',-24,11.055196078431,265.32470588234,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:34:57',NULL,'Ajustement d\'inventaire'),(118,41,6,NULL,'AJUSTEMENT',7,100,700,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:35:26',NULL,'Ajustement d\'inventaire'),(119,6,28,NULL,'AJUSTEMENT',-27,11.298148148148,305.05,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:36:39',NULL,'Ajustement d\'inventaire'),(120,30,31,NULL,'AJUSTEMENT',5,17.989411764706,89.94705882353,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:37:35',NULL,'Ajustement d\'inventaire'),(121,14,38,NULL,'AJUSTEMENT',22,27,594,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:38:08',NULL,'Ajustement d\'inventaire'),(122,16,34,NULL,'AJUSTEMENT',-6,26.6,159.6,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:38:39',NULL,'Ajustement d\'inventaire'),(123,20,39,NULL,'AJUSTEMENT',-33,261.2,8619.6,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:39:02',NULL,'Ajustement d\'inventaire'),(124,10,40,NULL,'AJUSTEMENT',183,40,7320,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:39:31',NULL,'Ajustement d\'inventaire'),(125,24,35,NULL,'AJUSTEMENT',10,150,1500,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:40:03',NULL,'Ajustement d\'inventaire'),(126,5,41,NULL,'AJUSTEMENT',-30,9.2,276,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:40:30',NULL,'Ajustement d\'inventaire'),(127,17,42,NULL,'AJUSTEMENT',-27,28.8,777.6,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:40:47',NULL,'Ajustement d\'inventaire'),(128,55,46,NULL,'AJUSTEMENT',-1,65,65,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:41:13',NULL,'Ajustement d\'inventaire'),(129,56,50,NULL,'AJUSTEMENT',-2,50,100,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:41:34',NULL,'Ajustement d\'inventaire'),(130,69,63,NULL,'AJUSTEMENT',1538,0,0,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:42:03',NULL,'Ajustement d\'inventaire'),(131,44,9,NULL,'AJUSTEMENT',11,65,715,'valeur erronée',NULL,NULL,NULL,19,'2026-05-18 16:42:27',NULL,'Ajustement d\'inventaire'),(132,23,45,NULL,'ENTREE',2,12,24,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:45:24',NULL,'Ajout depuis la liste des médicaments'),(133,49,17,NULL,'ENTREE',1,40,40,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:46:41',NULL,'Ajout depuis la liste des médicaments'),(134,41,6,NULL,'ENTREE',2,100,200,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-18 16:52:59',NULL,'Ajout depuis la liste des médicaments'),(137,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0038',40,138,130,1,'2026-05-20 09:43:18','ORD-2026-0038',NULL),(138,69,63,NULL,'SORTIE',1,50,50,'Ordonnance ORD-2026-0038',40,139,130,1,'2026-05-20 09:43:18','ORD-2026-0038',NULL),(139,41,6,NULL,'SORTIE',1,350,350,'Ordonnance ORD-2026-0039',43,143,102,1,'2026-05-20 17:59:32','ORD-2026-0039',NULL),(140,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0039',43,144,102,1,'2026-05-20 17:59:32','ORD-2026-0039',NULL),(141,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0039',43,145,102,1,'2026-05-20 17:59:32','ORD-2026-0039',NULL),(142,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0040',43,146,102,1,'2026-05-20 18:00:30','ORD-2026-0040',NULL),(143,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0040',43,147,102,1,'2026-05-20 18:00:30','ORD-2026-0040',NULL),(144,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0040',43,148,102,1,'2026-05-20 18:00:30','ORD-2026-0040',NULL),(145,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0040',43,149,102,1,'2026-05-20 18:00:30','ORD-2026-0040',NULL),(146,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0040',43,150,102,1,'2026-05-20 18:00:30','ORD-2026-0040',NULL),(147,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0041',43,151,102,1,'2026-05-20 18:00:44','ORD-2026-0041',NULL),(148,44,9,NULL,'SORTIE',1,220,220,'Ordonnance ORD-2026-0042',48,158,135,1,'2026-05-22 09:16:35','ORD-2026-0042',NULL),(149,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0042',48,159,135,1,'2026-05-22 09:16:35','ORD-2026-0042',NULL),(150,25,32,NULL,'SORTIE',3,180,540,'Ordonnance ORD-2026-0043',48,162,135,1,'2026-05-22 09:17:20','ORD-2026-0043',NULL),(151,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0044',48,163,135,1,'2026-05-22 09:29:06','ORD-2026-0044',NULL),(152,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0044',48,164,135,1,'2026-05-22 09:29:06','ORD-2026-0044',NULL),(153,41,6,NULL,'SORTIE',1,350,350,'Ordonnance ORD-2026-0045',49,166,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(154,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0045',49,167,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(155,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0045',49,168,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(156,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0045',49,169,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(157,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0045',49,170,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(158,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0045',49,171,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(159,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0045',49,172,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(160,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0045',49,173,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(161,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0045',49,174,136,1,'2026-05-22 10:21:54','ORD-2026-0045',NULL),(162,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0046',49,176,136,1,'2026-05-22 10:43:26','ORD-2026-0046',NULL),(163,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0046',49,177,136,1,'2026-05-22 10:43:26','ORD-2026-0046',NULL),(164,15,16,NULL,'SORTIE',2,250,500,'Ordonnance ORD-2026-0046',49,178,136,1,'2026-05-22 10:43:26','ORD-2026-0046',NULL),(165,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0046',49,179,136,1,'2026-05-22 10:43:26','ORD-2026-0046',NULL),(166,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0047',50,182,137,1,'2026-05-22 19:53:22','ORD-2026-0047',NULL),(167,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0047',50,183,137,1,'2026-05-22 19:53:22','ORD-2026-0047',NULL),(168,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0047',50,184,137,1,'2026-05-22 19:53:22','ORD-2026-0047',NULL),(169,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0047',50,185,137,1,'2026-05-22 19:53:22','ORD-2026-0047',NULL),(170,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0047',50,186,137,1,'2026-05-22 19:53:22','ORD-2026-0047',NULL),(171,71,227,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-22 19:56:29',NULL,'Ajout depuis la liste des médicaments'),(172,71,227,NULL,'SORTIE',1,520,520,'Ordonnance ORD-2026-0048',50,188,137,1,'2026-05-22 19:56:58','ORD-2026-0048',NULL),(173,34,36,NULL,'SORTIE',2,50,100,'Ordonnance ORD-2026-0048',50,189,137,1,'2026-05-22 19:56:58','ORD-2026-0048',NULL),(174,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0049',50,190,137,1,'2026-05-22 19:57:21','ORD-2026-0049',NULL),(175,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0050',51,192,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(176,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0050',51,193,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(177,6,28,NULL,'SORTIE',2,100,200,'Ordonnance ORD-2026-0050',51,194,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(178,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0050',51,195,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(179,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0050',51,196,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(180,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0050',51,197,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(181,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0050',51,198,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(182,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0050',51,199,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(183,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0050',51,200,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(184,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0050',51,201,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(185,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0050',51,202,86,1,'2026-05-22 20:27:05','ORD-2026-0050',NULL),(186,72,228,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-22 20:29:42',NULL,'Ajout depuis la liste des médicaments'),(187,72,228,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0052',51,203,86,1,'2026-05-22 20:30:13','ORD-2026-0052',NULL),(188,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0053',52,205,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(189,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0053',52,206,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(190,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0053',52,207,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(191,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0053',52,208,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(192,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0053',52,209,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(193,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0053',52,210,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(194,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0053',52,211,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(195,16,34,NULL,'SORTIE',1,400,400,'Ordonnance ORD-2026-0053',52,212,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(196,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0053',52,213,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(197,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0053',52,214,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(198,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0053',52,215,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(199,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0053',52,216,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(200,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0053',52,217,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(201,41,6,NULL,'SORTIE',1,350,350,'Ordonnance ORD-2026-0053',52,218,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(202,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0053',52,219,138,1,'2026-05-23 12:45:14','ORD-2026-0053',NULL),(203,50,18,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-23 18:59:07',NULL,'Ajout depuis la liste des médicaments'),(204,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0054',54,224,139,1,'2026-05-23 18:59:25','ORD-2026-0054',NULL),(205,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0055',54,226,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(206,12,19,NULL,'SORTIE',1,170,170,'Ordonnance ORD-2026-0055',54,227,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(207,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0055',54,228,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(208,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0055',54,229,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(209,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0055',54,230,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(210,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0055',54,231,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(211,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0055',54,232,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(212,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0055',54,233,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(213,65,59,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0055',54,234,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(214,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0055',54,235,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(215,69,63,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0055',54,236,139,1,'2026-05-23 19:03:30','ORD-2026-0055',NULL),(216,66,60,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,1,'2026-05-23 19:05:16',NULL,'Ajout depuis la liste des médicaments'),(217,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0056',54,238,139,1,'2026-05-23 19:06:12','ORD-2026-0056',NULL),(218,16,34,NULL,'SORTIE',1,400,400,'Ordonnance ORD-2026-0057',56,241,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(219,25,32,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0057',56,242,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(220,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0057',56,243,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(221,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0057',56,244,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(222,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0057',56,245,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(223,34,36,NULL,'SORTIE',2,50,100,'Ordonnance ORD-2026-0057',56,246,142,1,'2026-05-23 19:46:37','ORD-2026-0057',NULL),(224,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0058',56,249,142,1,'2026-05-23 19:48:36','ORD-2026-0058',NULL),(225,25,32,NULL,'ENTREE',73,30.98,2261.54,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:27:11',NULL,'Ajout depuis la liste des médicaments'),(226,40,5,NULL,'ENTREE',50,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:27:43',NULL,'Ajout depuis la liste des médicaments'),(227,68,62,NULL,'ENTREE',24,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:28:17',NULL,'Ajout depuis la liste des médicaments'),(228,71,227,NULL,'ENTREE',21,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:29:21',NULL,'Ajout depuis la liste des médicaments'),(229,54,43,NULL,'ENTREE',4,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:29:59',NULL,'Ajout depuis la liste des médicaments'),(230,73,229,NULL,'ENTREE',40,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:32:02',NULL,'Ajout depuis la liste des médicaments'),(231,10,40,NULL,'ENTREE',100,40,4000,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:33:32',NULL,'Ajout depuis la liste des médicaments'),(232,53,29,NULL,'ENTREE',50,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:36:33',NULL,'Ajout depuis la liste des médicaments'),(233,48,14,NULL,'ENTREE',125,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:37:00',NULL,'Ajout depuis la liste des médicaments'),(234,66,60,NULL,'ENTREE',1,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:40:40',NULL,'Ajout depuis la liste des médicaments'),(235,74,230,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:41:47',NULL,'Ajout depuis la liste des médicaments'),(236,20,39,NULL,'ENTREE',2,261.2,522.4,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:43:02',NULL,'Ajout depuis la liste des médicaments'),(237,25,32,NULL,'ENTREE',20,30.98,619.6,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:48:00',NULL,'Ajout depuis la liste des médicaments'),(238,75,231,NULL,'ENTREE',100,5,500,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:52:22',NULL,'Ajout depuis la liste des médicaments'),(239,57,51,NULL,'ENTREE',100,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-25 14:54:52',NULL,NULL),(240,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0059',57,251,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(241,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0059',57,252,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(242,9,47,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0059',57,253,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(243,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0059',57,254,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(244,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0059',57,255,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(245,12,19,NULL,'SORTIE',1,170,170,'Ordonnance ORD-2026-0059',57,256,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(246,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0059',57,257,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(247,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0059',57,258,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(248,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0059',57,259,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(249,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0059',57,260,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(250,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0059',57,261,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(251,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0059',57,262,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(252,34,36,NULL,'SORTIE',5,50,250,'Ordonnance ORD-2026-0059',57,263,143,1,'2026-05-25 18:17:13','ORD-2026-0059',NULL),(253,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0060',57,265,143,1,'2026-05-25 18:20:30','ORD-2026-0060',NULL),(254,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0061',58,267,144,1,'2026-05-25 19:56:10','ORD-2026-0061',NULL),(255,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0061',58,268,144,1,'2026-05-25 19:56:10','ORD-2026-0061',NULL),(256,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0061',58,269,144,1,'2026-05-25 19:56:10','ORD-2026-0061',NULL),(257,34,36,NULL,'SORTIE',1,50,50,'Ordonnance ORD-2026-0061',58,270,144,1,'2026-05-25 19:56:10','ORD-2026-0061',NULL),(262,72,228,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0064',61,280,145,19,'2026-05-25 21:18:29','ORD-2026-0064',NULL),(263,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0064',61,281,145,19,'2026-05-25 21:18:29','ORD-2026-0064',NULL),(264,69,63,NULL,'SORTIE',1,50,50,'Ordonnance ORD-2026-0064',61,282,145,19,'2026-05-25 21:18:29','ORD-2026-0064',NULL),(265,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0064',61,283,145,19,'2026-05-25 21:18:29','ORD-2026-0064',NULL),(266,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0065',62,285,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(267,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0065',62,286,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(268,12,19,NULL,'SORTIE',1,170,170,'Ordonnance ORD-2026-0065',62,287,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(269,40,5,NULL,'SORTIE',1,260,260,'Ordonnance ORD-2026-0065',62,288,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(270,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0065',62,289,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(271,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0065',62,290,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(272,4,25,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0065',62,291,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(273,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0065',62,292,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(274,50,18,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0065',62,293,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(275,66,60,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0065',62,294,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(276,56,50,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0065',62,295,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(277,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0065',62,296,146,1,'2026-05-26 10:15:38','ORD-2026-0065',NULL),(278,6,28,NULL,'SORTIE',1,100,100,'Ordonnance ORD-2026-0066',62,298,146,1,'2026-05-26 10:17:05','ORD-2026-0066',NULL),(279,51,21,NULL,'SORTIE',1,280,280,'Ordonnance ORD-2026-0067',65,304,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(280,30,31,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0067',65,305,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(281,39,3,NULL,'SORTIE',1,240,240,'Ordonnance ORD-2026-0067',65,306,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(282,12,19,NULL,'SORTIE',1,170,170,'Ordonnance ORD-2026-0067',65,307,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(283,40,5,NULL,'SORTIE',1,260,260,'Ordonnance ORD-2026-0067',65,308,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(284,13,24,NULL,'SORTIE',1,150,150,'Ordonnance ORD-2026-0067',65,309,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(285,23,45,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0067',65,310,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(286,23,45,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0067',65,311,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(287,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0067',65,312,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(288,69,63,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0067',65,313,149,1,'2026-05-26 16:45:50','ORD-2026-0067',NULL),(289,24,35,NULL,'SORTIE',1,450,450,'Ordonnance ORD-2026-0068',65,315,149,1,'2026-05-26 17:49:12','ORD-2026-0068',NULL),(290,79,235,NULL,'ENTREE',10,0,0,'Entrée de stock',NULL,NULL,NULL,19,'2026-05-26 19:17:03',NULL,'Ajout depuis la liste des médicaments'),(291,79,235,NULL,'SORTIE',1,700,700,'Ordonnance ORD-2026-0070',67,318,148,19,'2026-05-26 19:17:50','ORD-2026-0070',NULL),(292,79,235,NULL,'SORTIE',1,700,700,'Ordonnance ORD-2026-0071',67,319,148,19,'2026-05-28 17:40:36','ORD-2026-0071',NULL),(293,73,229,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0072',69,322,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(294,73,229,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0072',69,323,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(295,73,229,NULL,'SORTIE',1,180,180,'Ordonnance ORD-2026-0072',69,324,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(296,15,16,NULL,'SORTIE',1,250,250,'Ordonnance ORD-2026-0072',69,325,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(297,16,34,NULL,'SORTIE',1,400,400,'Ordonnance ORD-2026-0072',69,326,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(298,26,44,NULL,'SORTIE',1,200,200,'Ordonnance ORD-2026-0072',69,327,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL),(299,34,36,NULL,'SORTIE',3,50,150,'Ordonnance ORD-2026-0072',69,328,152,1,'2026-05-29 12:41:13','ORD-2026-0072',NULL);
+/*!40000 ALTER TABLE `mouvements_stock` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ordonnanceref`
+--
+
+DROP TABLE IF EXISTS `ordonnanceref`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ordonnanceref` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `refOrd` varchar(45) NOT NULL DEFAULT 'NR',
+  `Annee` int unsigned NOT NULL DEFAULT '0',
+  `numordre` int unsigned NOT NULL DEFAULT '0',
+  `fkidpatient` int unsigned NOT NULL DEFAULT '0',
+  `fkidprescripteur` int unsigned NOT NULL DEFAULT '1',
+  `dtPrescript` datetime DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `TypeOrdonnance` varchar(145) NOT NULL DEFAULT 'Ordonnances',
+  `statutSoin` varchar(20) NOT NULL DEFAULT 'en_attente',
+  PRIMARY KEY (`id`),
+  KEY `Index_2` (`refOrd`),
+  KEY `Index_3` (`Annee`),
+  KEY `Index_4` (`fkidpatient`),
+  KEY `Index_5` (`fkidprescripteur`),
+  KEY `Index_6` (`dtPrescript`),
+  KEY `Index_7` (`TypeOrdonnance`)
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordonnanceref`
+--
+
+LOCK TABLES `ordonnanceref` WRITE;
+/*!40000 ALTER TABLE `ordonnanceref` DISABLE KEYS */;
+INSERT INTO `ordonnanceref` VALUES (14,'ORD-2025-0001',2025,1,20,1,'2025-11-11 21:08:46',1,'Ordonnance Médicale','en_attente'),(15,'ORD-2025-0002',2025,2,8454,11,'2025-11-21 19:08:26',1,'Ordonnance Médicale','en_attente'),(16,'ORD-2025-0003',2025,3,8434,1,'2025-11-22 18:24:38',1,'Ordonnance Médicale','en_attente'),(17,'ORD-2025-0004',2025,4,8450,11,'2025-11-22 19:33:19',1,'Ordonnance Médicale','en_attente'),(18,'ORD-2026-0001',2026,1,8434,1,'2026-04-14 19:25:46',1,'Ordonnance Médicale','en_attente'),(19,'ORD-2026-0002',2026,2,8573,1,'2026-04-14 19:54:35',1,'Ordonnance Médicale','en_attente'),(20,'ORD-2026-0003',2026,3,8434,1,'2026-04-15 02:39:26',1,'Ordonnance Médicale','en_attente'),(21,'ORD-2026-0004',2026,4,8434,1,'2026-04-15 02:39:46',1,'Ordonnance d\'Analyses','en_attente'),(22,'ORD-2026-0005',2026,5,8573,1,'2026-04-15 02:50:57',1,'Ordonnance Médicale','en_attente'),(23,'ORD-2026-0006',2026,6,8434,1,'2026-04-15 20:54:51',1,'Ordonnance Médicale','en_attente'),(30,'ORD-2026-0007',2026,7,112,1,'2026-05-14 16:10:42',1,'Ordonnance d\'Analyses','en_attente'),(31,'ORD-2026-0008',2026,8,112,1,'2026-05-14 16:19:34',1,'Ordonnance Médicale','en_attente'),(32,'ORD-2026-0009',2026,9,115,19,'2026-05-15 02:42:56',1,'Traitement d\'urgence','termine'),(33,'ORD-2026-0010',2026,10,112,1,'2026-05-15 18:33:52',1,'Traitement d\'urgence','termine'),(34,'ORD-2026-0011',2026,11,112,1,'2026-05-15 18:36:34',1,'Ordonnance Médicale','en_attente'),(36,'ORD-2026-0012',2026,12,112,1,'2026-05-15 18:48:43',1,'Traitement d\'urgence','termine'),(37,'ORD-2026-0013',2026,13,117,1,'2026-05-15 19:48:45',1,'Traitement d\'urgence','termine'),(38,'ORD-2026-0014',2026,14,117,1,'2026-05-15 19:49:06',1,'Ordonnance d\'Analyses','termine'),(39,'ORD-2026-0015',2026,15,117,1,'2026-05-15 19:49:48',1,'Ordonnance Médicale','en_attente'),(40,'ORD-2026-0016',2026,16,115,19,'2026-05-16 02:33:35',1,'Traitement d\'urgence','en_attente'),(41,'ORD-2026-0017',2026,17,115,19,'2026-05-16 02:37:04',1,'Ordonnance d\'Analyses','en_attente'),(42,'ORD-2026-0018',2026,18,114,19,'2026-05-16 03:06:07',1,'Ordonnance de Radiologie','en_attente'),(43,'ORD-2026-0019',2026,19,118,1,'2026-05-16 09:58:53',1,'Traitement d\'urgence','termine'),(44,'ORD-2026-0020',2026,20,118,1,'2026-05-16 10:08:10',1,'Ordonnance d\'Analyses','termine'),(45,'ORD-2026-0021',2026,21,118,1,'2026-05-16 10:08:48',1,'Ordonnance d\'Analyses','termine'),(46,'ORD-2026-0022',2026,22,118,1,'2026-05-16 10:11:13',1,'Traitement d\'urgence','termine'),(47,'ORD-2026-0023',2026,23,120,1,'2026-05-16 17:39:29',1,'Traitement d\'urgence','termine'),(48,'ORD-2026-0024',2026,24,122,1,'2026-05-16 17:52:26',1,'Traitement d\'urgence','termine'),(49,'ORD-2026-0025',2026,25,122,1,'2026-05-16 18:12:10',1,'Traitement d\'urgence','termine'),(50,'ORD-2026-0026',2026,26,120,1,'2026-05-16 18:15:34',1,'Traitement d\'urgence','termine'),(51,'ORD-2026-0027',2026,27,122,1,'2026-05-16 18:18:00',1,'Traitement d\'urgence','termine'),(52,'ORD-2026-0028',2026,28,120,1,'2026-05-16 18:29:23',1,'Traitement d\'urgence','termine'),(53,'ORD-2026-0029',2026,29,123,1,'2026-05-18 10:13:49',1,'Traitement d\'urgence','termine'),(54,'ORD-2026-0030',2026,30,124,1,'2026-05-18 12:07:12',1,'Traitement d\'urgence','termine'),(55,'ORD-2026-0031',2026,31,124,1,'2026-05-18 12:07:24',1,'Traitement d\'urgence','termine'),(56,'ORD-2026-0032',2026,32,124,1,'2026-05-18 12:09:46',1,'Traitement d\'urgence','termine'),(57,'ORD-2026-0033',2026,33,124,1,'2026-05-18 12:28:24',1,'Traitement d\'urgence','termine'),(58,'ORD-2026-0034',2026,34,123,1,'2026-05-18 12:59:27',1,'Traitement d\'urgence','termine'),(59,'ORD-2026-0035',2026,35,123,1,'2026-05-18 13:12:06',1,'Traitement d\'urgence','termine'),(60,'ORD-2026-0036',2026,36,74,1,'2026-05-18 14:12:23',1,'Traitement d\'urgence','termine'),(61,'ORD-2026-0037',2026,37,74,1,'2026-05-18 14:12:32',1,'Traitement d\'urgence','termine'),(63,'ORD-2026-0038',2026,38,130,1,'2026-05-20 09:43:18',1,'Traitement d\'urgence','termine'),(64,'ORD-2026-0039',2026,39,102,1,'2026-05-20 17:59:32',1,'Traitement d\'urgence','termine'),(65,'ORD-2026-0040',2026,40,102,1,'2026-05-20 18:00:30',1,'Traitement d\'urgence','termine'),(66,'ORD-2026-0041',2026,41,102,1,'2026-05-20 18:00:44',1,'Traitement d\'urgence','termine'),(67,'ORD-2026-0042',2026,42,135,1,'2026-05-22 09:16:35',1,'Traitement d\'urgence','termine'),(68,'ORD-2026-0043',2026,43,135,1,'2026-05-22 09:17:20',1,'Traitement d\'urgence','termine'),(69,'ORD-2026-0044',2026,44,135,1,'2026-05-22 09:29:06',1,'Traitement d\'urgence','termine'),(70,'ORD-2026-0045',2026,45,136,1,'2026-05-22 10:21:54',1,'Traitement d\'urgence','termine'),(71,'ORD-2026-0046',2026,46,136,1,'2026-05-22 10:43:26',1,'Traitement d\'urgence','termine'),(72,'ORD-2026-0047',2026,47,137,1,'2026-05-22 19:53:22',1,'Traitement d\'urgence','en_cours'),(73,'ORD-2026-0048',2026,48,137,1,'2026-05-22 19:56:58',1,'Traitement d\'urgence','en_cours'),(74,'ORD-2026-0049',2026,49,137,1,'2026-05-22 19:57:20',1,'Traitement d\'urgence','en_cours'),(75,'ORD-2026-0050',2026,50,86,1,'2026-05-22 20:27:05',1,'Traitement d\'urgence','en_cours'),(76,'ORD-2026-0051',2026,51,86,1,'2026-05-22 20:28:03',1,'Traitement d\'urgence','en_cours'),(77,'ORD-2026-0052',2026,52,86,1,'2026-05-22 20:30:13',1,'Traitement d\'urgence','en_cours'),(78,'ORD-2026-0053',2026,53,138,1,'2026-05-23 12:45:14',1,'Traitement d\'urgence','termine'),(79,'ORD-2026-0054',2026,54,139,1,'2026-05-23 18:59:25',1,'Traitement d\'urgence','termine'),(80,'ORD-2026-0055',2026,55,139,1,'2026-05-23 19:03:29',1,'Traitement d\'urgence','termine'),(81,'ORD-2026-0056',2026,56,139,1,'2026-05-23 19:06:12',1,'Traitement d\'urgence','termine'),(82,'ORD-2026-0057',2026,57,142,1,'2026-05-23 19:46:37',1,'Traitement d\'urgence','termine'),(83,'ORD-2026-0058',2026,58,142,1,'2026-05-23 19:48:36',1,'Traitement d\'urgence','termine'),(84,'ORD-2026-0059',2026,59,143,1,'2026-05-25 18:17:13',1,'Traitement d\'urgence','termine'),(85,'ORD-2026-0060',2026,60,143,1,'2026-05-25 18:20:30',1,'Traitement d\'urgence','termine'),(86,'ORD-2026-0061',2026,61,144,1,'2026-05-25 19:56:10',1,'Traitement d\'urgence','termine'),(87,'ORD-2026-0062',2026,62,145,19,'2026-05-25 21:11:47',1,'Traitement d\'urgence','en_attente'),(88,'ORD-2026-0063',2026,63,145,19,'2026-05-25 21:16:39',1,'Traitement d\'urgence','en_attente'),(89,'ORD-2026-0064',2026,64,145,19,'2026-05-25 21:18:29',1,'Traitement d\'urgence','en_attente'),(90,'ORD-2026-0065',2026,65,146,1,'2026-05-26 10:15:38',1,'Traitement d\'urgence','termine'),(91,'ORD-2026-0066',2026,66,146,1,'2026-05-26 10:17:05',1,'Traitement d\'urgence','termine'),(92,'ORD-2026-0067',2026,67,149,1,'2026-05-26 16:45:50',1,'Traitement d\'urgence','termine'),(93,'ORD-2026-0068',2026,68,149,1,'2026-05-26 17:49:12',1,'Traitement d\'urgence','termine'),(94,'ORD-2026-0069',2026,69,148,1,'2026-05-26 18:47:21',1,'Traitement d\'urgence','en_attente'),(95,'ORD-2026-0070',2026,70,148,19,'2026-05-26 19:17:50',1,'Traitement d\'urgence','en_attente'),(96,'ORD-2026-0071',2026,71,148,19,'2026-05-28 17:40:36',1,'Traitement d\'urgence','en_attente'),(97,'ORD-2026-0072',2026,72,152,1,'2026-05-29 12:41:13',1,'Traitement d\'urgence','en_attente');
+/*!40000 ALTER TABLE `ordonnanceref` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ordonnances`
+--
+
+DROP TABLE IF EXISTS `ordonnances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ordonnances` (
+  `IDOrdonnances` int NOT NULL AUTO_INCREMENT,
+  `Libelle` mediumtext,
+  `DtPrescription` datetime DEFAULT NULL,
+  `fkidrefOrd` int DEFAULT NULL,
+  `NumordreOrd` int DEFAULT NULL,
+  `Utilisation` varchar(45) DEFAULT NULL,
+  `Quantite` smallint unsigned NOT NULL DEFAULT '1',
+  `estInterne` tinyint(1) NOT NULL DEFAULT '0',
+  `fkiduser` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`IDOrdonnances`),
+  KEY `Index_2` (`fkidrefOrd`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=269 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordonnances`
+--
+
+LOCK TABLES `ordonnances` WRITE;
+/*!40000 ALTER TABLE `ordonnances` DISABLE KEYS */;
+INSERT INTO `ordonnances` VALUES (15,'Doliprane 500mg','2025-11-11 21:08:46',14,1,'1 cp /j',1,0,1),(16,'Perfalgan 1g','2025-11-21 19:08:26',15,1,'11',1,0,11),(17,'Perfalgan 1g','2025-11-22 18:24:38',16,1,'1 cp matin/midi/soir',1,0,1),(18,'Tramagene ','2025-11-22 19:33:19',17,1,'11',1,0,11),(19,'Perfalgan 1g','2026-04-14 19:25:46',18,1,'',1,0,1),(20,'Perfalgan 1g','2026-04-14 19:54:35',19,1,'',1,0,1),(21,'Acupan','2026-04-15 02:39:26',20,1,'',1,1,1),(22,'NFS','2026-04-15 02:39:46',21,1,'',1,1,1),(23,'glycemie a jeun','2026-04-15 02:39:46',21,2,'',1,1,1),(24,'Perfalgan 1g','2026-04-15 02:50:57',22,1,'',1,1,1),(25,'SSI','2026-04-15 02:50:57',22,2,'',1,1,1),(26,'Acupan','2026-04-15 20:54:51',23,1,'1 ampoule ',1,1,1),(31,'NFS','2026-05-14 16:10:42',30,1,'',1,1,1),(32,'CRP','2026-05-14 16:10:42',30,2,'',1,1,1),(33,'PCT','2026-05-14 16:10:42',30,3,'',1,1,1),(34,'Salbutamol','2026-05-14 16:19:34',31,1,'3',1,1,1),(35,'Dexa','2026-05-14 16:19:34',31,2,'',1,1,1),(36,'Augmentin','2026-05-14 16:19:34',31,3,'',1,1,1),(37,'SSI','2026-05-14 16:19:34',31,4,'',1,1,1),(38,'Seringue','2026-05-14 16:19:34',31,5,'',1,1,1),(39,'Seringue','2026-05-14 16:19:34',31,6,'',1,1,1),(40,'INTRANIL','2026-05-14 16:19:34',31,7,'',1,1,1),(41,'Perfose','2026-05-14 16:19:34',31,8,'',1,1,1),(42,'Augmentin','2026-05-15 02:42:56',32,1,'',1,1,19),(43,'SSI','2026-05-15 02:42:56',32,2,'',1,1,19),(44,'Dexa','2026-05-15 18:33:52',33,1,'UNE AMPOULE',1,1,1),(45,'Augmentin','2026-05-15 18:33:52',33,2,'1 g',1,1,1),(46,'Salbutamol','2026-05-15 18:33:52',33,3,'3 nebulisation a 20 min d\'intervalle',1,1,1),(47,'SSI','2026-05-15 18:33:52',33,4,'un flacon sur 30 min',1,1,1),(48,'Kit Voie','2026-05-15 18:33:52',33,5,'',1,1,1),(49,'clavor 1g','2026-05-15 18:36:34',34,1,'un sachet *3 /j',1,0,1),(50,'exomuc','2026-05-15 18:36:34',34,2,'un sachet *3/j',1,0,1),(51,'Salbutamol','2026-05-15 18:48:43',36,1,'',1,1,1),(52,'Salbutamol','2026-05-15 18:48:43',36,2,'',1,1,1),(53,'perfalgan','2026-05-15 19:48:45',37,1,'1G',1,1,1),(54,'Kit Voie','2026-05-15 19:48:45',37,2,'',1,1,1),(55,'NFS','2026-05-15 19:49:06',38,1,'',1,1,1),(56,'Doliprane 1g','2026-05-15 19:49:48',39,1,'un comprime *3/J',1,0,1),(57,'Augmentin','2026-05-16 02:33:35',40,1,'',1,1,19),(58,'Acupan','2026-05-16 02:33:35',40,2,'',1,1,19),(59,'NFS','2026-05-16 02:37:04',41,1,'',1,1,19),(60,'TDM thoracique','2026-05-16 03:06:07',42,1,'TDM \nThoracique',1,0,19),(61,'Oméprazole','2026-05-16 09:58:53',43,1,'',1,1,1),(62,'Kit Voie','2026-05-16 09:58:53',43,2,'',1,1,1),(63,'perfalgan','2026-05-16 09:58:53',43,3,'1g',1,1,1),(64,'Dislep','2026-05-16 09:58:53',43,4,'une ampoule',1,1,1),(65,'Spasfon','2026-05-16 09:58:53',43,5,'2 ampoules',1,1,1),(66,'écho abdominale','2026-05-16 10:08:10',44,1,'coliques hepatiques?',1,1,1),(67,'écho abdominale','2026-05-16 10:08:48',45,1,'coliques hépatiques',1,1,1),(68,'Spasfon','2026-05-16 10:11:13',46,1,'',1,1,1),(69,'perfalgan','2026-05-16 17:39:29',47,1,'',1,1,1),(70,'Kit Voie','2026-05-16 17:39:29',47,2,'',1,1,1),(71,'Dexa','2026-05-16 17:39:29',47,3,'',2,1,1),(72,'Claforan','2026-05-16 17:39:29',47,4,'',1,1,1),(73,'Acupan','2026-05-16 17:39:29',47,5,'',1,1,1),(74,'perfalgan','2026-05-16 17:52:26',48,1,'300mg',1,1,1),(75,'Dexa','2026-05-16 17:52:26',48,2,'une demie ampoules',1,1,1),(76,'Duoclav','2026-05-16 17:52:26',48,3,'500mg',1,1,1),(77,'perfalgan','2026-05-16 18:12:10',49,1,'300mg',1,1,1),(78,'Kit Voie','2026-05-16 18:12:10',49,2,'',1,1,1),(79,'Dexa','2026-05-16 18:12:10',49,3,'',1,1,1),(80,'Duoclav','2026-05-16 18:12:10',49,4,'500mg',1,1,1),(81,'Claforan','2026-05-16 18:15:34',50,1,'',1,1,1),(82,'perfalgan','2026-05-16 18:15:34',50,2,'1g',1,1,1),(83,'Kit Voie','2026-05-16 18:15:34',50,3,'',1,1,1),(84,'Dexa','2026-05-16 18:15:34',50,4,'',2,1,1),(85,'Acupan','2026-05-16 18:15:34',50,5,'',1,1,1),(86,'perfalgan','2026-05-16 18:18:00',51,1,'500mg',1,1,1),(87,'Dexa','2026-05-16 18:18:00',51,2,'',1,1,1),(88,'Kit Voie','2026-05-16 18:18:00',51,3,'',1,1,1),(89,'Duoclav','2026-05-16 18:18:00',51,4,'',1,1,1),(90,'Dislep','2026-05-16 18:29:23',52,1,'',1,1,1),(91,'SSI','2026-05-18 10:13:49',53,1,'',1,1,1),(92,'Dexa','2026-05-18 10:13:49',53,2,'',2,1,1),(93,'Duoclav','2026-05-18 10:13:49',53,3,'',2,1,1),(94,'SG 5%','2026-05-18 10:13:49',53,4,'',1,1,1),(95,'NACL','2026-05-18 10:13:49',53,5,'',2,1,1),(96,'KCL','2026-05-18 10:13:49',53,6,'',1,1,1),(97,'calcium','2026-05-18 10:13:49',53,7,'',2,1,1),(98,'hpv','2026-05-18 10:13:49',53,8,'',1,1,1),(99,'vitamine D 200 000 IM','2026-05-18 10:13:49',53,9,'',1,1,1),(100,'Kit Voie','2026-05-18 10:13:49',53,10,'',1,1,1),(101,'Seringue','2026-05-18 10:13:49',53,11,'',1,1,1),(102,'Dexa','2026-05-18 12:07:12',54,1,'',2,1,1),(103,'vitamine D 200 000 IM','2026-05-18 12:07:24',55,1,'',1,1,1),(104,'Seringue','2026-05-18 12:09:46',56,1,'',1,1,1),(105,'Seringue','2026-05-18 12:28:24',57,1,'',1,1,1),(106,'loxen','2026-05-18 12:59:27',58,1,'',1,1,1),(107,'SSI','2026-05-18 13:12:06',59,1,'',1,1,1),(108,'Dexa','2026-05-18 13:12:06',59,2,'',2,1,1),(109,'Duoclav','2026-05-18 13:12:06',59,3,'',2,1,1),(110,'SG 5%','2026-05-18 13:12:06',59,4,'',1,1,1),(111,'NACL','2026-05-18 13:12:06',59,5,'',2,1,1),(112,'KCL','2026-05-18 13:12:06',59,6,'',1,1,1),(113,'calcium','2026-05-18 13:12:06',59,7,'',2,1,1),(114,'hpv','2026-05-18 13:12:06',59,8,'',1,1,1),(115,'vitamine D 200 000 IM','2026-05-18 13:12:06',59,9,'',1,1,1),(116,'Kit Voie','2026-05-18 13:12:06',59,10,'',1,1,1),(117,'Seringue','2026-05-18 13:12:06',59,11,'',3,1,1),(118,'loxen','2026-05-18 13:12:06',59,12,'',1,1,1),(119,'Dexa','2026-05-18 14:12:23',60,1,'',1,1,1),(120,'Seringue','2026-05-18 14:12:32',61,1,'',1,1,1),(123,'vitamine D 200 000 IM','2026-05-20 09:43:18',63,1,'',1,1,1),(124,'Seringue 10CC','2026-05-20 09:43:18',63,2,'',1,1,1),(125,'fer','2026-05-20 17:59:32',64,1,'',1,1,1),(126,'Kit Voie','2026-05-20 17:59:32',64,2,'',1,1,1),(127,'hpv','2026-05-20 17:59:32',64,3,'',1,1,1),(128,'SG 5%','2026-05-20 18:00:30',65,1,'',1,1,1),(129,'NACL','2026-05-20 18:00:30',65,2,'',1,1,1),(130,'KCL','2026-05-20 18:00:30',65,3,'',1,1,1),(131,'calcium','2026-05-20 18:00:30',65,4,'',1,1,1),(132,'SSI','2026-05-20 18:00:30',65,5,'',1,1,1),(133,'NACL','2026-05-20 18:00:44',66,1,'',1,1,1),(134,'Duoclav','2026-05-22 09:16:35',67,1,'500mg',1,1,1),(135,'Dexa','2026-05-22 09:16:35',67,2,'4mg',1,1,1),(136,'Salbutamol','2026-05-22 09:17:20',68,1,'',3,1,1),(137,'perfalgan','2026-05-22 09:29:06',69,1,'500mg',1,1,1),(138,'Kit Voie','2026-05-22 09:29:06',69,2,'',1,1,1),(139,'fer','2026-05-22 10:21:54',70,1,'',1,1,1),(140,'Kit Voie','2026-05-22 10:21:54',70,2,'',1,1,1),(141,'SSI','2026-05-22 10:21:54',70,3,'',1,1,1),(142,'SG 5%','2026-05-22 10:21:54',70,4,'',1,1,1),(143,'NACL','2026-05-22 10:21:54',70,5,'',1,1,1),(144,'KCL','2026-05-22 10:21:54',70,6,'',1,1,1),(145,'calcium','2026-05-22 10:21:54',70,7,'',1,1,1),(146,'hpv','2026-05-22 10:21:54',70,8,'',1,1,1),(147,'vitamine D 200 000 IM','2026-05-22 10:21:54',70,9,'',1,1,1),(148,'Oméprazole','2026-05-22 10:43:26',71,1,'',1,1,1),(149,'Dislep','2026-05-22 10:43:26',71,2,'',1,1,1),(150,'Dexa','2026-05-22 10:43:26',71,3,'',2,1,1),(151,'Seringue 5CC','2026-05-22 10:43:26',71,4,'',3,1,1),(152,'perfalgan','2026-05-22 19:53:22',72,1,'',1,1,1),(153,'Kit Voie','2026-05-22 19:53:22',72,2,'',1,1,1),(154,'Oméprazole','2026-05-22 19:53:22',72,3,'',1,1,1),(155,'SSI','2026-05-22 19:53:22',72,4,'',1,1,1),(156,'hpv','2026-05-22 19:53:22',72,5,'',1,1,1),(157,'diazépam','2026-05-22 19:56:58',73,1,'',1,1,1),(158,'Seringue 5CC','2026-05-22 19:56:58',73,2,'',2,1,1),(159,'vitamine D 200 000 IM','2026-05-22 19:57:20',74,1,'',1,1,1),(160,'SSI','2026-05-22 20:27:05',75,1,'',1,1,1),(161,'SG 5%','2026-05-22 20:27:05',75,2,'',1,1,1),(162,'NACL','2026-05-22 20:27:05',75,3,'',2,1,1),(163,'KCL','2026-05-22 20:27:05',75,4,'',1,1,1),(164,'calcium','2026-05-22 20:27:05',75,5,'',1,1,1),(165,'hpv','2026-05-22 20:27:05',75,6,'',1,1,1),(166,'Dislep','2026-05-22 20:27:05',75,7,'',1,1,1),(167,'Oméprazole','2026-05-22 20:27:05',75,8,'',1,1,1),(168,'perfalgan','2026-05-22 20:27:05',75,9,'',1,1,1),(169,'Kit Voie','2026-05-22 20:27:05',75,10,'',1,1,1),(170,'Seringue 5CC','2026-05-22 20:27:05',75,11,'',3,1,1),(171,'Ringer lactate','2026-05-22 20:28:03',76,1,'',1,1,1),(172,'Ringer lactate','2026-05-22 20:30:13',77,1,'',1,1,1),(173,'perfalgan','2026-05-23 12:45:14',78,1,'500mg',1,1,1),(174,'Dexa','2026-05-23 12:45:14',78,2,'',1,1,1),(175,'Salbutamol','2026-05-23 12:45:14',78,3,'',1,1,1),(176,'Salbutamol','2026-05-23 12:45:14',78,4,'',1,1,1),(177,'Salbutamol','2026-05-23 12:45:14',78,5,'',1,1,1),(178,'Kit Voie','2026-05-23 12:45:14',78,6,'',1,1,1),(179,'Seringue 5CC','2026-05-23 12:45:14',78,7,'',3,1,1),(180,'Claforan','2026-05-23 12:45:14',78,8,'',1,1,1),(181,'SG 5%','2026-05-23 12:45:14',78,9,'',1,1,1),(182,'NACL','2026-05-23 12:45:14',78,10,'',1,1,1),(183,'KCL','2026-05-23 12:45:14',78,11,'',1,1,1),(184,'calcium','2026-05-23 12:45:14',78,12,'',1,1,1),(185,'SSI','2026-05-23 12:45:14',78,13,'',1,1,1),(186,'fer','2026-05-23 12:45:14',78,14,'',1,1,1),(187,'Dislep','2026-05-23 12:45:14',78,15,'',1,1,1),(188,'KCL','2026-05-23 18:59:25',79,1,'',1,1,1),(189,'perfalgan','2026-05-23 19:03:30',80,1,'',1,1,1),(190,'Acupan','2026-05-23 19:03:30',80,2,'',1,1,1),(191,'Dexa','2026-05-23 19:03:30',80,3,'',1,1,1),(192,'Dexa','2026-05-23 19:03:30',80,4,'',1,1,1),(193,'SG 5%','2026-05-23 19:03:30',80,5,'',1,1,1),(194,'NACL','2026-05-23 19:03:30',80,6,'',1,1,1),(195,'NACL','2026-05-23 19:03:30',80,7,'',1,1,1),(196,'calcium','2026-05-23 19:03:30',80,8,'',1,1,1),(197,'hpv','2026-05-23 19:03:30',80,9,'',1,1,1),(198,'vitamine D 200 000 IM','2026-05-23 19:03:30',80,10,'',1,1,1),(199,'Kit Voie','2026-05-23 19:03:30',80,11,'',1,1,1),(200,'Seringue 10CC','2026-05-23 19:03:30',80,12,'',3,1,1),(201,'calcium','2026-05-23 19:06:12',81,1,'',1,1,1),(202,'Claforan','2026-05-23 19:46:37',82,1,'',1,1,1),(203,'Salbutamol','2026-05-23 19:46:37',82,2,'',1,1,1),(204,'Dexa','2026-05-23 19:46:37',82,3,'',1,1,1),(205,'Dexa','2026-05-23 19:46:37',82,4,'',1,1,1),(206,'Kit Voie','2026-05-23 19:46:37',82,5,'',1,1,1),(207,'Seringue 5CC','2026-05-23 19:46:37',82,6,'',2,1,1),(208,'Oméprazole','2026-05-23 19:48:36',83,1,'',1,1,1),(209,'perfalgan','2026-05-25 18:17:13',84,1,'',1,1,1),(210,'Kit Voie','2026-05-25 18:17:13',84,2,'',1,1,1),(211,'Metronidazole','2026-05-25 18:17:13',84,3,'',1,1,1),(212,'Oméprazole','2026-05-25 18:17:13',84,4,'',1,1,1),(213,'Dislep','2026-05-25 18:17:13',84,5,'',1,1,1),(214,'Acupan','2026-05-25 18:17:13',84,6,'',1,1,1),(215,'SG 5%','2026-05-25 18:17:13',84,7,'',1,1,1),(216,'NACL','2026-05-25 18:17:13',84,8,'',1,1,1),(217,'NACL','2026-05-25 18:17:13',84,9,'',1,1,1),(218,'KCL','2026-05-25 18:17:13',84,10,'',1,1,1),(219,'calcium','2026-05-25 18:17:13',84,11,'',1,1,1),(220,'hpv','2026-05-25 18:17:13',84,12,'',1,1,1),(221,'Seringue 5CC','2026-05-25 18:17:13',84,13,'',5,1,1),(222,'SSI','2026-05-25 18:20:30',85,1,'',1,1,1),(223,'perfalgan','2026-05-25 19:56:10',86,1,'',1,1,1),(224,'Dexa','2026-05-25 19:56:10',86,2,'',1,1,1),(225,'Kit Voie','2026-05-25 19:56:10',86,3,'',1,1,1),(226,'Seringue 5CC','2026-05-25 19:56:10',86,4,'',1,1,1),(227,'Ringer lactate','2026-05-25 21:11:47',87,1,'',1,1,19),(228,'Kit Voie','2026-05-25 21:11:47',87,2,'',1,1,19),(229,'Seringue 10CC','2026-05-25 21:16:39',88,1,'',1,1,19),(230,'SSI','2026-05-25 21:16:39',88,2,'',1,1,19),(231,'Ringer lactate','2026-05-25 21:18:29',89,1,'',1,1,19),(232,'Kit Voie','2026-05-25 21:18:29',89,2,'',1,1,19),(233,'Seringue 10CC','2026-05-25 21:18:29',89,3,'',1,1,19),(234,'SSI','2026-05-25 21:18:29',89,4,'',1,1,19),(235,'perfalgan','2026-05-26 10:15:38',90,1,'',1,1,1),(236,'Kit Voie','2026-05-26 10:15:38',90,2,'',1,1,1),(237,'Acupan','2026-05-26 10:15:38',90,3,'',1,1,1),(238,'Profenid','2026-05-26 10:15:38',90,4,'',1,1,1),(239,'Oméprazole','2026-05-26 10:15:38',90,5,'',1,1,1),(240,'Dislep','2026-05-26 10:15:38',90,6,'',1,1,1),(241,'SG 5%','2026-05-26 10:15:38',90,7,'',1,1,1),(242,'NACL','2026-05-26 10:15:38',90,8,'',1,1,1),(243,'KCL','2026-05-26 10:15:38',90,9,'',1,1,1),(244,'calcium','2026-05-26 10:15:38',90,10,'',1,1,1),(245,'hpv','2026-05-26 10:15:38',90,11,'',1,1,1),(246,'Seringue 5CC','2026-05-26 10:15:38',90,12,'',3,1,1),(247,'NACL','2026-05-26 10:17:05',91,1,'',1,1,1),(248,'Oméprazole','2026-05-26 16:45:50',92,1,'',1,1,1),(249,'Dislep','2026-05-26 16:45:50',92,2,'',1,1,1),(250,'perfalgan','2026-05-26 16:45:50',92,3,'',1,1,1),(251,'Acupan','2026-05-26 16:45:50',92,4,'',1,1,1),(252,'Profenid','2026-05-26 16:45:50',92,5,'',1,1,1),(253,'SSI','2026-05-26 16:45:50',92,6,'',1,1,1),(254,'Spasfon','2026-05-26 16:45:50',92,7,'',1,1,1),(255,'Spasfon','2026-05-26 16:45:50',92,8,'',1,1,1),(256,'Kit Voie','2026-05-26 16:45:50',92,9,'',1,1,1),(257,'Seringue 10CC','2026-05-26 16:45:50',92,10,'',3,1,1),(258,'Ciprofloxacine','2026-05-26 17:49:12',93,1,'',1,1,1),(259,'Pansement chirurgie plastique','2026-05-26 18:47:21',94,1,'',1,1,1),(260,'Pansement chirurgie plastique','2026-05-26 19:17:50',95,1,'',1,1,19),(261,'Pansement chirurgie plastique','2026-05-28 17:40:36',96,1,'',1,1,19),(262,'bricanyl','2026-05-29 12:41:13',97,1,'',1,1,1),(263,'bricanyl','2026-05-29 12:41:13',97,2,'',1,1,1),(264,'bricanyl','2026-05-29 12:41:13',97,3,'',1,1,1),(265,'Dexa','2026-05-29 12:41:13',97,4,'',1,1,1),(266,'Claforan','2026-05-29 12:41:13',97,5,'',1,1,1),(267,'Kit Voie','2026-05-29 12:41:13',97,6,'',1,1,1),(268,'Seringue 5CC','2026-05-29 12:41:13',97,7,'',3,1,1);
+/*!40000 ALTER TABLE `ordonnances` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `password_resets` (
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  KEY `password_resets_email_index` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+LOCK TABLES `password_resets` WRITE;
+/*!40000 ALTER TABLE `password_resets` DISABLE KEYS */;
+/*!40000 ALTER TABLE `password_resets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pathologies`
+--
+
+DROP TABLE IF EXISTS `pathologies`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pathologies` (
+  `idPathologies` int unsigned NOT NULL AUTO_INCREMENT,
+  `Pathologie` varchar(245) NOT NULL DEFAULT '',
+  PRIMARY KEY (`idPathologies`),
+  KEY `Index_2` (`Pathologie`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pathologies`
+--
+
+LOCK TABLES `pathologies` WRITE;
+/*!40000 ALTER TABLE `pathologies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pathologies` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `patients`
+--
+
+DROP TABLE IF EXISTS `patients`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `patients` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Prenom` varchar(255) DEFAULT NULL,
+  `Nom` varchar(255) CHARACTER SET cp1256 COLLATE cp1256_general_ci DEFAULT NULL,
+  `NNI` varchar(255) DEFAULT NULL,
+  `DtNaissance` datetime DEFAULT NULL,
+  `Genre` varchar(255) DEFAULT NULL,
+  `IdentifiantAssurance` varchar(255) DEFAULT NULL,
+  `Assureur` int NOT NULL DEFAULT '1',
+  `Telephone1` varchar(255) DEFAULT NULL,
+  `Telephone2` varchar(255) DEFAULT NULL,
+  `MatriculeFonct` varchar(255) DEFAULT NULL,
+  `NomContact` varchar(243) DEFAULT NULL,
+  `ClasserSous` varchar(243) DEFAULT NULL,
+  `choix` bit(1) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `IdentifiantPatient` double NOT NULL DEFAULT '0',
+  `Dtajout` datetime DEFAULT NULL,
+  `fkidUser` int unsigned DEFAULT NULL,
+  `Adresse` varchar(245) DEFAULT NULL,
+  `DerniereDtOper` datetime DEFAULT NULL,
+  `DernDossierFermer` int unsigned NOT NULL DEFAULT '0',
+  `DtDernFermeture` datetime DEFAULT NULL,
+  `fkidtypeTiers` int unsigned NOT NULL DEFAULT '1',
+  `DtDernierRDV` datetime DEFAULT NULL,
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`ID`),
+  KEY `Index_2` (`NomContact`),
+  KEY `Index_3` (`Assureur`),
+  KEY `Index_4` (`Telephone2`),
+  KEY `Index_5` (`Telephone1`),
+  KEY `Index_6` (`IdentifiantPatient`),
+  KEY `Index_7` (`fkidtypeTiers`),
+  KEY `Index_8` (`DtDernierRDV`),
+  KEY `Index_9` (`DerniereDtOper`),
+  KEY `Index_10` (`Nom`)
+) ENGINE=InnoDB AUTO_INCREMENT=155 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `patients`
+--
+
+LOCK TABLES `patients` WRITE;
+/*!40000 ALTER TABLE `patients` DISABLE KEYS */;
+INSERT INTO `patients` VALUES (7,'Aicha Guewar','Aicha Guewar',NULL,'1999-12-22 00:00:00','F','',1,'36323243',NULL,'','Aicha Guewar','',_binary '\0',NULL,1,'2026-05-06 17:12:32',19,NULL,NULL,0,NULL,1,NULL,1),(8,'Amal Bchiri','Amal Bchiri',NULL,'2009-09-07 00:00:00','F','',1,'20929936',NULL,'','Amal Bchiri','',_binary '\0',NULL,2,'2026-05-06 17:13:18',19,NULL,NULL,0,NULL,1,NULL,1),(9,'Aicha Hamed','Aicha Hamed',NULL,'1995-01-01 00:00:00','F','',1,'36130606',NULL,'','Aicha Hamed','',_binary '\0',NULL,3,'2026-05-06 17:14:10',19,NULL,NULL,0,NULL,1,NULL,1),(10,'Adama Diallo','Adama Diallo',NULL,'2025-10-10 00:00:00','H','',1,'46883381',NULL,'','Adama Diallo','',_binary '\0',NULL,4,'2026-05-06 17:16:12',19,NULL,NULL,0,NULL,1,NULL,1),(11,'Assiya Soumaré','Assiya Soumaré',NULL,'1979-02-09 00:00:00','F','',1,'41161711',NULL,'','Assiya Soumaré','',_binary '\0',NULL,5,'2026-05-06 17:17:03',19,NULL,NULL,0,NULL,1,NULL,1),(12,'Aminetou Sy','Aminetou Sy',NULL,'1994-11-01 00:00:00','F','',1,'48379131',NULL,'','Aminetou Sy','',_binary '\0',NULL,6,'2026-05-06 17:17:43',19,NULL,NULL,0,NULL,1,NULL,1),(13,'Amadou Dia','Amadou Dia',NULL,'1991-07-25 00:00:00','H','',1,'49598308',NULL,'','Amadou Dia','',_binary '\0',NULL,7,'2026-05-06 17:18:29',19,NULL,NULL,0,NULL,1,NULL,1),(14,'Abaybac Aminatou','Abaybac Aminatou',NULL,'1940-01-01 00:00:00','F','',1,'49858502',NULL,'','Abaybac Aminatou','',_binary '\0',NULL,8,'2026-05-06 17:19:08',19,NULL,NULL,0,NULL,1,NULL,1),(15,'Amadou Abou Wane','Amadou Abou Wane',NULL,'1995-08-20 00:00:00','H','',1,'41904529',NULL,'','Amadou Abou Wane','',_binary '\0',NULL,9,'2026-05-06 17:19:56',19,NULL,NULL,0,NULL,1,NULL,1),(16,'Abdullah Sidibe','Abdullah Sidibe',NULL,'2013-08-06 00:00:00','H','',1,'47375007',NULL,'','Abdullah Sidibe','',_binary '\0',NULL,10,'2026-05-06 17:20:34',19,NULL,NULL,0,NULL,1,NULL,1),(17,'Hamed Mohamed','Hamed Mohamed',NULL,'1985-01-01 00:00:00','H','',1,'37744444',NULL,'','Hamed Mohamed','',_binary '\0',NULL,11,'2026-05-06 17:21:13',19,NULL,NULL,0,NULL,1,NULL,1),(18,'Khadija Abderrahmane','Khadija Abderrahmane',NULL,'2000-04-20 00:00:00','F','',1,'38332995',NULL,'','Khadija Abderrahmane','',_binary '\0',NULL,12,'2026-05-06 17:22:16',19,NULL,NULL,0,NULL,1,NULL,1),(19,'Ahmed Mohamed','Ahmed Mohamed',NULL,'1951-01-01 00:00:00','H','',1,'36313371',NULL,'','Ahmed Mohamed','',_binary '\0',NULL,13,'2026-05-06 17:23:03',19,NULL,NULL,0,NULL,1,NULL,1),(20,'Mbouombouo Abilou Ndam','Mbouombouo Abilou Ndam',NULL,'1998-09-10 00:00:00','H','',1,'34374890',NULL,'','Mbouombouo Abilou Ndam','',_binary '\0',NULL,14,'2026-05-06 17:24:08',19,NULL,NULL,0,NULL,1,NULL,1),(21,'AbdelKader Chourabi','AbdelKader Chourabi',NULL,'1988-05-23 00:00:00','H','',1,'27995983',NULL,'','AbdelKader Chourabi','',_binary '\0',NULL,15,'2026-05-06 17:24:55',19,NULL,NULL,0,NULL,1,NULL,1),(22,'Amina Dupon','Amina Dupon',NULL,'2014-03-28 00:00:00','F','',1,'34923864',NULL,'','Amina Dupon','',_binary '\0',NULL,16,'2026-05-06 17:28:28',19,NULL,NULL,0,NULL,1,NULL,1),(23,'Binta Dem','Binta Dem',NULL,'2023-05-27 00:00:00','F','',1,'49211591',NULL,'','Binta Dem','',_binary '\0',NULL,17,'2026-05-06 17:30:54',19,NULL,NULL,0,NULL,1,NULL,1),(24,'Barlabet Mohamed','Barlabet Mohamed',NULL,'1988-01-01 00:00:00','H','',1,'34784333',NULL,'','Barlabet Mohamed','',_binary '\0',NULL,18,'2026-05-06 17:31:59',19,NULL,NULL,0,NULL,1,NULL,1),(25,'Bellah Sidi Elamine','Bellah Sidi Elamine',NULL,'2025-08-11 00:00:00','H','',1,'38690016',NULL,'','Bellah Sidi Elamine','',_binary '\0',NULL,19,'2026-05-06 17:32:50',19,NULL,NULL,0,NULL,1,NULL,1),(26,'Billal Ouheyny','Billal Ouheyny',NULL,'1959-05-04 00:00:00','H','',1,'44886767',NULL,'','Billal Ouheyny','',_binary '\0',NULL,20,'2026-05-06 17:33:49',19,NULL,NULL,0,NULL,1,NULL,1),(27,'Chakib Mekadmini','Chakib Mekadmini',NULL,'1970-01-08 00:00:00','H','',1,'36144614',NULL,'','Chakib Mekadmini','',_binary '\0',NULL,21,'2026-05-06 17:38:12',19,NULL,NULL,0,NULL,1,NULL,1),(28,'Chourouk Touili','Chourouk Touili',NULL,'1990-08-14 00:00:00','F','',1,'30717175',NULL,'','Chourouk Touili','',_binary '\0',NULL,22,'2026-05-06 17:39:08',19,NULL,NULL,0,NULL,1,NULL,1),(29,'Dema Abdelmejide','Dema Abdelmejide',NULL,'1985-12-30 00:00:00','F','',1,'22012222',NULL,'','Dema Abdelmejide','',_binary '\0',NULL,23,'2026-05-06 17:41:04',19,NULL,NULL,0,NULL,1,NULL,1),(30,'Donia Mheimed','Donia Mheimed',NULL,'1985-01-01 00:00:00','F','',1,'46206720',NULL,'','Donia Mheimed','',_binary '\0',NULL,24,'2026-05-06 17:41:48',19,NULL,NULL,0,NULL,1,NULL,1),(31,'Djeinaba Sagnia','Djeinaba Sagnia',NULL,'1985-01-01 00:00:00','F','',1,'42837374',NULL,'','Djeinaba Sagnia','',_binary '\0',NULL,25,'2026-05-06 17:45:39',19,NULL,NULL,0,NULL,1,NULL,1),(32,'Elhichri Roued','Elhichri Roued',NULL,'2011-07-12 00:00:00','H','',1,'34161695',NULL,'','Elhichri Roued','',_binary '\0',NULL,26,'2026-05-06 17:47:39',19,NULL,NULL,0,NULL,1,NULL,1),(33,'Ezza Hamadi','Ezza Hamadi',NULL,'2016-05-28 00:00:00','F','',1,'41414466',NULL,'','Ezza Hamadi','',_binary '\0',NULL,27,'2026-05-06 17:48:13',19,NULL,NULL,0,NULL,1,NULL,1),(34,'Elhoussein Mohamed Etweil','Elhoussein Mohamed Etweil',NULL,'1970-03-03 00:00:00','H','',1,'44220165',NULL,'','Elhoussein Mohamed Etweil','',_binary '\0',NULL,28,'2026-05-06 17:49:01',19,NULL,NULL,0,NULL,1,NULL,1),(35,'Ely Samba','Ely Samba',NULL,'1993-01-01 00:00:00','H','',1,'38442031',NULL,'','Ely Samba','',_binary '\0',NULL,29,'2026-05-06 17:49:47',19,NULL,NULL,0,NULL,1,NULL,1),(36,'El Ghalia Ahmed Salem','El Ghalia Ahmed Salem',NULL,'1969-01-01 00:00:00','F','',1,'38212089',NULL,'','El Ghalia Ahmed Salem','',_binary '\0',NULL,30,'2026-05-06 17:50:52',19,NULL,NULL,0,NULL,1,NULL,1),(37,'Ely Mohamed El Moctar','Ely Mohamed El Moctar',NULL,'2001-01-01 00:00:00','H','',1,'31618446',NULL,'','Ely Mohamed El Moctar','',_binary '\0',NULL,31,'2026-05-06 17:51:34',19,NULL,NULL,0,NULL,1,NULL,1),(38,'Errouhi Hind','Errouhi Hind',NULL,'1981-04-23 00:00:00','F','',1,'27666666',NULL,'','Errouhi Hind','',_binary '\0',NULL,32,'2026-05-06 17:52:09',19,NULL,NULL,0,NULL,1,NULL,1),(39,'Elodie Babah','Elodie Babah',NULL,'1990-08-21 00:00:00','F','',1,'22737329',NULL,'','Elodie Babah','',_binary '\0',NULL,33,'2026-05-06 17:53:01',19,NULL,NULL,0,NULL,1,NULL,1),(40,'Esmaou Moctar Mbaba','Esmaou Moctar Mbaba',NULL,'1991-10-26 00:00:00','F','',1,'49023713',NULL,'','Esmaou Moctar Mbaba','',_binary '\0',NULL,34,'2026-05-06 17:53:47',19,NULL,NULL,0,NULL,1,NULL,1),(41,'Ely Salek','Ely Salek',NULL,'1974-01-01 00:00:00','H','',1,'36709950',NULL,'','Ely Salek','',_binary '\0',NULL,35,'2026-05-06 17:54:16',19,NULL,NULL,0,NULL,1,NULL,1),(42,'Elhafede Benou','Elhafede Benou',NULL,'1996-01-01 00:00:00','H','',1,'36763336',NULL,'','Elhafede Benou','',_binary '\0',NULL,36,'2026-05-06 17:54:56',19,NULL,NULL,0,NULL,1,NULL,1),(43,'Eze Mktave','Eze Mktave',NULL,'1991-12-29 00:00:00','F','',1,'36260909',NULL,'','Eze Mktave','',_binary '\0',NULL,37,'2026-05-06 17:57:34',19,NULL,NULL,0,NULL,1,NULL,1),(44,'Fatima Ezzahra Elemine','Fatima Ezzahra Elemine',NULL,'2024-10-14 00:00:00','F','',1,'32203248',NULL,'','Fatima Ezzahra Elemine','',_binary '\0',NULL,38,'2026-05-06 17:58:52',19,NULL,NULL,0,NULL,1,NULL,1),(45,'Fatima Abba','Fatima Abba',NULL,'1988-02-19 00:00:00','F','',1,'36636966',NULL,'','Fatima Abba','',_binary '\0',NULL,39,'2026-05-06 17:59:34',19,NULL,NULL,0,NULL,1,NULL,1),(47,'Fouze Hadouch','Fouze Hadouch',NULL,'1989-01-01 00:00:00','F','',1,'46077445',NULL,'','Fouze Hadouch','',_binary '\0',NULL,40,'2026-05-06 18:02:15',19,NULL,NULL,0,NULL,1,NULL,1),(48,'Fatimattou Babe','Fatimattou Babe',NULL,'2016-06-23 00:00:00','F','',1,'37399662',NULL,'','Fatimattou Babe','',_binary '\0',NULL,41,'2026-05-06 18:03:12',19,NULL,NULL,0,NULL,1,NULL,1),(49,'Faouzi Abidi','Faouzi Abidi',NULL,'1990-07-10 00:00:00','H','',1,'+216 58709331',NULL,'','Faouzi Abidi','',_binary '\0',NULL,42,'2026-05-06 18:04:08',19,NULL,NULL,0,NULL,1,NULL,1),(50,'Fanta Sokhana','Fanta Sokhana',NULL,'2011-01-01 00:00:00','F','',1,'48195265',NULL,'','Fanta Sokhana','',_binary '\0',NULL,43,'2026-05-06 18:05:48',19,NULL,NULL,0,NULL,1,NULL,1),(51,'Fanta Hattar','Fanta Hattar',NULL,'1988-01-01 00:00:00','F','',1,'36636966',NULL,'','Fanta Hattar','',_binary '\0',NULL,44,'2026-05-06 18:06:41',19,NULL,NULL,0,NULL,1,NULL,1),(52,'Faouzi Abidi','Faouzi Abidi',NULL,'1990-07-10 00:00:00','H','',1,'38642001',NULL,'','Faouzi Abidi','',_binary '\0',NULL,45,'2026-05-06 18:07:51',19,NULL,NULL,0,NULL,1,NULL,1),(53,'Hadrami Feity','Hadrami Feity',NULL,'2008-01-01 00:00:00','H','',1,'34777166',NULL,'','Hadrami Feity','',_binary '\0',NULL,46,'2026-05-06 18:09:23',19,NULL,NULL,0,NULL,1,NULL,1),(54,'Houem Diallo','Houem Diallo',NULL,'2025-10-01 00:00:00','H','',1,'46883381',NULL,'','Houem Diallo','',_binary '\0',NULL,47,'2026-05-06 18:12:42',19,NULL,NULL,0,NULL,1,NULL,1),(55,'Ismael Maouland','Ismael Maouland',NULL,'2002-01-01 00:00:00','H','',1,'49982453',NULL,'','Ismael Maouland','',_binary '\0',NULL,48,'2026-05-06 18:13:45',19,NULL,NULL,0,NULL,1,NULL,1),(56,'Khdeija Rmeidhine','Khdeija Rmeidhine',NULL,'1991-03-12 00:00:00','F','',1,'37371138',NULL,'','Khdeija Rmeidhine','',_binary '\0',NULL,49,'2026-05-06 18:15:40',19,NULL,NULL,0,NULL,1,NULL,1),(57,'Karima Achari','Karima Achari',NULL,'1980-01-01 00:00:00','F','',1,'42561200',NULL,'','Karima Achari','',_binary '\0',NULL,50,'2026-05-06 18:16:18',19,NULL,NULL,0,NULL,1,NULL,1),(58,'Khadjtou Ismael','Khadjtou Ismael',NULL,'1967-01-01 00:00:00','F','',1,'30723703',NULL,'','Khadjtou Ismael','',_binary '\0',NULL,51,'2026-05-06 18:16:57',19,NULL,NULL,0,NULL,1,NULL,1),(59,'Kerima Ichori','Kerima Ichori',NULL,'1980-01-01 00:00:00','F','',1,'42561200',NULL,'','Kerima Ichori','',_binary '\0',NULL,52,'2026-05-06 18:17:44',19,NULL,NULL,0,NULL,1,NULL,1),(60,'Leila Mouloud','Leila Mouloud',NULL,'1999-01-16 00:00:00','F','',1,'44855754',NULL,'','Leila Mouloud','',_binary '\0',NULL,53,'2026-05-06 18:19:02',19,NULL,NULL,0,NULL,1,NULL,1),(61,'Leila Benan','Leila Benan',NULL,'2004-04-06 00:00:00','F','',1,'44485654',NULL,'','Leila Benan','',_binary '\0',NULL,54,'2026-05-06 18:19:43',19,NULL,NULL,0,NULL,1,NULL,1),(62,'Mahjoub Boya','Mahjoub Boya',NULL,'1998-10-05 00:00:00','H','',1,'32261031',NULL,'','Mahjoub Boya','',_binary '\0',NULL,55,'2026-05-06 18:20:22',19,NULL,NULL,0,NULL,1,NULL,1),(64,'Mohamed Ben Acine','Mohamed Ben Acine',NULL,'1989-02-12 00:00:00','H','',1,'41319409',NULL,'','Mohamed Ben Acine','',_binary '\0',NULL,57,'2026-05-06 18:21:57',19,NULL,NULL,0,NULL,1,NULL,1),(65,'Mohamed Raslan','Mohamed Raslan',NULL,'1996-08-28 00:00:00','H','',1,'20163758',NULL,'','Mohamed Raslan','',_binary '\0',NULL,58,'2026-05-06 18:22:28',19,NULL,NULL,0,NULL,1,NULL,1),(66,'Meima Souleiman Sokhona','Meima Souleiman Sokhona',NULL,'1990-12-10 00:00:00','H','',1,'48195265',NULL,'','Meima Souleiman Sokhona','',_binary '\0',NULL,59,'2026-05-06 18:23:29',19,NULL,NULL,0,NULL,1,NULL,1),(67,'Mohamed Lemine Mohamed El Kory','Mohamed Lemine Mohamed El Kory',NULL,'1986-01-01 00:00:00','H','',1,'46543289',NULL,'','Mohamed Lemine Mohamed El Kory','',_binary '\0',NULL,60,'2026-05-06 18:24:08',19,NULL,NULL,0,NULL,1,NULL,1),(68,'Mounem Brahim','Mounem Brahim',NULL,'1991-01-01 00:00:00','H','',1,'36390606',NULL,'','Mounem Brahim','',_binary '\0',NULL,61,'2026-05-06 18:24:57',19,NULL,NULL,0,NULL,1,NULL,1),(69,'Mohamed Amir Tesniti','Mohamed Amir Tesniti',NULL,'1981-12-16 00:00:00','H','',1,'26991810',NULL,'','Mohamed Amir Tesniti','',_binary '\0',NULL,62,'2026-05-06 18:25:40',19,NULL,NULL,0,NULL,1,NULL,1),(70,'Mohamed El Mami','Mohamed El Mami',NULL,'1962-01-01 00:00:00','H','',1,'22103167',NULL,'','Mohamed El Mami','',_binary '\0',NULL,63,'2026-05-06 18:26:25',19,NULL,NULL,0,NULL,1,NULL,1),(71,'Mohamed Lemine Saleh','Mohamed Lemine Saleh',NULL,'1998-12-12 00:00:00','H','',1,'38304840',NULL,'','Mohamed Lemine Saleh','',_binary '\0',NULL,64,'2026-05-06 18:27:07',19,NULL,NULL,0,NULL,1,NULL,1),(72,'Meriem Ada Gueye','Meriem Ada Gueye',NULL,'2022-04-07 00:00:00','F','',1,'+4917666893852',NULL,'','Meriem Ada Gueye','',_binary '\0',NULL,65,'2026-05-06 18:28:10',19,NULL,NULL,0,NULL,1,NULL,1),(73,'Meimouna Ahmed Baba','Meimouna Ahmed Baba',NULL,'1990-01-27 00:00:00','F','',1,'27724211',NULL,'','Meimouna Ahmed Baba','',_binary '\0',NULL,66,'2026-05-06 18:28:57',19,NULL,NULL,0,NULL,1,NULL,1),(74,'Mata Sidina','Mata Sidina',NULL,'2023-10-12 00:00:00','F','',1,'32702733',NULL,'','Mata Sidina','',_binary '\0',NULL,67,'2026-05-06 18:29:28',19,NULL,NULL,0,NULL,1,NULL,1),(76,'Mdam Abil','Mdam Abil',NULL,'1998-11-10 00:00:00','H','',1,'34374890',NULL,'','Mdam Abil','',_binary '\0',NULL,69,'2026-05-06 18:31:41',19,NULL,NULL,0,NULL,1,NULL,1),(77,'Mohamed Kerbally','Mohamed Kerbally',NULL,'2015-09-06 00:00:00','H','',1,'33883038',NULL,'','Mohamed Kerbally','',_binary '\0',NULL,70,'2026-05-06 18:32:12',19,NULL,NULL,0,NULL,1,NULL,1),(79,'Macarena Benjumea ','Macarena Benjumea ',NULL,'1976-06-13 00:00:00','F','',1,'42101188',NULL,'','Macarena Benjumea ','',_binary '\0',NULL,72,'2026-05-06 18:33:46',19,NULL,NULL,0,NULL,1,NULL,1),(80,'Mathilde Barbara ','Mathilde Barbara ',NULL,'2011-07-27 00:00:00','F','',1,'42101188',NULL,'','Mathilde Barbara ','',_binary '\0',NULL,73,'2026-05-06 18:34:30',19,NULL,NULL,0,NULL,1,NULL,1),(81,'Mohamed Hamed','Mohamed Hamed',NULL,'2017-08-24 00:00:00','H','',1,'36260909',NULL,'','Mohamed Hamed','',_binary '\0',NULL,74,'2026-05-06 18:35:03',19,NULL,NULL,0,NULL,1,NULL,1),(82,'Naceredine Ouldzeidoune','Naceredine Ouldzeidoune',NULL,'1965-02-06 00:00:00','H','',1,'22844058',NULL,'','Naceredine Ouldzeidoune','',_binary '\0',NULL,75,'2026-05-06 18:37:16',19,NULL,NULL,0,NULL,1,NULL,1),(83,'Oumkelthoum Ndiaye','Oumkelthoum Ndiaye',NULL,'1990-01-01 00:00:00','F','',1,'37554241',NULL,'','Oumkelthoum Ndiaye','',_binary '\0',NULL,76,'2026-05-06 18:38:23',19,NULL,NULL,0,NULL,1,NULL,1),(84,'Oubeidatha Chabi Boukhan','Oubeidatha Chabi Boukhan',NULL,'1996-03-16 00:00:00','F','',1,'33848774',NULL,'','Oubeidatha Chabi Boukhan','',_binary '\0',NULL,77,'2026-05-06 18:41:12',19,NULL,NULL,0,NULL,1,NULL,1),(85,'Olivier Bargonne','Olivier Bargonne',NULL,'1971-09-10 00:00:00','H','',1,'46476068',NULL,'','Olivier Bargonne','',_binary '\0',NULL,78,'2026-05-06 18:42:47',19,NULL,NULL,0,NULL,1,NULL,1),(86,'Oumekelthoum Yacoube','Oumekelthoum Yacoube',NULL,'2008-05-05 00:00:00','F','',1,'42541905',NULL,'','Oumekelthoum Yacoube','',_binary '\0',NULL,79,'2026-05-06 18:43:48',19,NULL,NULL,0,NULL,1,NULL,1),(87,'Romane Bertrand','Romane Bertrand',NULL,'1994-12-15 00:00:00','F','',1,'48021839',NULL,'','Romane Bertrand','',_binary '\0',NULL,80,'2026-05-06 18:45:24',19,NULL,NULL,0,NULL,1,NULL,1),(88,'Saida Ben Aries','Saida Ben Aries',NULL,'1982-05-04 00:00:00','F','',1,'47292912',NULL,'','Saida Ben Aries','',_binary '\0',NULL,81,'2026-05-06 18:46:03',19,NULL,NULL,0,NULL,1,NULL,1),(89,'Soltana Bennali','Soltana Bennali',NULL,'1996-04-06 00:00:00','F','',1,'33300102',NULL,'','Soltana Bennali','',_binary '\0',NULL,82,'2026-05-06 18:46:48',19,NULL,NULL,0,NULL,1,NULL,1),(90,'Sarah Bousbaa','Sarah Bousbaa',NULL,'2004-03-29 00:00:00','F','',1,'33398464',NULL,'','Sarah Bousbaa','',_binary '\0',NULL,83,'2026-05-06 18:50:52',19,NULL,NULL,0,NULL,1,NULL,1),(91,'Sidi Hamed','Sidi Hamed',NULL,'1970-12-31 00:00:00','H','',1,'46005119',NULL,'','Sidi Hamed','',_binary '\0',NULL,84,'2026-05-06 18:52:20',19,NULL,NULL,0,NULL,1,NULL,1),(92,'Selemou Mohamed Ahid','Selemou Mohamed Ahid',NULL,'2024-12-19 00:00:00','F','',1,'00000000',NULL,'','Selemou Mohamed Ahid','',_binary '\0',NULL,85,'2026-05-06 18:55:40',19,NULL,NULL,0,NULL,1,NULL,1),(93,'Syrine Ayadi','Syrine Ayadi',NULL,'1989-04-02 00:00:00','F','',1,'30770000',NULL,'','Syrine Ayadi','',_binary '\0',NULL,86,'2026-05-06 18:56:26',19,NULL,NULL,0,NULL,1,NULL,1),(94,'Sidi Beida','Sidi Beida',NULL,'2014-07-25 00:00:00','H','',1,'41995504',NULL,'','Sidi Beida','',_binary '\0',NULL,87,'2026-05-06 18:57:26',19,NULL,NULL,0,NULL,1,NULL,1),(95,'Soufian Ben Babis','Soufian Ben Babis',NULL,'1979-07-14 00:00:00','H','',1,'34211144',NULL,'','Soufian Ben Babis','',_binary '\0',NULL,88,'2026-05-06 18:58:16',19,NULL,NULL,0,NULL,1,NULL,1),(96,'Toutou Zorgan','Toutou Zorgan',NULL,'1999-05-08 00:00:00','F','',1,'49198031',NULL,'','Toutou Zorgan','',_binary '\0',NULL,89,'2026-05-06 19:04:55',19,NULL,NULL,0,NULL,1,NULL,1),(97,'Taleb Mohamed Lemine','Taleb Mohamed Lemine',NULL,'2001-01-01 00:00:00','H','',1,'36272733',NULL,'','Taleb Mohamed Lemine','',_binary '\0',NULL,90,'2026-05-06 19:05:40',19,NULL,NULL,0,NULL,1,NULL,1),(98,'Yasmine Cheikh','Yasmine Cheikh',NULL,'2009-04-21 00:00:00','F','',1,'22071240',NULL,'','Yasmine Cheikh','',_binary '\0',NULL,91,'2026-05-06 19:06:52',19,NULL,NULL,0,NULL,1,NULL,1),(99,'Zeinabou Diallo','Zeinabou Diallo',NULL,'1990-04-02 00:00:00','F','',1,'33507030',NULL,'','Zeinabou Diallo','',_binary '\0',NULL,92,'2026-05-06 19:07:34',19,NULL,NULL,0,NULL,1,NULL,1),(100,'Zeinabou Ely','Zeinabou Ely',NULL,'1960-01-01 00:00:00','F','',1,'33558482',NULL,'','Zeinabou Ely','',_binary '\0',NULL,93,'2026-05-06 19:08:16',19,NULL,NULL,0,NULL,1,NULL,1),(101,'Zeineb Camara','Zeineb Camara',NULL,'2021-01-01 00:00:00','F','',1,'37489208',NULL,'','Zeineb Camara','',_binary '\0',NULL,94,'2026-05-06 19:08:52',19,NULL,NULL,0,NULL,1,NULL,1),(102,'Boudy Sall','Boudy Sall',NULL,'1991-09-17 00:00:00','F','',1,'46979581',NULL,'','Boudy Sall','',_binary '\0',NULL,95,'2026-05-11 17:24:28',19,NULL,NULL,0,NULL,1,NULL,1),(103,'vatimetou larosy','vatimetou larosy',NULL,'1999-01-01 00:00:00','F','',1,'33088737',NULL,'','vatimetou larosy','',_binary '\0',NULL,96,'2026-05-11 17:45:47',20,'tvz\n\n\n',NULL,0,NULL,1,NULL,1),(104,'mohamed brahim','mohamed brahim',NULL,'1990-01-01 00:00:00','H','',1,'44822506',NULL,'','mohamed brahim','',_binary '\0',NULL,97,'2026-05-11 17:51:41',20,NULL,NULL,0,NULL,1,NULL,1),(106,'Fatimetou Khlil','Fatimetou Khlil',NULL,'1993-03-30 00:00:00','F','',1,'48727018','41708686','','Fatimetou Khlil','',_binary '\0',NULL,99,'2026-05-13 17:35:04',19,NULL,NULL,0,NULL,1,NULL,1),(107,'Ramle Bark salme','Ramle Bark salme',NULL,'2008-01-01 00:00:00','F','',1,'34354889',NULL,'','Ramle Bark salme','',_binary '\0',NULL,100,'2026-05-19 18:37:29',21,NULL,NULL,0,NULL,1,NULL,1),(108,'Jade Aissia','Jade Aissia',NULL,'2017-05-17 00:00:00','F','',1,'32191919',NULL,'','Jade Aissia','',_binary '\0',NULL,101,'2026-05-13 17:40:10',19,NULL,NULL,0,NULL,1,NULL,1),(109,'Lemine Aly Jean','Lemine Aly Jean',NULL,'1979-01-14 00:00:00','H','',1,'36306336',NULL,'','Lemine Aly Jean','',_binary '\0',NULL,102,'2026-05-13 17:41:10',19,NULL,NULL,0,NULL,1,NULL,1),(110,'Katia Ai Idir','Katia Ai Idir',NULL,'1987-04-20 00:00:00','F','',1,'34901034',NULL,'','Katia Ai Idir','',_binary '\0',NULL,103,'2026-05-13 17:41:57',19,NULL,NULL,0,NULL,1,NULL,1),(111,'Christelle Casanas','Christelle Casanas',NULL,'1971-11-06 00:00:00','F','',1,'+33768899855',NULL,'','Christelle Casanas','',_binary '\0',NULL,104,'2026-05-13 18:04:46',19,NULL,NULL,0,NULL,1,NULL,1),(112,'miled moctar','miled moctar',NULL,'1959-01-01 00:00:00','H','',1,'33077979',NULL,'','miled moctar','',_binary '\0',NULL,105,'2026-05-14 15:34:04',1,'ambassade lybie',NULL,0,NULL,1,NULL,1),(113,'Omar Ba','Omar Ba',NULL,'1960-01-14 00:00:00','H','',1,'36865000',NULL,'','Omar Ba','',_binary '\0',NULL,106,'2026-05-14 16:26:01',19,NULL,NULL,0,NULL,1,NULL,1),(114,'ahmedou','ahmedou',NULL,'1993-07-02 00:00:00','H','',1,'38523000',NULL,'','ahmedou','',_binary '\0',NULL,107,'2026-05-14 16:40:37',1,NULL,NULL,0,NULL,1,NULL,1),(115,'Ahmedou Khlil','Ahmedou Khlil',NULL,'1993-07-02 00:00:00',NULL,'',1,'+22238523000',NULL,'','Ahmedou Khlil','',_binary '\0',NULL,108,'2026-05-15 02:40:43',19,'Mamadou Lamine Konaté',NULL,0,NULL,1,NULL,1),(116,'Mokhtat milad','Mokhtat milad',NULL,'1959-01-01 00:00:00','H','',1,'33077979','33077979','','Mokhtat milad','',_binary '\0',NULL,109,'2026-05-15 16:40:35',21,'TVZ',NULL,0,NULL,1,NULL,1),(117,'sonia Lachaut','sonia Lachaut',NULL,'1995-09-20 00:00:00','F','',1,'32089255',NULL,'','sonia Lachaut','',_binary '\0',NULL,110,'2026-05-18 20:02:30',19,NULL,NULL,0,NULL,1,NULL,1),(118,'danielou pifeng','danielou pifeng',NULL,'1964-11-21 00:00:00','F','',1,'46411897',NULL,'','danielou pifeng','',_binary '\0',NULL,111,'2026-05-16 09:49:29',21,NULL,NULL,0,NULL,1,NULL,1),(119,'olivier lachaut','olivier lachaut',NULL,'1968-06-08 00:00:00','H','',1,'36203737',NULL,'','olivier lachaut','',_binary '\0',NULL,112,'2026-05-16 13:08:55',1,'TVZ',NULL,0,NULL,1,NULL,1),(120,'EZE ALY','EZE ALY',NULL,'1997-08-19 00:00:00',NULL,'',1,'33663336','33663336','','EZE ALY','',_binary '\0',NULL,113,'2026-05-16 17:17:27',21,'TVZ',NULL,0,NULL,1,NULL,1),(121,'LIILA EBI','LIILA EBI',NULL,'2024-05-19 00:00:00',NULL,'',1,'33663336',NULL,'','LIILA EBI','',_binary '\0',NULL,114,'2026-05-16 17:19:35',21,'TVZ',NULL,0,NULL,1,NULL,1),(122,'LEILA EBI ','LEILA EBI ',NULL,'2024-05-19 00:00:00','F','',1,'33663336',NULL,'','LEILA EBI ','',_binary '\0',NULL,115,'2026-05-16 17:37:12',21,'TVZ',NULL,0,NULL,1,NULL,1),(123,'MAREME OMARE','MAREME OMARE',NULL,'1983-08-19 00:00:00','F','',1,'48729859 ',NULL,'','MAREME OMARE','',_binary '\0',NULL,116,'2026-05-18 09:45:46',21,'TVZ',NULL,0,NULL,1,NULL,1),(124,'yaser lourimi','yaser lourimi',NULL,'0970-05-29 00:00:00','H','',1,'33770077',NULL,'','yaser lourimi','',_binary '\0',NULL,117,'2026-05-18 11:54:16',1,NULL,NULL,0,NULL,1,NULL,1),(126,'JEANNE  HAROUNI','JEANNE  HAROUNI',NULL,'1991-05-10 00:00:00','F','',1,'34422526',NULL,'','JEANNE  HAROUNI','',_binary '\0',NULL,118,'2026-05-18 19:59:34',21,'TVZ',NULL,0,NULL,1,NULL,1),(128,'kadjte ba','kadjte ba',NULL,'1982-09-21 00:00:00','F','',1,'49500461 ',NULL,'','kadjte ba','',_binary '\0',NULL,119,'2026-05-19 16:56:26',21,'ckojim pc',NULL,0,NULL,1,NULL,1),(130,'yoba cheikh bouya','yoba cheikh bouya',NULL,'1968-12-31 00:00:00','H','',1,'46084908',NULL,'','yoba cheikh bouya','',_binary '\0',NULL,120,'2026-05-20 09:39:34',1,NULL,NULL,0,NULL,1,NULL,1),(131,'Ahmed kachman','Ahmed kachman',NULL,'1975-01-01 00:00:00','H','',1,'26692511',NULL,'','Ahmed kachman','',_binary '\0',NULL,121,'2026-05-20 11:24:23',21,'tvz',NULL,0,NULL,1,NULL,1),(132,'lhoussen aly','lhoussen aly',NULL,'1992-12-15 00:00:00','H','',1,'36044444','47161668','','lhoussen aly','',_binary '\0',NULL,122,'2026-05-20 18:45:49',21,'tvz',NULL,0,NULL,1,NULL,1),(133,'meymoun mouham','meymoun mouham',NULL,'1983-01-01 00:00:00','F','',1,'26331527',NULL,'','meymoun mouham','',_binary '\0',NULL,123,'2026-05-21 12:01:33',21,'prmul',NULL,0,NULL,1,NULL,1),(134,'toutou yerebe','toutou yerebe',NULL,'2024-01-01 00:00:00','F','',1,'32201832',NULL,'','toutou yerebe','',_binary '\0',NULL,124,'2026-05-21 17:02:00',21,NULL,NULL,0,NULL,1,NULL,1),(135,'khadija boukhari','khadija boukhari',NULL,'2024-10-03 00:00:00','F','',1,'36255780',NULL,'','khadija boukhari','',_binary '\0',NULL,125,'2026-05-22 09:03:28',21,NULL,NULL,0,NULL,1,NULL,1),(136,'mouna safaoui','mouna safaoui',NULL,'1996-09-22 00:00:00','F','',1,'41084040',NULL,'','mouna safaoui','',_binary '\0',NULL,126,'2026-05-22 09:56:55',21,'tvz',NULL,0,NULL,1,NULL,1),(137,'CHADI LEHAF','CHADI LEHAF',NULL,'1993-11-27 00:00:00','H','',1,'44261818',NULL,'','CHADI LEHAF','',_binary '\0',NULL,127,'2026-05-22 19:23:38',21,'TVZ',NULL,0,NULL,1,NULL,1),(138,'TMANI KANE MOHAMADOU','TMANI KANE MOHAMADOU',NULL,'2019-09-09 00:00:00','F','',1,'43675335',NULL,'','TMANI KANE MOHAMADOU','',_binary '\0',NULL,128,'2026-05-23 12:32:22',21,'TVZ',NULL,0,NULL,1,NULL,1),(139,'AYMEN ROUACHED','AYMEN ROUACHED',NULL,'1987-01-07 00:00:00','H','',1,'42420278',NULL,'','AYMEN ROUACHED','',_binary '\0',NULL,129,'2026-05-23 18:49:38',21,'TVZ',NULL,0,NULL,1,NULL,1),(140,'AYMEN','AYMEN',NULL,'1987-01-17 00:00:00','H','',1,'42420278',NULL,'','AYMEN','',_binary '\0',NULL,130,'2026-05-23 18:47:20',21,'TVZ',NULL,0,NULL,1,NULL,1),(141,'Imani Kane Mohamadou','Imani Kane Mohamadou',NULL,'2019-09-09 00:00:00','F','',1,'43675335',NULL,'','Imani Kane Mohamadou','',_binary '\0',NULL,131,'2026-05-23 19:17:58',21,NULL,NULL,0,NULL,1,NULL,1),(142,'dowe mouhamed ','dowe mouhamed ',NULL,'1963-04-05 00:00:00','F','',1,'36363030',NULL,'','dowe mouhamed ','',_binary '\0',NULL,132,'2026-05-23 19:29:32',21,'TVZ',NULL,0,NULL,1,NULL,1),(143,'ELY CHEIKH SALK','ELY CHEIKH SALK',NULL,'0011-11-11 00:00:00',NULL,'',1,'31280016',NULL,'','ELY CHEIKH SALK','',_binary '\0',NULL,133,'2026-05-25 18:08:01',21,'TVZ',NULL,0,NULL,1,NULL,1),(144,'ABDRHMANE RAMDAM','ABDRHMANE RAMDAM',NULL,'2002-03-04 00:00:00',NULL,'',1,'42015036',NULL,'','ABDRHMANE RAMDAM','',_binary '\0',NULL,134,'2026-05-25 19:46:03',21,'TVZ',NULL,0,NULL,1,NULL,1),(145,'Khdeija Ethmane','Khdeija Ethmane',NULL,'1991-03-12 00:00:00','F','',1,'37371138',NULL,'','Khdeija Ethmane','',_binary '\0',NULL,135,'2026-05-25 21:08:40',19,NULL,NULL,0,NULL,1,NULL,1),(146,'Dede ahmd jdou','Dede ahmd jdou',NULL,'1996-10-21 00:00:00','F','',1,'37272530',NULL,'','Dede ahmd jdou','',_binary '\0',NULL,136,'2026-05-26 13:59:51',21,'TVA',NULL,0,NULL,1,NULL,1),(147,'MELISSA DELRUE ','MELISSA DELRUE ',NULL,'1989-05-15 00:00:00','F','',1,'34923864',NULL,'','MELISSA DELRUE ','',_binary '\0',NULL,137,'2026-05-26 10:48:45',21,'TVZ',NULL,0,NULL,1,NULL,1),(148,'OUMEKLTHOUM VETA','OUMEKLTHOUM VETA',NULL,'1983-11-09 00:00:00','F','',1,'43660000',NULL,'','OUMEKLTHOUM VETA','',_binary '\0',NULL,138,'2026-05-26 13:47:54',21,'TVZ',NULL,0,NULL,1,NULL,1),(149,'khald esma','khald esma',NULL,'1981-01-11 00:00:00','H','',1,'24044441',NULL,'','khald esma','',_binary '\0',NULL,139,'2026-05-26 16:38:02',21,'TVZ',NULL,0,NULL,1,NULL,1),(150,'FATIMTTOU ZAHRA  AMAR','FATIMTTOU ZAHRA  AMAR',NULL,'1989-05-01 00:00:00',NULL,'',1,'36378622',NULL,'','FATIMTTOU ZAHRA  AMAR','',_binary '\0',NULL,140,'2026-05-26 18:33:30',21,'TVA',NULL,0,NULL,1,NULL,1),(151,'samr brahim','samr brahim',NULL,'1967-05-04 00:00:00','H','',1,'31003274',NULL,'','samr brahim','',_binary '\0',NULL,141,'2026-05-29 11:14:54',21,NULL,NULL,0,NULL,1,NULL,1),(152,'mane vall ','mane vall ',NULL,'2025-04-30 00:00:00','F','',1,'36301213',NULL,'','mane vall ','',_binary '\0',NULL,142,'2026-05-29 12:37:00',21,'TVZ',NULL,0,NULL,1,NULL,1),(153,'BEATRICE CHAMY','BEATRICE CHAMY',NULL,'1111-02-13 00:00:00','F','',1,'26001073',NULL,'','BEATRICE CHAMY','',_binary '\0',NULL,143,'2026-06-01 12:45:25',21,'tvz',NULL,0,NULL,1,NULL,1),(154,'AISSATA SAMBA','AISSATA SAMBA',NULL,'1975-12-31 00:00:00','F','',1,'46915533',NULL,'','AISSATA SAMBA','',_binary '\0',NULL,144,'2026-06-01 12:40:36',21,'byke',NULL,0,NULL,1,NULL,1);
+/*!40000 ALTER TABLE `patients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `periodes`
+--
+
+DROP TABLE IF EXISTS `periodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `periodes` (
+  `idperiode` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `catperiode` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idperiode`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `periodes`
+--
+
+LOCK TABLES `periodes` WRITE;
+/*!40000 ALTER TABLE `periodes` DISABLE KEYS */;
+INSERT INTO `periodes` VALUES (1,'Tout'),(2,'Choisir'),(3,'Aujourdhui'),(4,'Hier'),(5,'Semaine dernière'),(6,'Ce mois'),(7,'Mois dernier'),(8,'l année en cours'),(9,'l année dernière');
+/*!40000 ALTER TABLE `periodes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `permissions`
+--
+
+DROP TABLE IF EXISTS `permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `permissions` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `label` varchar(150) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `groupe` varchar(60) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `ordre` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `permissions_name_unique` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permissions`
+--
+
+LOCK TABLES `permissions` WRITE;
+/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
+INSERT INTO `permissions` VALUES (1,'rendez-vous.view','Voir les rendez-vous','Rendez-vous',1,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(2,'rendez-vous.create','Créer des rendez-vous','Rendez-vous',2,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(3,'rendez-vous.edit','Modifier des rendez-vous','Rendez-vous',3,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(4,'rendez-vous.delete','Supprimer des rendez-vous','Rendez-vous',4,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(5,'rendez-vous.own','Voir ses propres RDV','Rendez-vous',5,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(6,'patient.view','Voir les patients','Patients',10,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(7,'patient.create','Créer des patients','Patients',11,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(8,'patient.edit','Modifier des patients','Patients',12,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(9,'patient.delete','Supprimer des patients','Patients',13,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(10,'facture.view','Voir toutes les factures','Factures',50,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(11,'facture.view.own','Voir ses propres factures','Factures',51,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(12,'facture.create','Créer des factures','Factures',52,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(13,'facture.edit','Modifier des factures','Factures',53,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(14,'facture.delete','Supprimer des factures','Factures',54,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(15,'finances.view','Voir toutes les finances','Finances',60,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(16,'finances.own','Voir ses propres finances','Finances',61,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(17,'finances.create','Créer des opérations','Finances',62,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(18,'finances.edit','Modifier des opérations','Finances',63,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(19,'finances.delete','Supprimer des opérations','Finances',64,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(20,'caisse-operations.view','Voir la caisse','Finances',65,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(21,'act.view','Voir les actes','Actes',100,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(22,'act.create','Créer des actes','Actes',101,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(23,'act.edit','Modifier des actes','Actes',102,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(24,'act.delete','Supprimer des actes','Actes',103,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(25,'user.view','Voir les utilisateurs','Utilisateurs',120,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(26,'user.create','Créer des utilisateurs','Utilisateurs',121,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(27,'user.edit','Modifier des utilisateurs','Utilisateurs',122,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(28,'user.delete','Supprimer des utilisateurs','Utilisateurs',123,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(29,'consultation.view','Voir les consultations','Consultations',20,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(30,'consultation.create','Créer des consultations','Consultations',21,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(31,'consultation.edit','Modifier des consultations','Consultations',22,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(32,'consultation.delete','Supprimer une consultation','Consultations',4,NULL,NULL),(33,'ordonnance.view','Voir les ordonnances','Ordonnances',30,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(34,'ordonnance.create','Créer des ordonnances','Ordonnances',31,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(35,'ordonnance.delete','Supprimer une ordonnance','Ordonnances',3,NULL,NULL),(36,'dossier.view','Voir le dossier médical','Dossier médical',40,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(37,'dossier.print','Imprimer le dossier médical','Dossier médical',41,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(38,'stock.view','Voir le stock','Stock',90,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(39,'stock.edit','Modifier le stock','Stock',91,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(40,'statistiques.view','Voir les statistiques','Statistiques',80,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(41,'depenses.view','Voir les dépenses','Dépenses',70,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(42,'depenses.create','Créer des dépenses','Dépenses',71,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(43,'salle-attente.view','Voir la salle d\'attente','Salle d\'attente',6,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(44,'depenses.edit','Modifier des dépenses','Dépenses',72,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(45,'depenses.delete','Supprimer des dépenses','Dépenses',73,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(46,'pharmacie.view','Voir la pharmacie','Stock',92,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(47,'pharmacie.manage','Gérer la pharmacie','Stock',93,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(48,'medecin.view','Voir les médecins','Cabinet',110,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(49,'medecin.manage','Gérer les médecins','Cabinet',111,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(50,'assureur.view','Voir les assureurs','Cabinet',112,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(51,'assureur.manage','Gérer les assureurs','Cabinet',113,'2026-04-15 02:05:22','2026-04-15 02:05:22'),(52,'salle-soins.view','Voir la salle de soins','Salle de soins',7,'2026-04-15 02:34:19','2026-04-15 02:34:19'),(53,'cabinet.manage','Paramètres du cabinet','cabinet',0,NULL,NULL);
+/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `personal_access_tokens`
+--
+
+DROP TABLE IF EXISTS `personal_access_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint unsigned NOT NULL,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `personal_access_tokens`
+--
+
+LOCK TABLES `personal_access_tokens` WRITE;
+/*!40000 ALTER TABLE `personal_access_tokens` DISABLE KEYS */;
+/*!40000 ALTER TABLE `personal_access_tokens` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pjconvention`
+--
+
+DROP TABLE IF EXISTS `pjconvention`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pjconvention` (
+  `IdPJ` int NOT NULL AUTO_INCREMENT,
+  `fkidassureur` int DEFAULT NULL,
+  `NomFichier` varchar(255) DEFAULT NULL,
+  `Chemindaccess` mediumtext,
+  `dtajoutPJ` datetime DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`IdPJ`),
+  KEY `Index_2` (`fkidassureur`),
+  KEY `Index_3` (`NomFichier`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pjconvention`
+--
+
+LOCK TABLES `pjconvention` WRITE;
+/*!40000 ALTER TABLE `pjconvention` DISABLE KEYS */;
+INSERT INTO `pjconvention` VALUES (9,1,'DDDD 2021.xlsx','C:UserspcOneDriveDocumentsDACG-Plan d action  2021.xlsx','2021-10-18 20:12:18','User');
+/*!40000 ALTER TABLE `pjconvention` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `problèmes`
+--
+
+DROP TABLE IF EXISTS `problèmes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `problèmes` (
+  `Champ1` int DEFAULT NULL,
+  `ID` int DEFAULT NULL,
+  `Résumé` varchar(255) DEFAULT NULL,
+  `État` varchar(255) DEFAULT NULL,
+  `Priorité` varchar(255) DEFAULT NULL,
+  `Catégorie` varchar(255) DEFAULT NULL,
+  `Projet` varchar(255) DEFAULT NULL,
+  `DateOuverture` datetime DEFAULT NULL,
+  `Échéance` datetime DEFAULT NULL,
+  `MotsClés` varchar(255) DEFAULT NULL,
+  `Résolution` varchar(255) DEFAULT NULL,
+  `VersionRésolue` varchar(255) DEFAULT NULL,
+  `PiècesJointes` mediumtext
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `problèmes`
+--
+
+LOCK TABLES `problèmes` WRITE;
+/*!40000 ALTER TABLE `problèmes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `problèmes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `recuaimprimer`
+--
+
+DROP TABLE IF EXISTS `recuaimprimer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `recuaimprimer` (
+  `IdRecu` int unsigned NOT NULL AUTO_INCREMENT,
+  `DtOperation` datetime DEFAULT '0000-00-00 00:00:00',
+  `TypeOperation` varchar(45) DEFAULT '',
+  `MontantOperation` double NOT NULL DEFAULT '0',
+  `Beneficiaire` varchar(45) DEFAULT NULL,
+  `TypeBeneficiaire` varchar(45) DEFAULT NULL,
+  `MontantEnLettre` varchar(145) DEFAULT NULL,
+  `fkidUser` int unsigned NOT NULL DEFAULT '0',
+  `Motif` varchar(145) DEFAULT NULL,
+  `Medecin` varchar(45) DEFAULT NULL,
+  `Utilisateur` varchar(45) DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidtypePaie` int unsigned NOT NULL DEFAULT '1',
+  `TypePAie` varchar(45) NOT NULL DEFAULT 'CASH',
+  PRIMARY KEY (`IdRecu`)
+) ENGINE=InnoDB AUTO_INCREMENT=8257 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `recuaimprimer`
+--
+
+LOCK TABLES `recuaimprimer` WRITE;
+/*!40000 ALTER TABLE `recuaimprimer` DISABLE KEYS */;
+INSERT INTO `recuaimprimer` VALUES (8256,'2025-06-13 22:03:29','Paiment fait par  : Patients',10000,'Hassen Hamadi','Patients','Dix mille  Ouguiya',9,'facture  (N° 1078-23) Dr Moud','Dr Moud','moud ',1,2,'BANKILY');
+/*!40000 ALTER TABLE `recuaimprimer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ref_type_paiement`
+--
+
+DROP TABLE IF EXISTS `ref_type_paiement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ref_type_paiement` (
+  `idtypepaie` int unsigned NOT NULL AUTO_INCREMENT,
+  `LibPaie` varchar(45) NOT NULL DEFAULT '',
+  PRIMARY KEY (`idtypepaie`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ref_type_paiement`
+--
+
+LOCK TABLES `ref_type_paiement` WRITE;
+/*!40000 ALTER TABLE `ref_type_paiement` DISABLE KEYS */;
+INSERT INTO `ref_type_paiement` VALUES (1,'CASH'),(2,'BANKILY'),(3,'MASRVI'),(4,'SEDAD'),(5,'BIM BANK'),(6,'CLICK');
+/*!40000 ALTER TABLE `ref_type_paiement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reglements`
+--
+
+DROP TABLE IF EXISTS `reglements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reglements` (
+  `idreglement` int NOT NULL AUTO_INCREMENT,
+  `fkidFactBord` int DEFAULT NULL,
+  `fkidTiers` int DEFAULT NULL,
+  `dtreglement` datetime DEFAULT NULL,
+  `typeReglement` varchar(255) DEFAULT NULL,
+  `MontantDep` double NOT NULL DEFAULT '0',
+  `fkiduser` int unsigned NOT NULL DEFAULT '1',
+  `Motif` varchar(145) DEFAULT NULL,
+  `fkidtypeDepRectte` int unsigned NOT NULL DEFAULT '0' COMMENT '1 dep et 2 recette',
+  `FkidtypeTiers` int unsigned NOT NULL DEFAULT '0',
+  `MontantRec` double NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idreglement`),
+  KEY `Index_2` (`fkidFactBord`) USING BTREE,
+  KEY `Index_3` (`fkidTiers`) USING BTREE,
+  KEY `Index_4` (`fkidtypeDepRectte`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reglements`
+--
+
+LOCK TABLES `reglements` WRITE;
+/*!40000 ALTER TABLE `reglements` DISABLE KEYS */;
+/*!40000 ALTER TABLE `reglements` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rendezvous`
+--
+
+DROP TABLE IF EXISTS `rendezvous`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rendezvous` (
+  `IDRdv` int NOT NULL AUTO_INCREMENT,
+  `ActePrevu` mediumtext,
+  `DtAjRdv` datetime DEFAULT NULL,
+  `dtPrevuRDV` datetime DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `HeureRdv` datetime DEFAULT NULL,
+  `fkidPatient` int unsigned DEFAULT NULL,
+  `rdvConfirmer` varchar(20) NOT NULL DEFAULT 'En Attente',
+  `fkidMedecin` int unsigned DEFAULT NULL,
+  `OrdreRDV` int unsigned DEFAULT NULL,
+  `HeureConfRDV` datetime DEFAULT NULL,
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  `fkidfacture` int unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`IDRdv`),
+  KEY `Index_3` (`dtPrevuRDV`),
+  KEY `Index_4` (`fkidPatient`),
+  KEY `Index_5` (`rdvConfirmer`),
+  KEY `Index_6` (`fkidMedecin`)
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rendezvous`
+--
+
+LOCK TABLES `rendezvous` WRITE;
+/*!40000 ALTER TABLE `rendezvous` DISABLE KEYS */;
+INSERT INTO `rendezvous` VALUES (7,'Consultation généraliste','2026-05-14 15:48:19','2026-05-14 00:00:00',NULL,'2026-05-14 15:48:19',112,'Terminé',7,1,NULL,1,16),(8,'Consultation généraliste','2026-05-14 16:41:02','2026-05-14 00:00:00',NULL,'2026-05-14 16:41:02',114,'En cours',7,2,NULL,1,17),(9,'Consultation généraliste','2026-05-15 02:40:55','2026-05-15 00:00:00',NULL,'2026-05-15 02:40:55',115,'Terminé',7,1,NULL,1,18),(10,'Consultation généraliste','2026-05-15 18:28:58','2026-05-15 00:00:00',NULL,'2026-05-15 18:28:58',112,'Terminé',7,2,NULL,1,19),(11,'Consultation généraliste','2026-05-15 19:33:23','2026-05-15 00:00:00',NULL,'2026-05-15 19:33:23',117,'Terminé',7,3,NULL,1,20),(12,'contrôle céphalées','2026-05-15 20:16:04','2026-05-22 00:00:00','1','2026-05-15 22:30:00',117,'Terminé',7,1,NULL,1,0),(13,'Consultation généraliste','2026-05-16 02:32:44','2026-05-16 00:00:00',NULL,'2026-05-16 02:32:44',115,'Terminé',7,1,NULL,1,21),(14,'Consultation généraliste','2026-05-16 09:49:44','2026-05-16 00:00:00',NULL,'2026-05-16 09:49:44',118,'Terminé',7,2,NULL,1,22),(15,'Consultation généraliste','2026-05-16 10:38:33','2026-05-16 00:00:00',NULL,'2026-05-16 10:38:33',118,'Terminé',7,3,NULL,1,23),(16,'Consultation généraliste','2026-05-16 13:09:12','2026-05-16 00:00:00',NULL,'2026-05-16 13:09:12',119,'Terminé',7,4,NULL,1,24),(17,'Consultation généraliste','2026-05-16 17:20:58','2026-05-16 00:00:00',NULL,'2026-05-16 17:20:58',120,'Terminé',7,5,NULL,1,25),(18,'Consultation généraliste','2026-05-16 17:28:32','2026-05-16 00:00:00',NULL,'2026-05-16 17:28:32',120,'Terminé',7,6,NULL,1,26),(19,'Consultation généraliste','2026-05-16 17:38:04','2026-05-16 00:00:00',NULL,'2026-05-16 17:38:04',122,'Terminé',7,7,NULL,1,27),(20,'Consultation généraliste','2026-05-18 09:47:36','2026-05-18 00:00:00',NULL,'2026-05-18 09:47:36',123,'Terminé',7,1,NULL,1,29),(22,'Consultation généraliste','2026-05-18 10:09:01','2026-05-18 00:00:00',NULL,'2026-05-18 10:09:01',123,'Terminé',7,3,NULL,1,31),(23,'Consultation généraliste','2026-05-18 10:44:19','2026-05-18 00:00:00',NULL,'2026-05-18 10:44:19',123,'Terminé',7,4,NULL,1,32),(24,'Consultation généraliste','2026-05-18 11:54:44','2026-05-18 00:00:00',NULL,'2026-05-18 11:54:44',124,'Terminé',7,5,NULL,1,33),(25,'Consultation généraliste','2026-05-18 13:58:03','2026-05-18 00:00:00',NULL,'2026-05-18 13:58:03',74,'Terminé',7,6,NULL,1,34),(27,'Consultation généraliste','2026-05-18 20:01:04','2026-05-18 00:00:00',NULL,'2026-05-18 20:01:04',126,'Confirmé',7,7,NULL,1,36),(28,'Consultation généraliste','2026-05-19 16:58:47','2026-05-19 00:00:00',NULL,'2026-05-19 16:58:47',128,'Terminé',7,1,NULL,1,37),(31,'Consultation généraliste','2026-05-20 09:40:35','2026-05-20 00:00:00',NULL,'2026-05-20 09:40:35',130,'Terminé',7,1,NULL,1,40),(32,'Consultation700','2026-05-20 09:50:23','2026-06-20 00:00:00','21','2026-05-20 10:00:00',130,'En Attente',7,1,NULL,1,0),(33,'Consultation généraliste','2026-05-20 11:50:11','2026-05-20 00:00:00',NULL,'2026-05-20 11:50:11',115,'Terminé',7,2,NULL,1,41),(34,'Consultation généraliste','2026-05-20 11:55:20','2026-05-20 00:00:00',NULL,'2026-05-20 11:55:20',35,'Terminé',7,3,NULL,1,42),(35,'Consultation généraliste','2026-05-20 17:50:30','2026-05-20 00:00:00',NULL,'2026-05-20 17:50:30',102,'Terminé',7,4,NULL,1,43),(36,'Consultation généraliste','2026-05-20 18:02:25','2026-05-20 00:00:00',NULL,'2026-05-20 18:02:25',102,'Terminé',7,5,NULL,1,44),(37,'Consultation généraliste','2026-05-20 18:46:33','2026-05-20 00:00:00',NULL,'2026-05-20 18:46:33',132,'Terminé',7,6,NULL,1,45),(38,'Consultation généraliste','2026-05-21 12:02:11','2026-05-21 00:00:00',NULL,'2026-05-21 12:02:11',133,'Terminé',7,1,NULL,1,46),(39,'Consultation généraliste','2026-05-21 16:49:12','2026-05-21 00:00:00',NULL,'2026-05-21 16:49:12',96,'Confirmé',7,2,NULL,1,47),(40,'Consultation généraliste','2026-05-22 09:05:15','2026-05-22 00:00:00',NULL,'2026-05-22 09:05:15',135,'Terminé',7,2,NULL,1,48),(41,'contrôle ','2026-05-22 09:43:31','2026-05-29 00:00:00','1','2026-05-22 10:00:00',135,'Terminé',7,1,NULL,1,0),(42,'Consultation généraliste','2026-05-22 09:57:26','2026-05-22 00:00:00',NULL,'2026-05-22 09:57:26',136,'Terminé',7,3,NULL,1,49),(43,'Consultation généraliste','2026-05-22 19:25:06','2026-05-22 00:00:00',NULL,'2026-05-22 19:25:06',137,'Terminé',7,4,NULL,1,50),(44,'Consultation généraliste','2026-05-22 19:29:27','2026-05-22 00:00:00',NULL,'2026-05-22 19:29:27',86,'Terminé',7,5,NULL,1,51),(45,'Consultation généraliste','2026-05-23 12:34:02','2026-05-23 00:00:00',NULL,'2026-05-23 12:34:02',138,'Terminé',7,1,NULL,1,52),(46,'Consultation généraliste','2026-05-23 18:44:19','2026-05-23 00:00:00',NULL,'2026-05-23 18:44:19',139,'Terminé',7,2,NULL,1,53),(47,'Consultation généraliste','2026-05-23 18:50:05','2026-05-23 00:00:00',NULL,'2026-05-23 18:50:05',139,'Terminé',7,3,NULL,1,54),(48,'Consultation généraliste','2026-05-23 19:18:50','2026-05-23 00:00:00',NULL,'2026-05-23 19:18:50',141,'Terminé',7,4,NULL,1,55),(49,'Consultation généraliste','2026-05-23 19:30:41','2026-05-23 00:00:00',NULL,'2026-05-23 19:30:41',142,'En cours',7,5,NULL,1,56),(50,'Consultation','2026-05-23 19:53:14','2026-05-26 00:00:00','21','2026-05-23 10:00:00',142,'Terminé',7,1,NULL,1,0),(51,'Consultation','2026-05-23 19:55:11','2026-05-25 00:00:00','21','2026-05-23 10:00:00',142,'Terminé',7,1,NULL,1,0),(52,'Consultation généraliste','2026-05-25 18:08:39','2026-05-25 00:00:00',NULL,'2026-05-25 18:08:39',143,'Terminé',7,2,NULL,1,57),(53,'Consultation généraliste','2026-05-25 19:46:35','2026-05-25 00:00:00',NULL,'2026-05-25 19:46:35',144,'Terminé',7,3,NULL,1,58),(54,'Consultation généraliste','2026-05-25 21:09:25','2026-05-25 00:00:00',NULL,'2026-05-25 21:09:25',145,'En cours',7,4,NULL,1,59),(55,'Consultation généraliste','2026-05-25 21:14:00','2026-05-25 00:00:00',NULL,'2026-05-25 21:14:00',145,'Confirmé',7,5,NULL,1,60),(56,'Consultation généraliste','2026-05-26 08:30:31','2026-05-26 00:00:00',NULL,'2026-05-26 08:30:31',146,'Terminé',7,2,NULL,1,62),(57,'Consultation généraliste','2026-05-26 10:49:47','2026-05-26 00:00:00',NULL,'2026-05-26 10:49:47',147,'Terminé',7,3,NULL,1,63),(58,'Consultation généraliste','2026-05-26 13:48:53','2026-05-26 00:00:00',NULL,'2026-05-26 13:48:53',148,'Terminé',7,4,NULL,1,64),(59,'Consultation généraliste','2026-05-26 16:39:23','2026-05-26 00:00:00',NULL,'2026-05-26 16:39:23',149,'Terminé',7,5,NULL,1,65),(60,'Consultation généraliste','2026-05-26 18:23:22','2026-05-26 00:00:00',NULL,'2026-05-26 18:23:22',148,'En cours',7,6,NULL,1,66),(61,'Consultation spécialiste','2026-05-26 18:25:35','2026-05-26 00:00:00',NULL,'2026-05-26 18:25:35',148,'En cours',10,1,NULL,1,67),(62,'Consultation généraliste','2026-05-29 11:15:24','2026-05-29 00:00:00',NULL,'2026-05-29 11:15:24',151,'Terminé',7,2,NULL,1,68),(63,'Consultation généraliste','2026-05-29 12:37:37','2026-05-29 00:00:00',NULL,'2026-05-29 12:37:37',152,'Terminé',7,3,NULL,1,69),(64,'Consultation généraliste','2026-06-01 10:25:57','2026-06-01 00:00:00',NULL,'2026-06-01 10:25:57',153,'Terminé',7,1,NULL,1,70),(65,'Consultation généraliste','2026-06-01 10:31:20','2026-06-01 00:00:00',NULL,'2026-06-01 10:31:20',154,'Terminé',7,2,NULL,1,71),(66,'Consultation généraliste','2026-06-01 11:02:26','2026-06-01 00:00:00',NULL,'2026-06-01 11:02:26',154,'Terminé',7,3,NULL,1,72),(67,'Consultation généraliste','2026-06-01 11:10:43','2026-06-01 00:00:00',NULL,'2026-06-01 11:10:43',154,'Terminé',7,4,NULL,1,73);
+/*!40000 ALTER TABLE `rendezvous` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reservationrdv`
+--
+
+DROP TABLE IF EXISTS `reservationrdv`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reservationrdv` (
+  `idReservation` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '0',
+  `dtdebut` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `dtfin` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `annee` int unsigned NOT NULL DEFAULT '2023',
+  `DtCreation` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `num1` bigint unsigned NOT NULL DEFAULT '0',
+  `num2` bigint unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idReservation`),
+  KEY `Index_2` (`fkidmedecin`),
+  KEY `Index_3` (`annee`),
+  KEY `Index_4` (`dtdebut`),
+  KEY `Index_5` (`dtfin`),
+  KEY `Index_6` (`num1`),
+  KEY `Index_7` (`num2`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reservationrdv`
+--
+
+LOCK TABLES `reservationrdv` WRITE;
+/*!40000 ALTER TABLE `reservationrdv` DISABLE KEYS */;
+INSERT INTO `reservationrdv` VALUES (7,1,'2023-12-13 23:38:52','2023-12-13 23:38:52',2023,'2023-12-13 23:39:11',638381075320000000,638381075320000000);
+/*!40000 ALTER TABLE `reservationrdv` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role_permissions`
+--
+
+DROP TABLE IF EXISTS `role_permissions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role_permissions` (
+  `role_id` int unsigned NOT NULL,
+  `permission_id` int unsigned NOT NULL,
+  PRIMARY KEY (`role_id`,`permission_id`),
+  KEY `role_permissions_permission_id_foreign` (`permission_id`),
+  CONSTRAINT `role_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role_permissions`
+--
+
+LOCK TABLES `role_permissions` WRITE;
+/*!40000 ALTER TABLE `role_permissions` DISABLE KEYS */;
+INSERT INTO `role_permissions` VALUES (1,1),(2,1),(3,1),(5,1),(1,2),(2,2),(3,2),(5,2),(1,3),(3,3),(5,3),(1,4),(3,4),(5,4),(1,5),(2,5),(3,5),(5,5),(1,6),(2,6),(3,6),(4,6),(5,6),(1,7),(3,7),(5,7),(1,8),(2,8),(3,8),(5,8),(1,9),(3,9),(5,9),(1,10),(3,10),(5,10),(1,11),(2,11),(3,11),(5,11),(1,12),(3,12),(5,12),(3,13),(5,13),(3,14),(5,14),(3,15),(5,15),(2,16),(3,16),(5,16),(3,17),(5,17),(3,18),(5,18),(3,19),(5,19),(3,20),(5,20),(2,21),(3,21),(5,21),(2,22),(3,22),(5,22),(3,23),(5,23),(3,24),(5,24),(3,25),(5,25),(3,26),(5,26),(3,27),(5,27),(3,28),(5,28),(1,29),(2,29),(3,29),(4,29),(5,29),(1,30),(2,30),(3,30),(5,30),(1,31),(2,31),(3,31),(5,31),(3,32),(5,32),(2,33),(3,33),(4,33),(5,33),(2,34),(3,34),(5,34),(3,35),(5,35),(2,36),(3,36),(5,36),(2,37),(3,37),(5,37),(2,38),(3,38),(5,38),(3,39),(5,39),(3,40),(5,40),(3,41),(5,41),(3,42),(5,42),(1,43),(2,43),(3,43),(4,43),(5,43),(3,44),(5,44),(3,45),(5,45),(3,46),(4,46),(5,46),(3,47),(5,47),(3,48),(5,48),(3,49),(5,49),(3,50),(5,50),(3,51),(5,51),(2,52),(3,52),(4,52),(5,52),(3,53),(5,53);
+/*!40000 ALTER TABLE `role_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `solde_par_jour`
+--
+
+DROP TABLE IF EXISTS `solde_par_jour`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `solde_par_jour` (
+  `idoperation` int DEFAULT NULL,
+  `solde_debit` double DEFAULT NULL,
+  `Solde_Credit` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `solde_par_jour`
+--
+
+LOCK TABLES `solde_par_jour` WRITE;
+/*!40000 ALTER TABLE `solde_par_jour` DISABLE KEYS */;
+/*!40000 ALTER TABLE `solde_par_jour` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stock_medicaments`
+--
+
+DROP TABLE IF EXISTS `stock_medicaments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stock_medicaments` (
+  `idStock` int unsigned NOT NULL AUTO_INCREMENT,
+  `fkidMedicament` int unsigned NOT NULL,
+  `fkidCabinet` int unsigned NOT NULL,
+  `quantiteStock` double NOT NULL DEFAULT '0' COMMENT 'Quantité totale en stock',
+  `quantiteMin` double NOT NULL DEFAULT '0' COMMENT 'Seuil minimum d''alerte',
+  `prixAchat` double NOT NULL DEFAULT '0' COMMENT 'Prix d''achat moyen',
+  `prixVente` double NOT NULL DEFAULT '0' COMMENT 'Prix de vente (peut venir de medicaments.PrixRef)',
+  `dateDerniereEntree` datetime DEFAULT NULL,
+  `dateDerniereSortie` datetime DEFAULT NULL,
+  `Masquer` int unsigned NOT NULL DEFAULT '0' COMMENT '0=Actif, 1=Masqué',
+  PRIMARY KEY (`idStock`),
+  UNIQUE KEY `unique_medicament_cabinet` (`fkidMedicament`,`fkidCabinet`),
+  KEY `idx_medicament` (`fkidMedicament`),
+  KEY `idx_cabinet` (`fkidCabinet`)
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stock_medicaments`
+--
+
+LOCK TABLES `stock_medicaments` WRITE;
+/*!40000 ALTER TABLE `stock_medicaments` DISABLE KEYS */;
+INSERT INTO `stock_medicaments` VALUES (3,20,1,16,5,83.42,200,'2026-01-12 19:21:02','2026-01-18 16:44:59',0),(4,25,1,6,5,51.4,300,'2025-12-01 14:32:40','2026-05-26 10:15:38',0),(5,41,1,5,5,9.2,100,'2026-01-12 18:06:33','2026-01-18 13:58:31',0),(6,28,1,13,2,11.298148148148,100,'2026-04-21 17:29:05','2026-05-26 10:17:05',0),(7,27,1,69,5,47.579504573954,200,'2026-01-12 18:07:31','2026-01-18 23:27:37',0),(8,10,1,121,10,54.077304964539,200,'2026-01-12 19:25:29','2026-04-14 18:09:37',0),(9,47,1,12,20,8.9,30,'2026-01-12 19:38:01','2026-05-25 18:17:13',0),(10,40,1,300,20,40,100,'2026-05-25 14:33:32','2026-01-15 19:27:23',0),(11,48,1,295,4,4.4438030620052,10,'2026-04-21 17:39:57','2026-01-18 23:33:40',0),(12,19,1,14,2,33.579348579349,100,'2026-04-21 17:07:50','2026-05-26 16:45:50',0),(13,24,1,8,2,59,300,'2026-05-12 17:08:34','2026-05-26 16:45:50',0),(14,38,1,29,5,27,100,'2026-01-12 16:12:08','2026-04-10 23:53:47',0),(15,16,1,92,30,66.560431654676,100,'2026-05-07 17:44:58','2026-05-29 12:41:13',0),(16,34,1,5,5,26.6,100,'2025-12-16 18:56:26','2026-05-29 12:41:13',0),(17,42,1,1,5,28.8,100,'2025-12-17 18:49:08','2026-01-18 10:39:19',0),(18,30,1,5,5,25,100,'2025-11-30 02:53:43',NULL,0),(19,49,1,339,10,14.438053097345,20,'2026-05-06 19:14:56','2026-01-18 23:32:39',0),(20,39,1,4,2,261.2,100,'2026-05-25 14:43:02','2026-01-12 16:24:15',0),(21,15,1,33,5,56.868648648649,200,'2026-01-12 19:23:56','2026-01-18 23:23:17',0),(22,23,1,29,2,26.98,200,'2026-04-21 17:08:45','2025-12-02 23:45:32',0),(23,45,1,22,2,12,50,'2026-05-18 16:45:24','2026-05-26 16:45:50',0),(24,35,1,14,5,150,100,'2025-11-30 02:13:12','2026-05-26 17:49:12',0),(25,32,1,100,5,30.98,100,'2026-05-25 14:48:00','2026-05-23 19:46:37',0),(26,44,1,6,5,7,50,'2025-12-17 18:45:10','2026-05-29 12:41:13',0),(27,118,1,11,5,16.14,100,'2025-11-30 02:23:17',NULL,0),(28,119,1,100,10,3,10,'2025-12-11 18:16:37',NULL,0),(29,26,1,13,10,11.055196078431,100,'2026-01-12 19:22:19','2026-01-13 09:25:50',0),(30,31,1,17,5,17.989411764706,100,'2026-01-04 20:35:30','2026-05-26 16:45:50',0),(31,33,1,8,5,42,100,'2026-05-14 16:15:15','2026-05-16 02:33:35',0),(32,116,1,0,5,64,300,'2025-12-02 17:26:31','2025-12-02 17:34:28',0),(33,37,1,40,5,150,500,'2025-12-09 17:22:38','2026-01-17 20:29:47',0),(34,36,1,29,5,56.3,500,'2026-05-18 14:11:38','2026-05-29 12:41:13',0),(35,120,1,5,5,10,50,'2025-12-17 18:50:30',NULL,0),(36,122,1,101,10,180,200,'2026-04-14 18:12:15',NULL,0),(37,1,1,100,50,79,200,'2026-04-18 13:03:58',NULL,0),(38,2,1,100,10,100,200,'2026-04-19 22:03:43',NULL,0),(39,3,1,29,5,70,250,'2026-04-20 18:04:28','2026-05-26 16:45:50',0),(40,5,1,48,5,0,260,'2026-05-25 14:27:43','2026-05-26 16:45:50',0),(41,6,1,9,0,100,350,'2026-05-18 16:52:59','2026-05-23 12:45:14',0),(42,7,1,0,0,0,180,NULL,NULL,0),(43,8,1,0,0,0,50,NULL,NULL,0),(44,9,1,13,0,65,220,'2026-04-21 17:44:39','2026-05-22 09:16:35',0),(45,11,1,10,2,50,100,'2026-04-21 17:04:04',NULL,0),(46,12,1,0,0,0,100,NULL,NULL,0),(47,13,1,0,0,0,100,NULL,NULL,0),(48,14,1,151,20,0,100,'2026-05-25 14:37:00',NULL,0),(49,17,1,22,1,40,150,'2026-05-18 16:46:41',NULL,0),(50,18,1,8,0,0,100,'2026-05-23 18:59:07','2026-05-26 10:15:38',0),(51,21,1,1,5,80,280,'2026-04-21 17:27:46','2026-05-26 16:45:50',0),(52,22,1,0,0,0,320,NULL,NULL,0),(53,29,1,54,5,0,120,'2026-05-25 14:36:33',NULL,0),(54,43,1,4,1,0,40,'2026-05-25 14:29:59',NULL,0),(55,46,1,10,5,65,220,'2026-04-21 17:17:03',NULL,0),(56,50,1,10,5,50,180,'2026-05-11 18:03:18','2026-05-26 10:15:38',0),(57,51,1,100,0,0,500,'2026-05-25 14:54:52',NULL,0),(58,52,1,0,0,0,100,NULL,NULL,0),(59,53,1,0,0,0,270,NULL,NULL,0),(60,54,1,0,0,0,50,NULL,NULL,0),(61,55,1,1003,0,0,100,'2026-05-18 16:18:24',NULL,0),(62,56,1,35,0,0,100,'2026-05-18 16:18:59',NULL,0),(63,57,1,25,0,0,150,'2026-05-18 16:21:11',NULL,0),(64,58,1,10,0,0,250,'2026-05-18 16:22:25',NULL,0),(65,59,1,12,0,250,450,'2026-05-18 10:02:53','2026-05-23 19:03:30',0),(66,60,1,8,0,0,100,'2026-05-25 14:40:40','2026-05-26 10:15:38',0),(67,61,1,4,0,0,480,'2026-05-18 13:09:47','2026-05-18 13:12:07',0),(68,62,1,24,0,0,350,'2026-05-25 14:28:17',NULL,0),(69,63,1,1530,0,0,50,NULL,'2026-05-26 16:45:50',0),(70,64,1,0,0,0,280,NULL,NULL,0),(71,227,1,30,5,0,520,'2026-05-25 14:29:21','2026-05-22 19:56:58',0),(72,228,1,8,0,0,150,'2026-05-22 20:29:42','2026-05-25 21:18:29',0),(73,229,1,37,5,0,180,'2026-05-25 14:32:01','2026-05-29 12:41:13',0),(74,230,1,10,5,0,120,'2026-05-25 14:41:47',NULL,0),(75,231,1,100,10,5,50,'2026-05-25 14:52:22',NULL,0),(76,232,1,0,0,0,200,NULL,NULL,0),(77,233,1,0,0,0,500,NULL,NULL,0),(78,234,1,0,0,0,500,NULL,NULL,0),(79,235,1,8,0,0,700,'2026-05-26 19:17:03','2026-05-28 17:40:36',0);
+/*!40000 ALTER TABLE `stock_medicaments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_arret_compte`
+--
+
+DROP TABLE IF EXISTS `t_arret_compte`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_arret_compte` (
+  `iderret` int DEFAULT NULL,
+  `ncompte` double DEFAULT NULL,
+  `soldedebit` double DEFAULT NULL,
+  `soldecredit` double DEFAULT NULL,
+  `idboutique` double DEFAULT NULL,
+  `exercice` double DEFAULT NULL,
+  `fkidcleoperation` double DEFAULT NULL,
+  `User_code` double DEFAULT NULL,
+  `dtgeneral` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_arret_compte`
+--
+
+LOCK TABLES `t_arret_compte` WRITE;
+/*!40000 ALTER TABLE `t_arret_compte` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_arret_compte` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_arret_situation_compte`
+--
+
+DROP TABLE IF EXISTS `t_arret_situation_compte`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_arret_situation_compte` (
+  `idarret` int DEFAULT NULL,
+  `dateoper` datetime DEFAULT NULL,
+  `Ncompte` double DEFAULT NULL,
+  `MontantOperation` double DEFAULT NULL,
+  `typeoperation` double DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
+  `Numfacture` varchar(255) DEFAULT NULL,
+  `fkidboutique` double DEFAULT NULL,
+  `entreEspece` double DEFAULT NULL,
+  `retraitEspece` double DEFAULT NULL,
+  `pourlui` double DEFAULT NULL,
+  `pourbtique` double DEFAULT NULL,
+  `nombene` varchar(250) DEFAULT NULL,
+  `telebene` varchar(250) DEFAULT NULL,
+  `compmouv` double DEFAULT NULL,
+  `remi` double DEFAULT NULL,
+  `numecheqbanq` varchar(255) DEFAULT NULL,
+  `User_code` int DEFAULT NULL,
+  `typedepense` int DEFAULT NULL,
+  `exercice` double DEFAULT NULL,
+  `archive` varchar(255) DEFAULT NULL,
+  `soldetouche` varchar(255) DEFAULT NULL,
+  `dtgeneraloper` datetime DEFAULT NULL,
+  `operationsurfacture` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_arret_situation_compte`
+--
+
+LOCK TABLES `t_arret_situation_compte` WRITE;
+/*!40000 ALTER TABLE `t_arret_situation_compte` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_arret_situation_compte` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_banque`
+--
+
+DROP TABLE IF EXISTS `t_banque`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_banque` (
+  `Id_BNQ` int NOT NULL AUTO_INCREMENT,
+  `LibBanque` varchar(255) DEFAULT NULL,
+  `Ncompte_Bnq` varchar(255) DEFAULT NULL,
+  `CompteDebit` varchar(255) DEFAULT NULL,
+  `Isvisible` double DEFAULT NULL,
+  PRIMARY KEY (`Id_BNQ`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_banque`
+--
+
+LOCK TABLES `t_banque` WRITE;
+/*!40000 ALTER TABLE `t_banque` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_banque` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_campagnie`
+--
+
+DROP TABLE IF EXISTS `t_campagnie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_campagnie` (
+  `IDCampagnie` varchar(255) DEFAULT NULL,
+  `NomCampagnie` varchar(255) DEFAULT NULL,
+  `Code` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_campagnie`
+--
+
+LOCK TABLES `t_campagnie` WRITE;
+/*!40000 ALTER TABLE `t_campagnie` DISABLE KEYS */;
+INSERT INTO `t_campagnie` VALUES ('147','Royal Air Maroc','AT'),('169','Hahn Air','HR'),('199','Tunisair','TU'),('235','Turkish Airlines Inc.','TK'),('365','FlexFlight ApS','W2'),('474','Binter Canarias','NT'),('495','Mauritania Airlines International','L6'),('577','Azul Linhas Aereas Brasileiras','AD');
+/*!40000 ALTER TABLE `t_campagnie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_categorie_compte_client`
+--
+
+DROP TABLE IF EXISTS `t_categorie_compte_client`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_categorie_compte_client` (
+  `Codecategorie` int NOT NULL AUTO_INCREMENT,
+  `libecate` varchar(255) DEFAULT NULL,
+  `cle` int DEFAULT NULL,
+  `clas` double DEFAULT NULL,
+  `numecompcate` double DEFAULT NULL,
+  `libecatearab` varchar(250) DEFAULT NULL,
+  `derniernum` double DEFAULT NULL,
+  `isvisible` double DEFAULT NULL,
+  `isvisiblefact` double DEFAULT NULL,
+  `isvisibleoper` double DEFAULT NULL,
+  `numTris` double DEFAULT NULL,
+  PRIMARY KEY (`Codecategorie`)
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_categorie_compte_client`
+--
+
+LOCK TABLES `t_categorie_compte_client` WRITE;
+/*!40000 ALTER TABLE `t_categorie_compte_client` DISABLE KEYS */;
+INSERT INTO `t_categorie_compte_client` VALUES (25,'Fournisseurs',1,40,400,'Fournisseurs',22,0,0,1,3),(26,'dépôts et cautionnements',1,26,265,'??????? ?????????',21,0,0,0,8),(27,'Clients',1,41,410,'Clients',22,0,1,1,1),(28,'Sociétés',1,40,403,'????????',21,0,0,0,2),(29,'Personnels',1,42,420,'Personnels',21,0,0,1,4),(30,'Achats directs',0,60,600,'?????? ???????',21,0,0,0,7),(31,'Dépenses',0,62,620,'Dépenses',25,1,0,1,5),(32,'Salaires',0,65,650,'???????',21,0,0,0,6),(33,'Ventes Directes',0,70,700,'Recettes',21,1,0,0,24),(34,'Ventes Indirectes',0,70,701,'????? ??? ???????',21,0,0,0,9),(35,'Banques',1,55,550,'??????',21,0,0,0,10),(36,'Caisse',1,56,560,'???????',21,0,0,0,11),(37,'achats indirects',0,60,601,'?????? ??? ???????',21,0,0,0,12),(38,'Matériels Transports',1,21,215,'????? ?????',21,0,0,0,13),(39,'Matériels d\'exploitation',1,21,214,'? ??? ???????',21,0,0,0,14),(40,'Amrtissement',1,28,280,'???????',21,0,0,0,15),(41,'Marchandise',1,30,300,'???????',21,0,0,0,16),(42,'Capital',1,10,100,'??? ?????',21,0,0,0,17),(43,'Emprunts',1,16,160,'??????',21,0,0,0,18),(44,'Matériels de bureaux et informatiques',1,21,216,'??????? ???????? ??????????',21,0,0,0,19),(45,'Resultat de l\'exercice',1,13,130,'???? ???????',21,0,0,0,20),(46,'Prov pour risques et charges',1,68,687,'??????? ??????? ????????',21,0,0,0,21),(47,'Taxe et Impôts',1,66,660,'?????? ????????',21,0,0,0,22),(48,'Loyers',1,62,621,'??????',21,0,0,0,23);
+/*!40000 ALTER TABLE `t_categorie_compte_client` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_currentexercice`
+--
+
+DROP TABLE IF EXISTS `t_currentexercice`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_currentexercice` (
+  `idexercice` double NOT NULL,
+  `archive` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idexercice`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_currentexercice`
+--
+
+LOCK TABLES `t_currentexercice` WRITE;
+/*!40000 ALTER TABLE `t_currentexercice` DISABLE KEYS */;
+INSERT INTO `t_currentexercice` VALUES (2018,'Non');
+/*!40000 ALTER TABLE `t_currentexercice` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_depenses_recette`
+--
+
+DROP TABLE IF EXISTS `t_depenses_recette`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_depenses_recette` (
+  `iddepenserecette` int NOT NULL AUTO_INCREMENT,
+  `dtdepense` datetime DEFAULT NULL,
+  `dtajoutdepense` datetime DEFAULT NULL,
+  `idexercice` double DEFAULT NULL,
+  `designation` varchar(255) DEFAULT NULL,
+  `modereglement` varchar(255) DEFAULT NULL,
+  `numtitreregl` varchar(255) DEFAULT NULL,
+  `typedep` varchar(255) DEFAULT NULL,
+  `xbeneficiaire` double DEFAULT NULL,
+  `mntentree` double DEFAULT NULL,
+  `mntsortie` double DEFAULT NULL,
+  `nomuser` varchar(255) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `fkidCabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`iddepenserecette`),
+  KEY `Index_2` (`idexercice`),
+  KEY `Index_3` (`typedep`),
+  KEY `Index_4` (`xbeneficiaire`),
+  KEY `Index_5` (`dtdepense`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_depenses_recette`
+--
+
+LOCK TABLES `t_depenses_recette` WRITE;
+/*!40000 ALTER TABLE `t_depenses_recette` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_depenses_recette` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_exercice`
+--
+
+DROP TABLE IF EXISTS `t_exercice`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_exercice` (
+  `Exercice` double NOT NULL,
+  `archiver` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`Exercice`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_exercice`
+--
+
+LOCK TABLES `t_exercice` WRITE;
+/*!40000 ALTER TABLE `t_exercice` DISABLE KEYS */;
+INSERT INTO `t_exercice` VALUES (2018,'NON');
+/*!40000 ALTER TABLE `t_exercice` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_fournisseur_personnel`
+--
+
+DROP TABLE IF EXISTS `t_fournisseur_personnel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_fournisseur_personnel` (
+  `IDFournisseur` int NOT NULL AUTO_INCREMENT,
+  `NomTiers` varchar(255) DEFAULT NULL,
+  `TelephoneAutre` varchar(255) DEFAULT NULL,
+  `fkidtypeTiers` double DEFAULT NULL,
+  `userCr` double DEFAULT NULL,
+  PRIMARY KEY (`IDFournisseur`)
+) ENGINE=InnoDB AUTO_INCREMENT=971 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_fournisseur_personnel`
+--
+
+LOCK TABLES `t_fournisseur_personnel` WRITE;
+/*!40000 ALTER TABLE `t_fournisseur_personnel` DISABLE KEYS */;
+INSERT INTO `t_fournisseur_personnel` VALUES (951,'Moctar',NULL,3,NULL),(953,'assi bintou',NULL,5,NULL),(956,'medecin praicien',NULL,3,NULL),(957,'expresse medical',NULL,3,NULL),(959,'nourdine',NULL,5,NULL),(960,'bacar',NULL,5,NULL),(961,'mamouni',NULL,5,NULL),(963,'fatou',NULL,7,NULL),(965,'phamacie',NULL,8,NULL),(968,'maison',NULL,7,NULL),(970,'factures',NULL,7,NULL);
+/*!40000 ALTER TABLE `t_fournisseur_personnel` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_solde_caisse`
+--
+
+DROP TABLE IF EXISTS `t_solde_caisse`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_solde_caisse` (
+  `idoper` int NOT NULL AUTO_INCREMENT,
+  `typeoperation` varchar(255) DEFAULT NULL,
+  `idtypeoperation` double DEFAULT NULL,
+  `xclie` double DEFAULT NULL,
+  `especesortie` double DEFAULT NULL,
+  `especeentre` double DEFAULT NULL,
+  `dateoper` datetime DEFAULT NULL,
+  `dtgeneral` datetime DEFAULT NULL,
+  `iduser` double DEFAULT NULL,
+  `exercice` double DEFAULT NULL,
+  `xboutique` double DEFAULT NULL,
+  PRIMARY KEY (`idoper`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_solde_caisse`
+--
+
+LOCK TABLES `t_solde_caisse` WRITE;
+/*!40000 ALTER TABLE `t_solde_caisse` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_solde_caisse` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_souscompte`
+--
+
+DROP TABLE IF EXISTS `t_souscompte`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_souscompte` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Ncompte` double DEFAULT NULL,
+  `Numordresouscompte` double DEFAULT NULL,
+  `souscompte` varchar(255) DEFAULT NULL,
+  `dtcreation` datetime DEFAULT NULL,
+  `iduser_code` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Index_2` (`Ncompte`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_souscompte`
+--
+
+LOCK TABLES `t_souscompte` WRITE;
+/*!40000 ALTER TABLE `t_souscompte` DISABLE KEYS */;
+/*!40000 ALTER TABLE `t_souscompte` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_type_operation`
+--
+
+DROP TABLE IF EXISTS `t_type_operation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_type_operation` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `liboperation` varchar(255) DEFAULT NULL,
+  `isvisibleemployer` double DEFAULT NULL,
+  `isvisibleclient` double DEFAULT NULL,
+  `iscaisse` double DEFAULT NULL,
+  `lib` varchar(255) DEFAULT NULL,
+  `cat_operation` varchar(255) DEFAULT NULL,
+  `isvisiblerech` double DEFAULT NULL,
+  `lib2` varchar(255) DEFAULT NULL,
+  `categorie` double DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_type_operation`
+--
+
+LOCK TABLES `t_type_operation` WRITE;
+/*!40000 ALTER TABLE `t_type_operation` DISABLE KEYS */;
+INSERT INTO `t_type_operation` VALUES (1,'??? ???',1,1,1,'????   :','D',1,'????',1),(2,'??? ???',1,1,1,'??   :','C',1,'??',2),(3,'????? ??',1,1,0,'??   :','C',0,'??',2),(4,'????? ????',1,1,0,'????   :','D',0,'????',1),(5,'???????',1,0,1,'??????? / ?? :','DC',0,'??????? / ??',2),(6,'????? ??????  ??',0,0,0,'????? ??????  ??','A',0,'????? ??????  ??',0),(7,'????? ??????  ????',0,0,0,'????? ??????  ????','A',0,'????? ??????  ????',0);
+/*!40000 ALTER TABLE `t_type_operation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_user`
+--
+
+DROP TABLE IF EXISTS `t_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `t_user` (
+  `Iduser` int unsigned NOT NULL AUTO_INCREMENT,
+  `login` varchar(45) NOT NULL DEFAULT '',
+  `password` varchar(145) NOT NULL DEFAULT '',
+  `ismasquer` int unsigned NOT NULL DEFAULT '0',
+  `NomComplet` varchar(45) NOT NULL DEFAULT '',
+  `IdClasseUser` int unsigned NOT NULL DEFAULT '1' COMMENT '1 Secretaire, 2 Doct,3 Propreitaire,4 Doct Proprietaire',
+  `fonction` varchar(45) DEFAULT NULL,
+  `fkidmedecin` int unsigned NOT NULL DEFAULT '0',
+  `DtCr` datetime DEFAULT NULL,
+  `fkidcabinet` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`Iduser`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_user`
+--
+
+LOCK TABLES `t_user` WRITE;
+/*!40000 ALTER TABLE `t_user` DISABLE KEYS */;
+INSERT INTO `t_user` VALUES (1,'INES','$2y$10$D7c9CULze0ZOhhr6aPdzBuxGpzKpG8/H8DDLqSEkMqNJnICx8gJzW',0,'INES ISSAOUI',3,'Docteur Propriétaire',7,'2026-05-15 18:26:53',1),(19,'sonia','$2y$10$.BwSNmiKnDYdkEy7ptxI0uJYr00nXuOTaPoVIsrkgTJA2Xb8bj7vi',0,'Sonia',5,'Propriétaire',1,'2026-04-19 03:39:24',1),(20,'fatimetou','$2y$10$owxt6bPrwnBTseVSP.Q/2ebJqDdFcLEVAsa/xI9Gk17nUXsMWFvCG',0,'Fatimetou',4,'Propriétaire',0,'2026-04-21 19:54:10',1),(21,'marwa','$2y$10$nOi7pY5u1DzO/deOQ1xcHuTVugiTFxjrQ8Y1g3crlBCA6z6srU3gy',0,'Marwa',1,'Secrétaire',0,'2026-04-21 19:54:28',1);
+/*!40000 ALTER TABLE `t_user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `typeactes`
+--
+
+DROP TABLE IF EXISTS `typeactes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `typeactes` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `Type` varchar(45) NOT NULL DEFAULT '',
+  `CodeType` varchar(45) NOT NULL DEFAULT '',
+  `ISvisible` int unsigned NOT NULL DEFAULT '1',
+  `NumeroOrdre` int unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `typeactes`
+--
+
+LOCK TABLES `typeactes` WRITE;
+/*!40000 ALTER TABLE `typeactes` DISABLE KEYS */;
+INSERT INTO `typeactes` VALUES (1,'Consultation','Cons',1,2),(2,'Odontologie Conservtrice','Odonto-Cons',0,3),(3,'Endodontie','Endo',1,4),(4,'Parodontie','Parod',1,5),(5,'Chirurgie orale','ChirurOR',1,6),(6,'Prothèses','Proth',1,7),(7,'Blanchiment','Blan',1,8),(8,'Orthodontie','Orthod',1,9),(9,'Actes CNAM','CNAM',1,10);
+/*!40000 ALTER TABLE `typeactes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `typerecettesdepenses`
+--
+
+DROP TABLE IF EXISTS `typerecettesdepenses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `typerecettesdepenses` (
+  `IdtypeDepRec` int unsigned NOT NULL AUTO_INCREMENT,
+  `LibelleType` varchar(45) NOT NULL DEFAULT '',
+  PRIMARY KEY (`IdtypeDepRec`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `typerecettesdepenses`
+--
+
+LOCK TABLES `typerecettesdepenses` WRITE;
+/*!40000 ALTER TABLE `typerecettesdepenses` DISABLE KEYS */;
+INSERT INTO `typerecettesdepenses` VALUES (1,'Recettes'),(2,'Dépenses');
+/*!40000 ALTER TABLE `typerecettesdepenses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `typereglements`
+--
+
+DROP TABLE IF EXISTS `typereglements`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `typereglements` (
+  `idreglement` int NOT NULL AUTO_INCREMENT,
+  `TypeReglement` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`idreglement`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `typereglements`
+--
+
+LOCK TABLES `typereglements` WRITE;
+/*!40000 ALTER TABLE `typereglements` DISABLE KEYS */;
+INSERT INTO `typereglements` VALUES (1,'Espèce'),(2,'Chèque'),(3,'Virement');
+/*!40000 ALTER TABLE `typereglements` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `typetiers`
+--
+
+DROP TABLE IF EXISTS `typetiers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `typetiers` (
+  `IdTypeTiers` int unsigned NOT NULL AUTO_INCREMENT,
+  `LibelleTypeTiers` varchar(45) NOT NULL DEFAULT '',
+  `Estvisible` int unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`IdTypeTiers`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `typetiers`
+--
+
+LOCK TABLES `typetiers` WRITE;
+/*!40000 ALTER TABLE `typetiers` DISABLE KEYS */;
+INSERT INTO `typetiers` VALUES (1,'Patients',1),(3,'Fournisseurs',1),(4,'Assureurs',1),(5,'Personnel Cabinet',1),(6,'Loyers',1),(7,'Autres Depnses',1),(8,'Autres Recettes',1),(9,'Laboratoires',0);
+/*!40000 ALTER TABLE `typetiers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `typeuser`
+--
+
+DROP TABLE IF EXISTS `typeuser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `typeuser` (
+  `IdClasseUser0` int unsigned NOT NULL AUTO_INCREMENT,
+  `Libelle` varchar(45) NOT NULL DEFAULT '',
+  PRIMARY KEY (`IdClasseUser0`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `typeuser`
+--
+
+LOCK TABLES `typeuser` WRITE;
+/*!40000 ALTER TABLE `typeuser` DISABLE KEYS */;
+INSERT INTO `typeuser` VALUES (1,'Secretaire'),(2,'Docteur'),(3,'Docteur Propriétaire'),(4,'Infirmier'),(5,'Administrateur');
+/*!40000 ALTER TABLE `typeuser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_verified_at` timestamp NULL DEFAULT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users_email_unique` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-01 16:20:56

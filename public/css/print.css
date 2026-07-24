@@ -1,0 +1,235 @@
+/*
+ * SysMedical — Feuille de style impression commune
+ * Philosophie : noir sur blanc, zéro fond coloré, encre minimale
+ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f5f5;
+    color: #000;
+    font-size: 11px;
+}
+
+/* ── Conteneurs page ── */
+.page, .a4 {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 20px auto;
+    background: #fff;
+    padding: 12mm 14mm 14mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.a5 {
+    width: 148mm;
+    min-height: 210mm;
+    margin: 20px auto;
+    background: #fff;
+    padding: 8mm 10mm 10mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── En-tête ── */
+.recu-header, .print-header { text-align: center; }
+.recu-header .header { margin-bottom: 0 !important; }
+.recu-header img, .print-header img { max-height: 120px; width: auto; }
+
+.header-divider {
+    border: none;
+    border-top: 1.5px solid #000;
+    margin: 8px 0 12px;
+}
+
+/* ── Titre document ── */
+.doc-title, .facture-title {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 1.5px solid #000;
+    padding: 6px 14px;
+    margin: 0 auto 14px;
+    display: inline-block;
+    width: 100%;
+}
+
+/* ── Bloc info patient / métadonnées ── */
+.info-bloc {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+.info-bloc td {
+    padding: 2px 6px;
+    font-size: 11px;
+    vertical-align: top;
+}
+.info-bloc .lbl {
+    font-weight: 600;
+    white-space: nowrap;
+    width: 90px;
+}
+.info-bloc .val { color: #000; }
+.info-bloc .right { text-align: right; }
+
+.info-divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 8px 0 10px;
+}
+
+/* ── Tableaux de données ── */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4px;
+    page-break-inside: auto;
+}
+.data-table thead tr {
+    border-bottom: 1.5px solid #000;
+}
+.data-table th {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 5px 7px;
+    text-align: left;
+    border-bottom: 1.5px solid #000;
+    background: none;
+    color: #000;
+}
+.data-table th.right, .data-table td.right { text-align: right; }
+.data-table th.center, .data-table td.center { text-align: center; }
+.data-table td {
+    font-size: 11px;
+    padding: 4px 7px;
+    border-bottom: 1px solid #ddd;
+    color: #000;
+    background: none;
+}
+/* Zéro fond alterné à l'impression — uniquement pour l'écran */
+.data-table tbody tr:nth-child(even) td { background: #fafafa; }
+
+/* ── Section label (groupes) ── */
+.section-lbl {
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 3px;
+    margin: 12px 0 6px;
+    page-break-after: avoid;
+}
+
+/* ── Totaux ── */
+.totaux-table {
+    width: 42%;
+    border-collapse: collapse;
+    margin: 0 0 0 auto;
+}
+.totaux-table td {
+    font-size: 11px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+}
+.totaux-table td:last-child { text-align: right; }
+.totaux-table tr:last-child td {
+    font-weight: 700;
+    border-top: 1.5px solid #000;
+}
+
+/* ── Montant en lettres ── */
+.montant-lettres {
+    margin-top: 12px;
+    font-size: 11px;
+    font-style: italic;
+    border-left: 2px solid #000;
+    padding-left: 8px;
+    page-break-inside: avoid;
+}
+
+/* ── Signature ── */
+.signature-block {
+    margin-top: 32px;
+    text-align: right;
+    padding-right: 16px;
+    page-break-inside: avoid;
+}
+.signature-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 28px;
+}
+.signature-line {
+    display: inline-block;
+    width: 130px;
+    border-top: 1px solid #000;
+    padding-top: 3px;
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* ── Pied de page ── */
+.recu-footer, .print-footer {
+    margin-top: auto;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    padding-top: 6px;
+    font-size: 9px;
+    color: #555;
+}
+
+/* ── Boutons impression (écran seulement) ── */
+.print-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+.print-controls select,
+.print-controls button {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+}
+.print-controls .btn-primary { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+.print-controls .btn-success { background: #16a34a; color: #fff; border-color: #16a34a; }
+.print-controls .btn-wa     { background: #25D366; color: #fff; border-color: #25D366; }
+
+/* ── IMPRESSION ── */
+@media print {
+    body { background: #fff !important; }
+    .print-controls { display: none !important; }
+    .page, .a4, .a5 {
+        margin: 0 !important;
+        box-shadow: none !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+    /* Aucun fond coloré à l'impression */
+    * { background: transparent !important; color: #000 !important; }
+    .data-table tbody tr:nth-child(even) td { background: none !important; }
+    .data-table th { border-bottom: 1.5px solid #000 !important; }
+    .data-table td { border-bottom: 1px solid #ccc !important; }
+    .totaux-table tr:last-child td { border-top: 1.5px solid #000 !important; }
+    .header-divider { border-top-color: #000 !important; }
+    /* Sauts de page */
+    .data-table thead { display: table-header-group; }
+    .data-table tbody tr { page-break-inside: avoid; }
+    .signature-block, .montant-lettres, .totaux-table { page-break-inside: avoid; }
+    .section-lbl { page-break-after: avoid; }
+    a { color: #000 !important; text-decoration: none !important; }
+    @page { size: A4; margin: 10mm; }
+}

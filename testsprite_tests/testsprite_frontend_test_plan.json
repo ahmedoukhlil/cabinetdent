@@ -1,0 +1,995 @@
+[
+  {
+    "id": "TC001",
+    "title": "Staff can sign in and reach the protected dashboard",
+    "description": "Verifies a staff user can authenticate successfully and lands on the patient queue dashboard.",
+    "category": "Connexion staff",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the patient queue dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Créer une consultation avec actes et enregistrer la facture",
+    "description": "Vérifie qu’un médecin peut créer une consultation complète avec actes et mode de paiement et que la facture est enregistrée.",
+    "category": "Consultations (medical flow & billing)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create a new consultation"
+      },
+      {
+        "type": "action",
+        "description": "Use the patient search to select a patient"
+      },
+      {
+        "type": "action",
+        "description": "Select a consultation type"
+      },
+      {
+        "type": "action",
+        "description": "Select at least one acte"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment mode"
+      },
+      {
+        "type": "action",
+        "description": "Select insurance options if available"
+      },
+      {
+        "type": "action",
+        "description": "Submit the consultation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the consultation submission results in an invoice being recorded or visible in the UI"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Staff can update a waiting patient status and see the queue reorder",
+    "description": "Verifies changing a patient's waiting status updates the queue order and/or status display accordingly.",
+    "category": "Accueil et file d'attente patient",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open the patient queue dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Select a patient from the waiting list"
+      },
+      {
+        "type": "action",
+        "description": "Change the selected patient status to arrived or confirmed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the queue updates to reflect the new status and ordering"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Staff can start a consultation from the queue via modal",
+    "description": "Verifies starting a consultation from the queue opens a modal, allows submitting basic info, then closes and updates the queue.",
+    "category": "Accueil et file d'attente patient",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open the patient queue dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Select a patient from the waiting list"
+      },
+      {
+        "type": "action",
+        "description": "Open the consultation modal for the selected patient"
+      },
+      {
+        "type": "action",
+        "description": "Fill the consultation basic information fields with valid values"
+      },
+      {
+        "type": "action",
+        "description": "Submit the consultation start action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the consultation modal is closed and the queue reflects the updated state for that patient"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Receptionist can create a new patient and find them in the list",
+    "description": "Verifies creating a patient with required fields succeeds and the new patient appears in the patient list.",
+    "category": "Patients (list & creation)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open patient creation"
+      },
+      {
+        "type": "action",
+        "description": "Fill Jean Testpatient into the patient full name field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid phone number into the phone field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid value in any required dropdown fields"
+      },
+      {
+        "type": "action",
+        "description": "Submit the patient form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open the patients list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a patient named Jean Testpatient appears in the patient list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Créer un rendez-vous et obtenir un lien public patient",
+    "description": "Vérifie qu’un staff peut créer un rendez-vous, le retrouver dans la liste et accéder à un lien/token public associé.",
+    "category": "Rendez-vous (appointments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to appointments"
+      },
+      {
+        "type": "action",
+        "description": "Open the new appointment creation form"
+      },
+      {
+        "type": "action",
+        "description": "Use the patient search to select a patient"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid appointment date"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid appointment time"
+      },
+      {
+        "type": "action",
+        "description": "Select a practitioner"
+      },
+      {
+        "type": "action",
+        "description": "Submit the appointment form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the newly created appointment appears in the appointments list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a public access token or QR/link for the appointment is available from the appointment entry"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Régler une facture et mettre à jour son statut",
+    "description": "Vérifie qu’un caissier peut rechercher une facture, enregistrer un paiement et voir le statut de la facture mis à jour dans la liste.",
+    "category": "Caisse et règlements (cash operations & invoice payments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create a new consultation"
+      },
+      {
+        "type": "action",
+        "description": "Use the patient search to select a patient"
+      },
+      {
+        "type": "action",
+        "description": "Select a consultation type"
+      },
+      {
+        "type": "action",
+        "description": "Select at least one acte"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment mode that creates an unpaid or partially paid invoice"
+      },
+      {
+        "type": "action",
+        "description": "Submit the consultation form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to invoice payments"
+      },
+      {
+        "type": "action",
+        "description": "Search for the invoice created in this session"
+      },
+      {
+        "type": "action",
+        "description": "Select the invoice from the results"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid payment amount into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Select a payment method"
+      },
+      {
+        "type": "action",
+        "description": "Submit the payment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the payment is recorded for the invoice in the UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the invoice status is updated to a paid or partially paid state"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Enregistrer une opération de caisse et voir le solde se recalculer",
+    "description": "Vérifie qu’un caissier peut enregistrer une entrée/sortie de caisse et que le solde journalier se met à jour.",
+    "category": "Caisse et règlements (cash operations & invoice payments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to cash operations"
+      },
+      {
+        "type": "action",
+        "description": "Select an operation type (entry or withdrawal)"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid amount into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a short description into the operation description field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the cash operation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new cash operation appears in the operations list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the daily balance value is updated"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Receptionist can search and filter the patient directory",
+    "description": "Verifies a staff user can search or filter patients and see the list update to match the criteria.",
+    "category": "Patients (list & creation)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open the patients list"
+      },
+      {
+        "type": "action",
+        "description": "Fill test into the patient search field"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the patient list results are filtered based on the search criteria"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Changer le statut d’un rendez-vous depuis la liste",
+    "description": "Vérifie qu’un staff peut mettre à jour le statut d’un rendez-vous et voir le changement reflété dans la liste.",
+    "category": "Rendez-vous (appointments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to appointments"
+      },
+      {
+        "type": "action",
+        "description": "Open the new appointment creation form"
+      },
+      {
+        "type": "action",
+        "description": "Use the patient search to select a patient"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid appointment date"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid appointment time"
+      },
+      {
+        "type": "action",
+        "description": "Select a practitioner"
+      },
+      {
+        "type": "action",
+        "description": "Submit the appointment form"
+      },
+      {
+        "type": "action",
+        "description": "Select the newly created appointment in the list"
+      },
+      {
+        "type": "action",
+        "description": "Change the appointment status to a different valid status"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the appointment status is updated in the appointments list"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Connexion et accès aux statistiques avec filtres",
+    "description": "Vérifie qu’un admin peut se connecter, appliquer des filtres sur les statistiques et voir les métriques se mettre à jour à l’écran.",
+    "category": "Statistiques",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation entry to open the statistics page."
+      },
+      {
+        "type": "action",
+        "description": "Select a valid date range in the statistics filters."
+      },
+      {
+        "type": "action",
+        "description": "Select a practitioner filter option."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify revenue and metric summaries are displayed for the selected filters."
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC012",
+    "title": "Créer un utilisateur staff avec rôle et le voir dans la liste",
+    "description": "Vérifie qu’un admin peut créer un nouvel utilisateur en assignant un rôle et que l’utilisateur apparaît ensuite dans la liste.",
+    "category": "Administration — Users",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation entry to open the users administration page."
+      },
+      {
+        "type": "action",
+        "description": "Open the new user form."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Test User\" into the name field."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"test.user+ui1@example.com\" into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Select a staff role."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Password123!\" into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the new user form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new user is present in the users list."
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC013",
+    "title": "Afficher les informations RDV via lien patient",
+    "description": "Vérifie qu’un patient peut ouvrir un lien RDV reçu et voir sa position et une estimation d’attente affichées avec l’état de la file.",
+    "category": "Interface patient publique",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /patient/rendez-vous/{token} en utilisant un token de test fourni par l’environnement."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify appointment position and estimated waiting time are displayed."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify current queue status information is displayed."
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC014",
+    "title": "Afficher le résumé de consultation via lien patient",
+    "description": "Vérifie qu’un patient peut ouvrir un lien consultation reçu et voir un résumé de consultation et les documents disponibles affichés.",
+    "category": "Interface patient publique",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /patient/consultation/{token} en utilisant un token de test fourni par l’environnement."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a consultation summary is displayed."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify available consultation documents are displayed."
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Exporter ou imprimer un rapport de statistiques",
+    "description": "Vérifie qu’un admin peut lancer une action d’export ou d’impression depuis les statistiques et voir une confirmation de démarrage de l’action.",
+    "category": "Statistiques",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation entry to open the statistics page."
+      },
+      {
+        "type": "action",
+        "description": "Select a valid date range in the statistics filters."
+      },
+      {
+        "type": "action",
+        "description": "Click the export report action."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a confirmation is visible that the report export/print action started."
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Bloquer la création de consultation sans patient ou sans acte",
+    "description": "Vérifie que la consultation ne peut pas être enregistrée si des champs requis (patient ou acte) manquent et que des erreurs de validation sont visibles.",
+    "category": "Consultations (medical flow & billing)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create a new consultation"
+      },
+      {
+        "type": "action",
+        "description": "Submit the consultation form without selecting required fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation errors are visible and the consultation is not saved"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC017",
+    "title": "Empêcher la création d’un utilisateur avec email déjà utilisé",
+    "description": "Vérifie qu’un admin voit une erreur de validation lorsqu’il tente de créer un utilisateur avec un email déjà existant.",
+    "category": "Administration — Users",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation entry to open the users administration page."
+      },
+      {
+        "type": "action",
+        "description": "Open the new user form."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Duplicate User\" into the name field."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"test.user+dup@example.com\" into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Select a staff role."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Password123!\" into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the new user form."
+      },
+      {
+        "type": "action",
+        "description": "Open the new user form."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Duplicate User 2\" into the name field."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"test.user+dup@example.com\" into the email field."
+      },
+      {
+        "type": "action",
+        "description": "Select a staff role."
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Password123!\" into the password field."
+      },
+      {
+        "type": "action",
+        "description": "Submit the new user form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a duplicate email validation error is visible."
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC018",
+    "title": "Patient creation shows validation errors when required fields are missing",
+    "description": "Verifies submitting the patient creation form without required information shows validation errors and does not create a record.",
+    "category": "Patients (list & creation)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation option to open patient creation"
+      },
+      {
+        "type": "action",
+        "description": "Submit the patient form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation error messages are visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC019",
+    "title": "Empêcher la création d’un rendez-vous avec une date passée",
+    "description": "Vérifie qu’un rendez-vous avec une date passée est refusé avec une erreur de validation visible.",
+    "category": "Rendez-vous (appointments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to create a new appointment"
+      },
+      {
+        "type": "action",
+        "description": "Use the patient search to select a patient"
+      },
+      {
+        "type": "action",
+        "description": "Fill a past date into the appointment date field"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid appointment time"
+      },
+      {
+        "type": "action",
+        "description": "Select a practitioner"
+      },
+      {
+        "type": "action",
+        "description": "Submit the appointment form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a date validation error is visible and the appointment is not created"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC020",
+    "title": "Staff sees an error for invalid credentials",
+    "description": "Verifies submitting incorrect credentials shows an authentication error and the user remains unauthenticated.",
+    "category": "Connexion staff",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid-user into the login field"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid-password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the credentials"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC021",
+    "title": "Refuser un règlement avec un format de montant invalide",
+    "description": "Vérifie qu’un paiement avec un montant au format invalide est refusé avec une erreur de validation visible.",
+    "category": "Caisse et règlements (cash operations & invoice payments)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the navigation link to invoice payments"
+      },
+      {
+        "type": "action",
+        "description": "Search for an invoice using patient or invoice search inputs"
+      },
+      {
+        "type": "action",
+        "description": "Select an invoice from the results"
+      },
+      {
+        "type": "action",
+        "description": "Fill an invalid amount format into the amount field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the payment"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an amount validation error is visible and the payment is not recorded"
+      }
+    ],
+    "priority": "Low"
+  }
+]
