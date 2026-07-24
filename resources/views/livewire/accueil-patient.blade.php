@@ -684,7 +684,7 @@ $patientId = $selectedPatient
             <button type="button" @click="open = false" class="modal-close"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <livewire:user-manager wire:key="user-manager-modal" lazy="on-load" />
+            <livewire:user-manager wire:key="user-manager-modal" />
         </div>
     </div>
 </div>

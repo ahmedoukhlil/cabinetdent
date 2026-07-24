@@ -369,7 +369,6 @@
                 <button type="button" onclick="document.getElementById('force-delete-dialog').close()"
                         class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">Annuler</button>
                 <button type="button" wire:click="forceDeleteUser"
-                        onclick="document.getElementById('force-delete-dialog').close()"
                         class="px-4 py-2 bg-red-700 text-white rounded-lg text-sm hover:bg-red-800 font-medium">
                     <i class="fas fa-trash-alt mr-1"></i> Supprimer définitivement
                 </button>
@@ -426,6 +425,10 @@
             window.addEventListener('open-force-delete', () => {
                 const dlg = document.getElementById('force-delete-dialog');
                 if (dlg && !dlg.open) dlg.showModal();
+            });
+            window.addEventListener('close-force-delete', () => {
+                const dlg = document.getElementById('force-delete-dialog');
+                if (dlg && dlg.open) dlg.close();
             });
         })();
     </script>

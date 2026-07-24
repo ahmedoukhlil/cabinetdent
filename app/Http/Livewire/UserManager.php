@@ -274,10 +274,12 @@ class UserManager extends Component
                 session()->flash('message', 'Utilisateur supprimé définitivement.');
             }
         } catch (\Exception $e) {
+            \Log::error('UserManager::forceDeleteUser', ['error' => $e->getMessage(), 'userToDelete' => $this->userToDelete]);
             session()->flash('error', 'Erreur lors de la suppression définitive.');
         }
         $this->showForceDeleteModal = false;
         $this->userToDelete = null;
+        $this->dispatch('close-force-delete');
     }
 
     public function reactivateUser($id)
