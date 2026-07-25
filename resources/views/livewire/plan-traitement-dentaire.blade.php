@@ -208,6 +208,19 @@
                                     <span class="{{ $badge[1] }} font-medium">{{ $badge[0] }}</span>
                                 </div>
                             </div>
+                        @elseif($item['type'] === 'evaluation')
+                            <i class="fas fa-clipboard-check text-blue-500 mt-0.5"></i>
+                            <div class="flex-1">
+                                <div class="text-gray-700 space-y-0.5">
+                                    @foreach($item['lignes'] as $ligne)
+                                        <div>{{ $ligne }}</div>
+                                    @endforeach
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    {{ \Carbon\Carbon::parse($item['date'])->format('d/m/Y H:i') }}
+                                    @if($item['medecin']) · Dr. {{ $item['medecin'] }} @endif
+                                </div>
+                            </div>
                         @else
                             <i class="fas fa-sticky-note text-yellow-500 mt-0.5"></i>
                             <div class="flex-1">
