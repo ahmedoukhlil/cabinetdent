@@ -7,7 +7,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Patient
@@ -40,11 +41,18 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Patient extends Model
+class Patient extends Authenticatable
 {
+	use Notifiable;
+
 	protected $table = 'patients';
 	protected $primaryKey = 'ID';
 	public $timestamps = false;
+
+	protected $hidden = [
+		'password',
+		'remember_token',
+	];
 
 	protected $casts = [
 		'DtNaissance' => 'datetime',
@@ -58,7 +66,8 @@ class Patient extends Model
 		'DtDernFermeture' => 'datetime',
 		'fkidtypeTiers' => 'int',
 		'DtDernierRDV' => 'datetime',
-		'fkidcabinet' => 'int'
+		'fkidcabinet' => 'int',
+		'mdp_defini_le' => 'datetime'
 	];
 
 	protected $fillable = [
@@ -85,7 +94,9 @@ class Patient extends Model
 		'DtDernFermeture',
 		'fkidtypeTiers',
 		'DtDernierRDV',
-		'fkidcabinet'
+		'fkidcabinet',
+		'password',
+		'mdp_defini_le'
 	];
 
 	/**

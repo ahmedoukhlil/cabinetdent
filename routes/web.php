@@ -188,3 +188,23 @@ Route::prefix('patient')->group(function () {
     Route::get('/rendez-vous/{token}', [App\Http\Controllers\PatientInterfaceController::class, 'showRendezVous'])->name('patient.rendez-vous');
     Route::get('/consultation/{token}', [App\Http\Controllers\PatientInterfaceController::class, 'showConsultation'])->name('patient.consultation');
 });
+
+// ─── Espace patient (compte permanent, PWA) ────────────────────────────────
+Route::prefix('espace-patient')->name('patient.')->group(function () {
+    Route::middleware('guest:patient')->group(function () {
+        Route::get('/connexion', [App\Http\Controllers\Auth\PatientAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/connexion/telephone', [App\Http\Controllers\Auth\PatientAuthController::class, 'rechercherParTelephone'])->name('login.telephone');
+        Route::post('/connexion/choisir', [App\Http\Controllers\Auth\PatientAuthController::class, 'selectionnerPatient'])->name('login.choisir');
+        Route::post('/connexion/mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'verifierMotDePasse'])->name('login.mot-de-passe');
+    });
+
+    Route::middleware('auth:patient')->group(function () {
+        Route::get('/definir-mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'showDefinirMotDePasse'])->name('definir-mot-de-passe');
+        Route::post('/definir-mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'definirMotDePasse'])->name('definir-mot-de-passe.save');
+        Route::post('/deconnexion', [App\Http\Controllers\Auth\PatientAuthController::class, 'logout'])->name('logout');
+
+        Route::get('/', function () {
+            return view('patient-auth.dashboard');
+        })->name('dashboard');
+    });
+});
