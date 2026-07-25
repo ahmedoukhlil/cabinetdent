@@ -301,8 +301,14 @@ function OdontogramReactif({ wireId, mode, conditionsParDent, modeMultiSelection
 
 const mountedRoots = new WeakMap();
 
-function renderInto(root, wireId, mode, conditionsParDent, modeMultiSelection, dentsSelectionnees) {
-    root.render(
+// Le conteneur vit sous wire:ignore : ses attributs data-* ne sont jamais
+// rafraîchis par Livewire après le montage initial. On mémorise donc ici
+// le dernier état réellement rendu (reçu via les événements dispatchés
+// explicitement par PHP), seule source fiable — lireEtatDepuisDom() ne
+// doit servir qu'au tout premier montage.
+function renderInto(entry, wireId, mode, conditionsParDent, modeMultiSelection, dentsSelectionnees) {
+    entry.dernierEtat = { mode, conditionsParDent, modeMultiSelection, dentsSelectionnees };
+    entry.root.render(
         <OdontogramReactif
             wireId={wireId}
             mode={mode}
@@ -316,7 +322,7 @@ function renderInto(root, wireId, mode, conditionsParDent, modeMultiSelection, d
 function lireEtatDepuisDom(el) {
     return {
         mode: el.dataset.dentitionMode || 'adulte',
-        conditions: JSON.parse(el.dataset.conditions || '{}'),
+        conditionsParDent: JSON.parse(el.dataset.conditions || '{}'),
         modeMultiSelection: el.dataset.modeMultiSelection === 'true',
         dentsSelectionnees: JSON.parse(el.dataset.dentsSelectionnees || '[]'),
     };
@@ -330,9 +336,10 @@ function mountAll() {
         const wireId = el.dataset.wireId;
         const etat = lireEtatDepuisDom(el);
         const root = createRoot(el);
-        mountedRoots.set(el, { root, wireId });
+        const entry = { root, wireId };
+        mountedRoots.set(el, entry);
         el.setAttribute('data-odontogram-mounted', 'true');
-        renderInto(root, wireId, etat.mode, etat.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
+        renderInto(entry, wireId, etat.mode, etat.conditionsParDent, etat.modeMultiSelection, etat.dentsSelectionnees);
     });
 }
 
@@ -341,13 +348,16 @@ function mountAll() {
 // peut être repositionné dans l'arbre DOM par morphdom, ce qui peut faire
 // perdre au navigateur le sous-arbre SVG interne de la librairie React
 // sans que React n'en soit informé (donc sans redéclencher les effects qui
-// réinjectent les labels FDI). On force un nouveau render dans ce cas.
+// réinjectent les labels FDI). On force un nouveau render dans ce cas — en
+// réutilisant le dernier état connu (dernierEtat), jamais le DOM : le
+// conteneur vit sous wire:ignore, ses data-* ne sont plus rafraîchis par
+// Livewire après le montage initial et seraient donc obsolètes ici.
 function rerenderTousLesSchemas() {
     document.querySelectorAll('[data-odontogram-root]').forEach((el) => {
         const entry = mountedRoots.get(el);
-        if (!entry) return;
-        const etat = lireEtatDepuisDom(el);
-        renderInto(entry.root, entry.wireId, etat.mode, etat.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
+        if (!entry || !entry.dernierEtat) return;
+        const { mode, conditionsParDent, modeMultiSelection, dentsSelectionnees } = entry.dernierEtat;
+        renderInto(entry, entry.wireId, mode, conditionsParDent, modeMultiSelection, dentsSelectionnees);
     });
 }
 
@@ -365,8 +375,8 @@ document.addEventListener('livewire:init', () => {
             if (!entry) return;
             const idCourant = resoudreWireIdCourant(el, entry.wireId);
             if (idCourant === payload.wireId) {
-                const etat = lireEtatDepuisDom(el);
-                renderInto(entry.root, entry.wireId, etat.mode, payload.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
+                const etat = entry.dernierEtat || lireEtatDepuisDom(el);
+                renderInto(entry, entry.wireId, etat.mode, payload.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
             }
         });
     });
@@ -376,8 +386,8 @@ document.addEventListener('livewire:init', () => {
         document.querySelectorAll('[data-odontogram-root]').forEach((el) => {
             const entry = mountedRoots.get(el);
             if (entry && entry.wireId === payload.wireId) {
-                const etat = lireEtatDepuisDom(el);
-                renderInto(entry.root, entry.wireId, payload.mode, etat.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
+                const etat = entry.dernierEtat || lireEtatDepuisDom(el);
+                renderInto(entry, entry.wireId, payload.mode, etat.conditionsParDent, etat.modeMultiSelection, etat.dentsSelectionnees);
             }
         });
     });
@@ -389,8 +399,8 @@ document.addEventListener('livewire:init', () => {
             if (!entry) return;
             const idCourant = resoudreWireIdCourant(el, entry.wireId);
             if (idCourant === payload.wireId) {
-                const etat = lireEtatDepuisDom(el);
-                renderInto(entry.root, entry.wireId, etat.mode, etat.conditions, payload.modeMultiSelection, payload.dentsSelectionnees);
+                const etat = entry.dernierEtat || lireEtatDepuisDom(el);
+                renderInto(entry, entry.wireId, etat.mode, etat.conditionsParDent, payload.modeMultiSelection, payload.dentsSelectionnees);
             }
         });
     });
