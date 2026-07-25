@@ -72,10 +72,11 @@
         @endunless
     </div>
 
-    {{-- Panneau d'ajout d'un acte / observation sur la dent sélectionnée --}}
+    {{-- Modale d'ajout d'un acte / observation sur la dent sélectionnée --}}
     @if($showActeSelector && !$modeObservationsSeules)
-    <div class="bg-primary-light border-l-4 border-primary rounded-lg p-4">
-        <div class="flex items-center justify-between mb-3">
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" wire:click.self="fermerActeSelector">
+    <div class="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto border-l-4 border-primary">
+        <div class="sticky top-0 bg-primary-light flex items-center justify-between mb-0 p-4 border-b border-primary/20">
             <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">
                 <i class="fas fa-tooth mr-1"></i>
                 @if($modeMultiSelection && count($dentsSelectionnees) > 0)
@@ -92,6 +93,7 @@
             </button>
         </div>
 
+        <div class="p-4">
         @unless($modeObservationsSeules)
         <div class="relative">
             <input type="text" wire:model.live.debounce.300ms="searchActe"
@@ -187,6 +189,8 @@
             @error('nouvelleObservation')<span class="text-red-500 text-xs">{{ $message }}</span>@enderror
         </div>
         @endunless
+        </div>
+    </div>
     </div>
     @endif
 

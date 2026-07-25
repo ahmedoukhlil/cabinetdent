@@ -215,9 +215,9 @@ class PlanTraitementDentaire extends Component
 
         $this->showActeSelector = true;
         $this->searchActe = '';
-        $this->filteredActes = [];
         $this->selectedActeId = null;
         $this->prixRef = null;
+        $this->chargerActesDisponibles();
     }
 
     public function toggleModeMultiSelection()
@@ -273,9 +273,9 @@ class PlanTraitementDentaire extends Component
 
         $this->showActeSelector = true;
         $this->searchActe = '';
-        $this->filteredActes = [];
         $this->selectedActeId = null;
         $this->prixRef = null;
+        $this->chargerActesDisponibles();
     }
 
     public function ouvrirEvaluation(string $numDent)
@@ -429,11 +429,20 @@ class PlanTraitementDentaire extends Component
     public function updatedSearchActe($value)
     {
         if (!$this->selectedActeId) {
-            $this->filteredActes = Acte::where('Acte', 'like', '%' . $value . '%')
-                ->where('Masquer', 0)
-                ->limit(30)
-                ->get();
+            $this->chargerActesDisponibles($value);
         }
+    }
+
+    // Charge la liste des actes disponibles, filtrée par $recherche si
+    // fourni — appelée à l'ouverture de la modale (liste complète) et à
+    // chaque frappe dans la barre de recherche (liste filtrée).
+    private function chargerActesDisponibles(string $recherche = '')
+    {
+        $this->filteredActes = Acte::where('Acte', 'like', '%' . $recherche . '%')
+            ->where('Masquer', 0)
+            ->orderBy('nordre')
+            ->limit(50)
+            ->get();
     }
 
     public function selectActe($id)
