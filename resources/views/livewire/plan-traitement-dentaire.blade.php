@@ -14,16 +14,60 @@
     {{-- Schéma dentaire (FDI), rendu via le composant React react-odontogram --}}
     <div class="border border-gray-200 rounded-xl p-3 bg-white overflow-x-auto">
         <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
-            @unless($modeObservationsSeules)
-            <button type="button" wire:click="toggleModeMultiSelection"
-                    class="text-xs flex items-center gap-1 px-2 py-1 rounded-lg
-                        {{ $modeMultiSelection ? 'bg-primary text-white' : 'text-gray-500 hover:text-primary' }}">
-                <i class="fas fa-check-double"></i>
-                {{ $modeMultiSelection ? 'Quitter la sélection multiple' : 'Sélection multiple (ex: détartrage)' }}
-            </button>
-            @else
-            <span></span>
-            @endunless
+            <div class="flex items-center flex-wrap gap-2">
+                @unless($modeObservationsSeules)
+                <button type="button" wire:click="toggleModeMultiSelection"
+                        class="text-xs flex items-center gap-1 px-2 py-1 rounded-lg
+                            {{ $modeMultiSelection ? 'bg-primary text-white' : 'text-gray-500 hover:text-primary' }}">
+                    <i class="fas fa-check-double"></i>
+                    {{ $modeMultiSelection ? 'Quitter la sélection multiple' : 'Sélection multiple (ex: détartrage)' }}
+                </button>
+
+                @unless($modeMultiSelection)
+                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <button type="button" @click="open = !open"
+                            class="text-xs flex items-center gap-1 px-2 py-1 rounded-lg text-gray-500 hover:text-primary">
+                        <i class="fas fa-layer-group"></i>
+                        Choisir une zone
+                        <i class="fas fa-chevron-down text-[10px]"></i>
+                    </button>
+                    <div x-show="open" x-cloak @click="open = false"
+                         class="absolute z-20 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
+                        <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_droite')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Hémi sup. droite
+                        </button>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_gauche')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Hémi sup. gauche
+                        </button>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_droite')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Hémi inf. droite
+                        </button>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_gauche')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Hémi inf. gauche
+                        </button>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('arcade_sup')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Arcade supérieure
+                        </button>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('arcade_inf')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Arcade inférieure
+                        </button>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <button type="button" wire:click="ouvrirActeSelectorZone('bouche_entiere')"
+                                class="w-full text-left px-3 py-1.5 text-xs text-gray-600 hover:bg-primary-light hover:text-primary">
+                            Toute la bouche
+                        </button>
+                    </div>
+                </div>
+                @endunless
+                @endunless
+            </div>
             <button type="button" wire:click="basculerDentition"
                     class="text-xs text-gray-500 hover:text-primary flex items-center gap-1">
                 <i class="fas fa-baby"></i>
@@ -68,45 +112,6 @@
             <span><span class="inline-block w-3 h-3 bg-gray-200 border border-gray-500 rounded mr-1"></span>Planifié</span>
             <span><span class="inline-block w-3 h-3 bg-orange-200 border border-orange-600 rounded mr-1"></span>En cours</span>
             <span><span class="inline-block w-3 h-3 bg-green-200 border border-green-600 rounded mr-1"></span>Terminé</span>
-        </div>
-        @endunless
-
-        {{-- Actes sur une zone (hémi-arcade/arcade/toute la bouche) plutôt
-             qu'une dent précise — masqué pendant la sélection multiple libre
-             pour ne pas superposer deux modes de sélection à la fois. --}}
-        @unless($modeObservationsSeules || $modeMultiSelection)
-        <div class="mt-4 pt-3 border-t border-gray-100">
-            <p class="text-xs text-gray-500 mb-2 text-center">Ou choisir une zone :</p>
-            <div class="grid grid-cols-2 gap-1.5 max-w-xs mx-auto">
-                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_droite')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Hémi sup. droite
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_gauche')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Hémi sup. gauche
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_droite')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Hémi inf. droite
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_gauche')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Hémi inf. gauche
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('arcade_sup')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Arcade supérieure
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('arcade_inf')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
-                    Arcade inférieure
-                </button>
-                <button type="button" wire:click="ouvrirActeSelectorZone('bouche_entiere')"
-                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200 col-span-2">
-                    Toute la bouche
-                </button>
-            </div>
         </div>
         @endunless
     </div>
