@@ -39,6 +39,46 @@ class PlanTraitementDentaire extends Component
     public $modeMultiSelection = false;
     public $dentsSelectionnees = [];
 
+    // Zone cliquée pour les actes HEMI_ARCADE / ARCADE / BOUCHE_ENTIERE :
+    // 'hemi_sup_droite', 'hemi_sup_gauche', 'hemi_inf_droite',
+    // 'hemi_inf_gauche', 'arcade_sup', 'arcade_inf', 'bouche_entiere'.
+    public $zoneSelectionnee = null;
+
+    // Dents FDI (adulte) par zone — quadrants 1-4, positions 1-8.
+    const DENTS_PAR_ZONE = [
+        'hemi_sup_droite' => ['11', '12', '13', '14', '15', '16', '17', '18'],
+        'hemi_sup_gauche' => ['21', '22', '23', '24', '25', '26', '27', '28'],
+        'hemi_inf_gauche' => ['31', '32', '33', '34', '35', '36', '37', '38'],
+        'hemi_inf_droite' => ['41', '42', '43', '44', '45', '46', '47', '48'],
+        'arcade_sup' => ['11', '12', '13', '14', '15', '16', '17', '18', '21', '22', '23', '24', '25', '26', '27', '28'],
+        'arcade_inf' => ['31', '32', '33', '34', '35', '36', '37', '38', '41', '42', '43', '44', '45', '46', '47', '48'],
+        'bouche_entiere' => [
+            '11', '12', '13', '14', '15', '16', '17', '18', '21', '22', '23', '24', '25', '26', '27', '28',
+            '31', '32', '33', '34', '35', '36', '37', '38', '41', '42', '43', '44', '45', '46', '47', '48',
+        ],
+    ];
+
+    const LIBELLES_ZONE = [
+        'hemi_sup_droite' => 'Hémi-arcade supérieure droite',
+        'hemi_sup_gauche' => 'Hémi-arcade supérieure gauche',
+        'hemi_inf_gauche' => 'Hémi-arcade inférieure gauche',
+        'hemi_inf_droite' => 'Hémi-arcade inférieure droite',
+        'arcade_sup' => 'Arcade supérieure',
+        'arcade_inf' => 'Arcade inférieure',
+        'bouche_entiere' => 'Toute la bouche',
+    ];
+
+    // Types d'acte pertinents pour chaque zone/mode d'ouverture du sélecteur.
+    const TYPES_CIBLE_PAR_ZONE = [
+        'hemi_sup_droite' => ['HEMI_ARCADE'],
+        'hemi_sup_gauche' => ['HEMI_ARCADE'],
+        'hemi_inf_gauche' => ['HEMI_ARCADE'],
+        'hemi_inf_droite' => ['HEMI_ARCADE'],
+        'arcade_sup' => ['ARCADE'],
+        'arcade_inf' => ['ARCADE'],
+        'bouche_entiere' => ['BOUCHE_ENTIERE', 'PATIENT'],
+    ];
+
     public $ligneAFacturerId = null;
     public $facturesEnAttente = [];
     public $showFactureSelector = false;
@@ -213,6 +253,27 @@ class PlanTraitementDentaire extends Component
             return;
         }
 
+        $this->zoneSelectionnee = null;
+        $this->showActeSelector = true;
+        $this->searchActe = '';
+        $this->selectedActeId = null;
+        $this->prixRef = null;
+        $this->chargerActesDisponibles();
+    }
+
+    // Ouvre le sélecteur d'actes pour une zone prédéfinie (hémi-arcade,
+    // arcade, toute la bouche), déclenché par les boutons de zone du
+    // schéma plutôt que par le clic sur une dent précise.
+    public function ouvrirActeSelectorZone(string $zone)
+    {
+        if (!isset(self::DENTS_PAR_ZONE[$zone])) {
+            return;
+        }
+
+        $this->zoneSelectionnee = $zone;
+        $this->dentSelectionnee = null;
+        $this->dentsSelectionnees = self::DENTS_PAR_ZONE[$zone];
+        $this->modeMultiSelection = false;
         $this->showActeSelector = true;
         $this->searchActe = '';
         $this->selectedActeId = null;
@@ -271,6 +332,7 @@ class PlanTraitementDentaire extends Component
             return;
         }
 
+        $this->zoneSelectionnee = null;
         $this->showActeSelector = true;
         $this->searchActe = '';
         $this->selectedActeId = null;
@@ -424,6 +486,10 @@ class PlanTraitementDentaire extends Component
         $this->selectedActeId = null;
         $this->searchActe = '';
         $this->filteredActes = [];
+        if ($this->zoneSelectionnee) {
+            $this->zoneSelectionnee = null;
+            $this->dentsSelectionnees = [];
+        }
     }
 
     public function updatedSearchActe($value)
@@ -435,14 +501,34 @@ class PlanTraitementDentaire extends Component
 
     // Charge la liste des actes disponibles, filtrée par $recherche si
     // fourni — appelée à l'ouverture de la modale (liste complète) et à
-    // chaque frappe dans la barre de recherche (liste filtrée).
+    // chaque frappe dans la barre de recherche (liste filtrée). Le filtre
+    // par type_cible dépend du contexte d'ouverture : dent unique, zone
+    // prédéfinie (hémi-arcade/arcade/bouche), ou sélection multiple libre.
     private function chargerActesDisponibles(string $recherche = '')
     {
+        $typesCible = $this->typesCiblePertinents();
+
         $this->filteredActes = Acte::where('Acte', 'like', '%' . $recherche . '%')
             ->where('Masquer', 0)
+            ->whereIn('type_cible', $typesCible)
             ->orderBy('nordre')
             ->limit(50)
             ->get();
+    }
+
+    // Détermine quels type_cible d'actes sont pertinents pour le contexte
+    // d'ouverture actuel du sélecteur.
+    private function typesCiblePertinents(): array
+    {
+        if ($this->zoneSelectionnee) {
+            return self::TYPES_CIBLE_PAR_ZONE[$this->zoneSelectionnee] ?? [];
+        }
+
+        if ($this->modeMultiSelection && count($this->dentsSelectionnees) > 1) {
+            return ['MULTI_DENTS', 'DENT'];
+        }
+
+        return ['DENT'];
     }
 
     public function selectActe($id)
@@ -458,7 +544,7 @@ class PlanTraitementDentaire extends Component
     {
         $this->validate();
 
-        $dents = $this->modeMultiSelection && !empty($this->dentsSelectionnees)
+        $dents = ($this->modeMultiSelection || $this->zoneSelectionnee) && !empty($this->dentsSelectionnees)
             ? $this->dentsSelectionnees
             : ($this->dentSelectionnee ? [$this->dentSelectionnee] : []);
 

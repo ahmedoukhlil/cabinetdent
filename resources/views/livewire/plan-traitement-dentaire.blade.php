@@ -70,6 +70,45 @@
             <span><span class="inline-block w-3 h-3 bg-green-200 border border-green-600 rounded mr-1"></span>Terminé</span>
         </div>
         @endunless
+
+        {{-- Actes sur une zone (hémi-arcade/arcade/toute la bouche) plutôt
+             qu'une dent précise — masqué pendant la sélection multiple libre
+             pour ne pas superposer deux modes de sélection à la fois. --}}
+        @unless($modeObservationsSeules || $modeMultiSelection)
+        <div class="mt-4 pt-3 border-t border-gray-100">
+            <p class="text-xs text-gray-500 mb-2 text-center">Ou choisir une zone :</p>
+            <div class="grid grid-cols-2 gap-1.5 max-w-xs mx-auto">
+                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_droite')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Hémi sup. droite
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_sup_gauche')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Hémi sup. gauche
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_droite')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Hémi inf. droite
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('hemi_inf_gauche')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Hémi inf. gauche
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('arcade_sup')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Arcade supérieure
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('arcade_inf')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200">
+                    Arcade inférieure
+                </button>
+                <button type="button" wire:click="ouvrirActeSelectorZone('bouche_entiere')"
+                        class="text-xs px-2 py-1.5 rounded-lg bg-gray-50 hover:bg-primary-light text-gray-600 hover:text-primary border border-gray-200 col-span-2">
+                    Toute la bouche
+                </button>
+            </div>
+        </div>
+        @endunless
     </div>
 
     {{-- Modale d'ajout d'un acte / observation sur la dent sélectionnée --}}
@@ -79,7 +118,9 @@
         <div class="sticky top-0 bg-primary-light flex items-center justify-between mb-0 p-4 border-b border-primary/20">
             <h3 class="text-sm font-semibold text-primary uppercase tracking-wide">
                 <i class="fas fa-tooth mr-1"></i>
-                @if($modeMultiSelection && count($dentsSelectionnees) > 0)
+                @if($zoneSelectionnee)
+                    Ajouter un acte — {{ \App\Http\Livewire\PlanTraitementDentaire::LIBELLES_ZONE[$zoneSelectionnee] ?? '' }}
+                @elseif($modeMultiSelection && count($dentsSelectionnees) > 0)
                     Ajouter un acte — {{ count($dentsSelectionnees) }} dents ({{ implode(', ', $dentsSelectionnees) }})
                 @else
                     Ajouter un acte — Dent {{ $dentSelectionnee }}

@@ -45,7 +45,8 @@ class Acte extends Model
 		'user',
 		'fkidassureur',
 		'ActeArab',
-		'Masquer'
+		'Masquer',
+		'type_cible'
 	];
 
 	// Accesseurs pour la compatibilité avec le composant Livewire
