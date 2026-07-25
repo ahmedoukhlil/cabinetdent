@@ -55,7 +55,10 @@ function fdiAdulteDepuisLait(fdiLait) {
 }
 
 function buildTeethConditions(conditionsParDent) {
-    const groups = { termine: [], en_cours: [], planifie: [] };
+    // Les dents "terminé" ne sont volontairement pas colorées : une fois le
+    // traitement achevé, la dent redevient visuellement neutre sur le
+    // schéma (seuls "planifié" et "en_cours" restent mis en évidence).
+    const groups = { en_cours: [], planifie: [] };
 
     Object.entries(conditionsParDent || {}).forEach(([numDent, statut]) => {
         if (groups[statut]) {
@@ -313,8 +316,27 @@ function mountAll() {
     });
 }
 
+// Filet de sécurité : après chaque morph Livewire (ex: fermeture de la
+// modale d'ajout d'acte), le <div wire:ignore> hébergeant l'odontogramme
+// peut être repositionné dans l'arbre DOM par morphdom, ce qui peut faire
+// perdre au navigateur le sous-arbre SVG interne de la librairie React
+// sans que React n'en soit informé (donc sans redéclencher les effects qui
+// réinjectent les labels FDI). On force un nouveau render dans ce cas.
+function rerenderTousLesSchemas() {
+    document.querySelectorAll('[data-odontogram-root]').forEach((el) => {
+        const entry = mountedRoots.get(el);
+        if (!entry) return;
+        const etat = lireEtatDepuisDom(el);
+        renderInto(entry.root, entry.wireId, etat.mode, etat.conditions, etat.modeMultiSelection, etat.dentsSelectionnees);
+    });
+}
+
 document.addEventListener('livewire:init', () => {
     mountAll();
+
+    Livewire.hook('morph.updated', () => {
+        rerenderTousLesSchemas();
+    });
 
     Livewire.on('conditions-updated', (event) => {
         const payload = Array.isArray(event) ? event[0] : event;

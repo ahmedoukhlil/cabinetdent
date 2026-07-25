@@ -111,7 +111,6 @@
         <div class="flex justify-center gap-4 mt-4 text-xs text-gray-500">
             <span><span class="inline-block w-3 h-3 bg-gray-200 border border-gray-500 rounded mr-1"></span>Planifié</span>
             <span><span class="inline-block w-3 h-3 bg-orange-200 border border-orange-600 rounded mr-1"></span>En cours</span>
-            <span><span class="inline-block w-3 h-3 bg-green-200 border border-green-600 rounded mr-1"></span>Terminé</span>
         </div>
         @endunless
     </div>

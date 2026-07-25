@@ -4,7 +4,7 @@
     "name": "rolldown-runtime"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DPDXv80K.css",
+    "file": "assets/app-BIwdPvkM.css",
     "name": "app",
     "names": [
       "app.css"
@@ -22,7 +22,7 @@
     ]
   },
   "resources/js/odontogram.jsx": {
-    "file": "assets/odontogram-Ds29iLed.js",
+    "file": "assets/odontogram-CWn9ndD2.js",
     "name": "odontogram",
     "src": "resources/js/odontogram.jsx",
     "isEntry": true,
