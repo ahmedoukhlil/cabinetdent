@@ -159,7 +159,7 @@ function OdontogramReactif({ wireId, mode, conditionsParDent, modeMultiSelection
         FDI_ADULTE.forEach((fdi) => {
             const g = svg.querySelector(`.teeth-${fdi}`);
             if (!g) return;
-            if (modeMultiSelection && selectionneesInternes.has(fdi)) {
+            if (selectionneesInternes.has(fdi)) {
                 g.style.filter = 'drop-shadow(0 0 0 2px #3b82f6)';
             } else {
                 g.style.filter = '';
