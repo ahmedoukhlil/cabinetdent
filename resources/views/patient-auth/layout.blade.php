@@ -41,8 +41,11 @@
         <a href="{{ route('patient.factures') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.factures*') ? 'text-blue-600' : 'text-gray-500' }}">
             <span class="text-lg">🧾</span> Factures
         </a>
-        <a href="{{ route('patient.paiements') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.paiements') ? 'text-blue-600' : 'text-gray-500' }}">
+        <a href="{{ route('patient.paiements') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.paiements') ? 'text-blue-600' : 'text-gray-500' }}">
             <span class="text-lg">💳</span> Paiements
+        </a>
+        <a href="{{ route('patient.file-attente') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.file-attente') ? 'text-blue-600' : 'text-gray-500' }}">
+            <span class="text-lg">⏱️</span> Attente
         </a>
     </nav>
 </body>

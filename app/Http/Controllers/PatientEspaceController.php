@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Facture;
 use App\Models\PlanTraitementDentaire;
+use App\Services\FileAttenteService;
 use Illuminate\Support\Facades\Auth;
 
 class PatientEspaceController extends Controller
@@ -91,5 +92,18 @@ class PatientEspaceController extends Controller
         })->sortByDesc('dtreglement')->values();
 
         return view('patient-auth.paiements', compact('patient', 'reglements'));
+    }
+
+    /**
+     * File d'attente du patient pour son rendez-vous du jour, si applicable.
+     * Rafraîchie côté vue via polling (meta refresh JS), sans WebSocket.
+     */
+    public function fileAttente(FileAttenteService $service)
+    {
+        $patient = Auth::guard('patient')->user();
+
+        $etat = $service->pourPatientAujourdhui($patient->ID);
+
+        return view('patient-auth.file-attente', compact('patient', 'etat'));
     }
 }

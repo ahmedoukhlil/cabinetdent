@@ -208,5 +208,6 @@ Route::prefix('espace-patient')->name('patient.')->group(function () {
         Route::get('/factures', [App\Http\Controllers\PatientEspaceController::class, 'factures'])->name('factures');
         Route::get('/factures/{id}', [App\Http\Controllers\PatientEspaceController::class, 'factureDetail'])->name('factures.detail');
         Route::get('/paiements', [App\Http\Controllers\PatientEspaceController::class, 'paiements'])->name('paiements');
+        Route::get('/file-attente', [App\Http\Controllers\PatientEspaceController::class, 'fileAttente'])->name('file-attente');
     });
 });

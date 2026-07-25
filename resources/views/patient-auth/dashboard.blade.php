@@ -26,10 +26,10 @@
         <div class="font-medium text-sm">Paiements</div>
         <div class="text-xs text-gray-500">Historique</div>
     </a>
-    <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm opacity-50">
+    <a href="{{ route('patient.file-attente') }}" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
         <div class="text-2xl mb-1">⏱️</div>
         <div class="font-medium text-sm">File d'attente</div>
-        <div class="text-xs text-gray-400">Bientôt disponible</div>
-    </div>
+        <div class="text-xs text-gray-500">Voir en direct</div>
+    </a>
 </div>
 @endsection
