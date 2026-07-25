@@ -209,5 +209,8 @@ Route::prefix('espace-patient')->name('patient.')->group(function () {
         Route::get('/factures/{id}', [App\Http\Controllers\PatientEspaceController::class, 'factureDetail'])->name('factures.detail');
         Route::get('/paiements', [App\Http\Controllers\PatientEspaceController::class, 'paiements'])->name('paiements');
         Route::get('/file-attente', [App\Http\Controllers\PatientEspaceController::class, 'fileAttente'])->name('file-attente');
+
+        Route::post('/push/subscribe', [App\Http\Controllers\PushSubscriptionController::class, 'store'])->name('push.subscribe');
+        Route::post('/push/unsubscribe', [App\Http\Controllers\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
     });
 });

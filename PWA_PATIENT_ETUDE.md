@@ -70,3 +70,23 @@ Rien côté fonctionnement existant — c'est un espace totalement séparé. Seu
 6. **Notifications Web Push** (dernière étape, la plus optionnelle si le budget/temps est limité).
 
 Chaque étape est livrable et testable indépendamment — on peut s'arrêter après l'étape 4 et ajouter la suite plus tard.
+
+## 8. Déploiement — notifications Web Push (étape 6, terminée)
+
+- **Clés VAPID** : générées une fois, stockées dans `.env` (`VAPID_PUBLIC_KEY`,
+  `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`) — jamais commitées. Sur le VPS, les
+  ajouter manuellement au `.env` de production avec les mêmes valeurs que
+  celles générées en local (ou en générer de nouvelles dédiées à la prod).
+- **Cron obligatoire** : Laravel ne déclenche jamais seul les tâches planifiées
+  (`routes/console.php` → `Schedule::command('app:envoyer-rappels-rdv')`).
+  Il faut une entrée crontab sur le VPS :
+  ```
+  * * * * * cd /var/www/cabinetdent && php artisan schedule:run >> /dev/null 2>&1
+  ```
+  Sans cette ligne, aucun rappel de RDV ne sera jamais envoyé automatiquement.
+- **HTTPS obligatoire** : les Service Workers et Web Push exigent HTTPS (déjà
+  le cas pour `cabinetdentaire.syslog-apps.online`, à vérifier si ce n'est pas
+  encore actif).
+- Le patient doit explicitement cliquer sur "Activer" (bouton sur le
+  dashboard) et accepter la permission navigateur — rien n'est automatique
+  ni implicite, conformément aux règles des navigateurs sur les notifications.

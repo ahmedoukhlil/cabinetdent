@@ -116,4 +116,9 @@ class Patient extends Authenticatable
 	{
 		return $this->hasMany(\App\Models\Facture::class, 'IDPatient', 'ID');
 	}
+
+	public function pushSubscriptions()
+	{
+		return $this->hasMany(\App\Models\PushSubscription::class, 'patient_id', 'ID');
+	}
 }

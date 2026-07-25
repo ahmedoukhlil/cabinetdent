@@ -39,3 +39,22 @@ self.addEventListener('fetch', (event) => {
         );
     }
 });
+
+self.addEventListener('push', (event) => {
+    if (!event.data) return;
+    const donnees = event.data.json();
+    event.waitUntil(
+        self.registration.showNotification(donnees.title || 'SysMedical', {
+            body: donnees.body || '',
+            icon: '/pwa/icon-192.png',
+            badge: '/pwa/icon-192.png',
+            data: { url: donnees.url || '/espace-patient' },
+        })
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification.data?.url || '/espace-patient';
+    event.waitUntil(clients.openWindow(url));
+});

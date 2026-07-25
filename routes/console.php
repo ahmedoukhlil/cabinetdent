@@ -2,6 +2,11 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+
+// Rappels de rendez-vous (notifications Web Push) — chaque jour à 18h,
+// pour les rendez-vous du lendemain.
+Schedule::command('app:envoyer-rappels-rdv')->dailyAt('18:00');
 
 /*
 |--------------------------------------------------------------------------
