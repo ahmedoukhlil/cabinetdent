@@ -254,8 +254,29 @@ function OdontogramReactif({ wireId, mode, conditionsParDent, modeMultiSelection
                         ),
                 }}
                 onChange={(selected) => {
+                    if (!window.Livewire) return;
+                    const idCourant = resoudreWireIdCourant(containerRef.current, wireId);
+
+                    // En mode multi-sélection, la librairie renvoie le tableau
+                    // complet des dents actuellement cochées à chaque clic (pas
+                    // seulement la dernière) — on synchronise donc la liste
+                    // entière côté serveur plutôt que de toggler une seule
+                    // dent, pour rester fidèle à l'état interne de la lib.
+                    if (modeMultiSelection) {
+                        const dents = selected
+                            .map((tooth) => Number(tooth.notations.fdi))
+                            .filter((fdiAdulte) => !(estModeLait && FDI_ABSENTS_EN_LAIT.includes(fdiAdulte)))
+                            .map((fdiAdulte) => (estModeLait ? String(fdiLaitDepuisAdulte(fdiAdulte)) : String(fdiAdulte)));
+                        try {
+                            window.Livewire.find(idCourant)?.call('definirDentsSelectionnees', dents);
+                        } catch (e) {
+                            console.warn('Odontogram: composant Livewire introuvable, clic ignoré', e);
+                        }
+                        return;
+                    }
+
                     const tooth = selected[0];
-                    if (!tooth || !window.Livewire) return;
+                    if (!tooth) return;
                     const fdiAdulte = Number(tooth.notations.fdi);
                     if (estModeLait && FDI_ABSENTS_EN_LAIT.includes(fdiAdulte)) {
                         return;
@@ -263,7 +284,6 @@ function OdontogramReactif({ wireId, mode, conditionsParDent, modeMultiSelection
                     const numDent = estModeLait
                         ? String(fdiLaitDepuisAdulte(fdiAdulte))
                         : tooth.notations.fdi;
-                    const idCourant = resoudreWireIdCourant(containerRef.current, wireId);
                     try {
                         // Livewire.find() lance une exception (et non un simple
                         // retour null) quand l'id ne correspond à aucun composant

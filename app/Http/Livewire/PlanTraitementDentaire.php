@@ -299,6 +299,15 @@ class PlanTraitementDentaire extends Component
         $this->notifierSelectionMultiple();
     }
 
+    // Remplace intégralement la sélection par la liste de dents fournie par
+    // le composant React (source de vérité en mode multi-sélection : la
+    // librairie gère elle-même l'accumulation/retrait des dents cochées).
+    public function definirDentsSelectionnees(array $dents)
+    {
+        $this->dentsSelectionnees = array_values(array_unique($dents));
+        $this->notifierSelectionMultiple();
+    }
+
     public function selectionnerToutesLesDents()
     {
         $toutes = $this->dentitionMode === 'lait'
