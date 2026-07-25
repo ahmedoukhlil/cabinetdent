@@ -549,6 +549,30 @@ class PlanTraitementDentaire extends Component
         }
     }
 
+    // Retourne, parmi $dents, celles où ce même acte est déjà planifié ou
+    // en cours (statut non terminé) — un acte terminé n'empêche pas de
+    // refaire le même acte plus tard sur la même dent.
+    private function dentsAvecActeDejaEnCours(?int $acteId, array $dents): array
+    {
+        if (!$acteId || !$this->patientId) {
+            return [];
+        }
+
+        $lignes = PlanTraitementDentaireModel::forPatient($this->patientId)
+            ->where('acte_id', $acteId)
+            ->whereIn('statut', ['planifie', 'en_cours'])
+            ->get(['num_dent']);
+
+        $dentsOccupees = [];
+        foreach ($lignes as $ligne) {
+            foreach (explode(',', $ligne->num_dent) as $numDent) {
+                $dentsOccupees[$numDent] = true;
+            }
+        }
+
+        return array_values(array_filter($dents, fn ($d) => isset($dentsOccupees[$d])));
+    }
+
     public function ajouterActeAuPlan()
     {
         $this->validate();
@@ -558,6 +582,18 @@ class PlanTraitementDentaire extends Component
             : ($this->dentSelectionnee ? [$this->dentSelectionnee] : []);
 
         if (empty($dents) || !$this->patientId) {
+            return;
+        }
+
+        $dentsEnDoublon = $this->dentsAvecActeDejaEnCours($this->selectedActeId, $dents);
+        if (!empty($dentsEnDoublon)) {
+            $acteNom = Acte::find($this->selectedActeId)->Acte ?? 'Cet acte';
+            session()->flash(
+                'error',
+                $acteNom . ' est déjà planifié ou en cours sur la dent ' .
+                    (count($dentsEnDoublon) > 1 ? 's ' : ' ') .
+                    implode(', ', $dentsEnDoublon) . '.'
+            );
             return;
         }
 
