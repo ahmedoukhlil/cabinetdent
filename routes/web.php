@@ -203,8 +203,10 @@ Route::prefix('espace-patient')->name('patient.')->group(function () {
         Route::post('/definir-mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'definirMotDePasse'])->name('definir-mot-de-passe.save');
         Route::post('/deconnexion', [App\Http\Controllers\Auth\PatientAuthController::class, 'logout'])->name('logout');
 
-        Route::get('/', function () {
-            return view('patient-auth.dashboard');
-        })->name('dashboard');
+        Route::get('/', [App\Http\Controllers\PatientEspaceController::class, 'dashboard'])->name('dashboard');
+        Route::get('/plan-traitement', [App\Http\Controllers\PatientEspaceController::class, 'planTraitement'])->name('plan-traitement');
+        Route::get('/factures', [App\Http\Controllers\PatientEspaceController::class, 'factures'])->name('factures');
+        Route::get('/factures/{id}', [App\Http\Controllers\PatientEspaceController::class, 'factureDetail'])->name('factures.detail');
+        Route::get('/paiements', [App\Http\Controllers\PatientEspaceController::class, 'paiements'])->name('paiements');
     });
 });
