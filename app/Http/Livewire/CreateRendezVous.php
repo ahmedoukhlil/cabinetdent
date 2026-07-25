@@ -330,7 +330,7 @@ class CreateRendezVous extends Component
                 'fkidPatient' => $this->patient_id,
                 'fkidMedecin' => $this->medecin_id,
                 'dtPrevuRDV' => $this->date_rdv,
-                'HeureRdv' => $this->heure_rdv,
+                'HeureRdv' => $this->date_rdv . ' ' . $this->heure_rdv . ':00',
                 'ActePrevu' => $this->acte_prevu,
                 'rdvConfirmer' => $this->rdv_confirmer,
                 'DtAjRdv' => now(),
