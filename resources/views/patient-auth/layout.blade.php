@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Espace patient') — SysMedical</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @include('patient-auth.partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen pb-20">
