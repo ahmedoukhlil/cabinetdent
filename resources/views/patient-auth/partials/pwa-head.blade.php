@@ -4,7 +4,8 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/pwa/sw.js', { scope: '/espace-patient' });
+            navigator.serviceWorker.register('/pwa/sw.js', { scope: '/espace-patient' })
+                .catch((err) => console.error('Échec enregistrement service worker :', err));
         });
     }
 </script>

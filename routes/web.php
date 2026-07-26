@@ -21,6 +21,16 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Sert le service worker patient avec l'en-tête Service-Worker-Allowed,
+// requis pour qu'un SW enregistré depuis /pwa/sw.js puisse contrôler
+// le scope /espace-patient (hors de son propre répertoire).
+Route::get('/pwa/sw.js', function () {
+    return response()->file(public_path('pwa/sw.js'), [
+        'Content-Type' => 'application/javascript',
+        'Service-Worker-Allowed' => '/espace-patient',
+    ]);
+});
+
 // Authentification
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login']);
