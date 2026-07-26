@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PatientNotification;
 use App\Models\PushSubscription;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
@@ -28,6 +29,13 @@ class WebPushService
      */
     public function envoyerAuPatient(int $patientId, string $titre, string $corps, ?string $url = null): void
     {
+        PatientNotification::create([
+            'patient_id' => $patientId,
+            'titre' => $titre,
+            'corps' => $corps,
+            'url' => $url ?? '/espace-patient',
+        ]);
+
         $abonnements = PushSubscription::where('patient_id', $patientId)->get();
 
         foreach ($abonnements as $abonnement) {

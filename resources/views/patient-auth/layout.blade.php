@@ -15,10 +15,21 @@
                 <i class="fas fa-tooth text-xl text-primary"></i>
                 <span class="font-bold">SysMedical</span>
             </a>
-            <form method="POST" action="{{ route('patient.logout') }}">
-                @csrf
-                <button type="submit" class="text-sm text-red-600 hover:underline">Déconnexion</button>
-            </form>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('patient.notifications') }}" class="relative text-gray-600 {{ request()->routeIs('patient.notifications') ? 'text-primary' : '' }}">
+                    <i class="fas fa-bell text-lg"></i>
+                    @php $nbNonLues = \App\Models\PatientNotification::where('patient_id', auth('patient')->id())->whereNull('lu_le')->count(); @endphp
+                    @if($nbNonLues > 0)
+                    <span class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] leading-none rounded-full w-4 h-4 flex items-center justify-center">
+                        {{ $nbNonLues > 9 ? '9+' : $nbNonLues }}
+                    </span>
+                    @endif
+                </a>
+                <form method="POST" action="{{ route('patient.logout') }}">
+                    @csrf
+                    <button type="submit" class="text-sm text-red-600 hover:underline">Déconnexion</button>
+                </form>
+            </div>
         </div>
 
         @if(session('message'))

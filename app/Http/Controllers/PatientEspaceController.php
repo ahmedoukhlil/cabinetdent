@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Facture;
+use App\Models\PatientNotification;
 use App\Models\PlanTraitementDentaire;
 use App\Services\FileAttenteService;
 use Illuminate\Support\Facades\Auth;
@@ -105,5 +106,24 @@ class PatientEspaceController extends Controller
         $etat = $service->pourPatientAujourdhui($patient->ID);
 
         return view('patient-auth.file-attente', compact('patient', 'etat'));
+    }
+
+    /**
+     * Historique des notifications envoyées au patient (rappels RDV, etc.),
+     * les plus récentes en premier. Marque tout comme lu à la consultation.
+     */
+    public function notifications()
+    {
+        $patient = Auth::guard('patient')->user();
+
+        $notifications = PatientNotification::where('patient_id', $patient->ID)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        PatientNotification::where('patient_id', $patient->ID)
+            ->whereNull('lu_le')
+            ->update(['lu_le' => now()]);
+
+        return view('patient-auth.notifications', compact('patient', 'notifications'));
     }
 }
