@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CaisseOperation;
 use App\Models\Facture;
 use App\Models\PatientNotification;
 use App\Models\PlanTraitementDentaire;
@@ -74,25 +75,20 @@ class PatientEspaceController extends Controller
     }
 
     /**
-     * Historique des paiements (règlements) du patient — lecture seule,
-     * regroupés à partir de ses factures.
+     * Historique des paiements du patient — lecture seule. Source unique :
+     * caisse_operations (même table que l'historique imprimable côté
+     * back-office), qui couvre tous les encaissements réels du patient,
+     * pas seulement ceux rattachés à une facture.
      */
     public function paiements()
     {
         $patient = Auth::guard('patient')->user();
 
-        $factures = Facture::where('IDPatient', $patient->ID)
-            ->with('reglements')
+        $paiements = CaisseOperation::where('fkidTiers', $patient->ID)
+            ->orderBy('dateoper', 'desc')
             ->get();
 
-        $reglements = $factures->flatMap(function ($facture) {
-            return $facture->reglements->map(function ($reglement) use ($facture) {
-                $reglement->facture_numero = $facture->Nfacture;
-                return $reglement;
-            });
-        })->sortByDesc('dtreglement')->values();
-
-        return view('patient-auth.paiements', compact('patient', 'reglements'));
+        return view('patient-auth.paiements', compact('patient', 'paiements'));
     }
 
     /**
