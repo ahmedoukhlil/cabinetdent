@@ -1,9 +1,3 @@
-<IfModule mod_headers.c>
-    <Files "sw.js">
-        Header set Service-Worker-Allowed "/espace-patient"
-    </Files>
-</IfModule>
-
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
