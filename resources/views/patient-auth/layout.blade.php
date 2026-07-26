@@ -8,7 +8,7 @@
     @include('patient-auth.partials.pwa-head')
     @include('patient-auth.partials.tailwind-config')
 </head>
-<body class="bg-gray-50 min-h-screen pb-20">
+<body class="bg-gray-50 min-h-screen pb-24">
     <div class="max-w-lg mx-auto p-4">
         <div class="flex items-center justify-between mb-4 pt-2">
             <a href="{{ route('patient.dashboard') }}" class="flex items-center gap-2 text-gray-800">
@@ -41,8 +41,8 @@
         @yield('content')
     </div>
 
-    {{-- Navigation basse, style app mobile --}}
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 max-w-lg mx-auto">
+    {{-- Navigation basse, légèrement surélevée du bord pour un effet flottant --}}
+    <nav class="fixed bottom-3 left-3 right-3 max-w-lg mx-auto bg-white border border-gray-100 rounded-2xl shadow-lg shadow-gray-200/50 flex justify-around py-2">
         <a href="{{ route('patient.dashboard') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.dashboard') ? 'text-primary' : 'text-gray-500' }}">
             <i class="fas fa-house text-lg"></i> Accueil
         </a>
