@@ -10,24 +10,24 @@
 
 <div class="grid grid-cols-2 gap-3">
     <a href="{{ route('patient.plan-traitement') }}" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div class="text-2xl mb-1">🦷</div>
+        <div class="text-2xl mb-1 text-primary"><i class="fas fa-tooth"></i></div>
         <div class="font-medium text-sm">Plan de traitement</div>
         <div class="text-xs text-gray-500">{{ $planEnCours }} en cours</div>
     </a>
     <a href="{{ route('patient.factures') }}" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div class="text-2xl mb-1">🧾</div>
+        <div class="text-2xl mb-1 text-primary"><i class="fas fa-file-invoice"></i></div>
         <div class="font-medium text-sm">Factures</div>
         <div class="text-xs {{ $facturesImpayees > 0 ? 'text-orange-600' : 'text-gray-500' }}">
             {{ $facturesImpayees > 0 ? $facturesImpayees . ' impayée(s)' : 'À jour' }}
         </div>
     </a>
     <a href="{{ route('patient.paiements') }}" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div class="text-2xl mb-1">💳</div>
+        <div class="text-2xl mb-1 text-primary"><i class="fas fa-credit-card"></i></div>
         <div class="font-medium text-sm">Paiements</div>
         <div class="text-xs text-gray-500">Historique</div>
     </a>
     <a href="{{ route('patient.file-attente') }}" class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-        <div class="text-2xl mb-1">⏱️</div>
+        <div class="text-2xl mb-1 text-primary"><i class="fas fa-clock"></i></div>
         <div class="font-medium text-sm">File d'attente</div>
         <div class="text-xs text-gray-500">Voir en direct</div>
     </a>
@@ -36,10 +36,10 @@
 <div id="notif-bloc" class="mt-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm hidden">
     <div class="flex items-center justify-between">
         <div>
-            <div class="font-medium text-sm">🔔 Rappels de rendez-vous</div>
+            <div class="font-medium text-sm"><i class="fas fa-bell text-primary"></i> Rappels de rendez-vous</div>
             <div class="text-xs text-gray-500" id="notif-statut">Recevez une notification avant vos RDV</div>
         </div>
-        <button id="notif-bouton" type="button" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700">
+        <button id="notif-bouton" type="button" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary-dark">
             Activer
         </button>
     </div>

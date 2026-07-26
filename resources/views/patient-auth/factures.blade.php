@@ -30,7 +30,7 @@
     </a>
 @empty
     <div class="text-center py-16 text-gray-400">
-        <div class="text-4xl mb-3">🧾</div>
+        <div class="text-4xl mb-3"><i class="fas fa-file-invoice"></i></div>
         <p>Aucune facture pour le moment.</p>
     </div>
 @endforelse

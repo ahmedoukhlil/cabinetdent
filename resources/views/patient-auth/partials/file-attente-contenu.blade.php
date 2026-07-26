@@ -1,6 +1,6 @@
 @if(!$etat)
     <div class="text-center py-16 text-gray-400">
-        <div class="text-4xl mb-3">📅</div>
+        <div class="text-4xl mb-3"><i class="fas fa-calendar-days"></i></div>
         <p>Vous n'avez pas de rendez-vous aujourd'hui.</p>
     </div>
 @else
@@ -22,7 +22,7 @@
     </div>
 
     @if($rdv->rdvConfirmer === 'En cours')
-    <div class="bg-blue-50 border border-blue-200 text-blue-700 text-sm rounded-lg p-3 mb-4 text-center font-medium">
+    <div class="bg-primary-light border border-primary/20 text-primary text-sm rounded-lg p-3 mb-4 text-center font-medium">
         Vous êtes actuellement en consultation
     </div>
     @endif
@@ -36,16 +36,16 @@
             $estMoi = $r->IDRdv === $rdv->IDRdv;
             $termine = in_array($r->rdvConfirmer, ['Terminé', 'terminé']);
         @endphp
-        <div class="p-3 flex items-center gap-3 text-sm {{ $estMoi ? 'bg-blue-50' : '' }}">
+        <div class="p-3 flex items-center gap-3 text-sm {{ $estMoi ? 'bg-primary-light' : '' }}">
             <span class="w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold flex-shrink-0
-                {{ $r->rdvConfirmer === 'En cours' ? 'bg-blue-600 text-white' : ($termine ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600') }}">
+                {{ $r->rdvConfirmer === 'En cours' ? 'bg-primary text-white' : ($termine ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600') }}">
                 {{ $r->OrdreRDV }}
             </span>
-            <span class="flex-1 {{ $estMoi ? 'font-semibold text-blue-800' : 'text-gray-700' }}">
+            <span class="flex-1 {{ $estMoi ? 'font-semibold text-primary-dark' : 'text-gray-700' }}">
                 {{ $estMoi ? 'Vous' : ($r->patient->NomContact ?? 'Patient') }}
             </span>
             @if($r->rdvConfirmer === 'En cours')
-                <span class="text-xs text-blue-600 font-medium">En cours</span>
+                <span class="text-xs text-primary font-medium">En cours</span>
             @elseif($termine)
                 <span class="text-xs text-green-600">Terminé</span>
             @endif

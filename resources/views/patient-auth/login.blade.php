@@ -6,7 +6,7 @@
     <title>Espace patient — SysMedical</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('patient-auth.partials.pwa-head')
-    <script src="https://cdn.tailwindcss.com"></script>
+    @include('patient-auth.partials.tailwind-config')
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm">
@@ -29,7 +29,7 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                     placeholder="Ex: 38230000">
             </div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700">
+            <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-primary-dark">
                 Continuer
             </button>
         </form>

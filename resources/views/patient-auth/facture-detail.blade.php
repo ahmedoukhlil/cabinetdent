@@ -3,7 +3,7 @@
 @section('title', 'Facture ' . $facture->Nfacture)
 
 @section('content')
-<a href="{{ route('patient.factures') }}" class="text-sm text-blue-600 hover:underline mb-4 inline-block">&larr; Retour aux factures</a>
+<a href="{{ route('patient.factures') }}" class="text-sm text-primary hover:underline mb-4 inline-block"><i class="fas fa-arrow-left text-xs"></i> Retour aux factures</a>
 
 <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm mb-4">
     <h1 class="text-lg font-bold text-gray-800">Facture N° {{ $facture->Nfacture }}</h1>

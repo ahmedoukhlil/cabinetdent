@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Espace patient — SysMedical</title>
     @include('patient-auth.partials.pwa-head')
-    <script src="https://cdn.tailwindcss.com"></script>
+    @include('patient-auth.partials.tailwind-config')
 </head>
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-sm">
@@ -24,13 +24,13 @@
                     <span class="font-medium text-gray-800">
                         {{ $patient->NomContact ?? trim(($patient->Prenom ?? '').' '.($patient->Nom ?? '')) }}
                     </span>
-                    <i class="text-gray-400">&rsaquo;</i>
+                    <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
                 </button>
             </form>
             @endforeach
         </div>
 
-        <a href="{{ route('patient.login') }}" class="block text-center text-sm text-blue-600 mt-4 hover:underline">
+        <a href="{{ route('patient.login') }}" class="block text-center text-sm text-primary mt-4 hover:underline">
             Ce n'est pas moi, revenir en arrière
         </a>
     </div>

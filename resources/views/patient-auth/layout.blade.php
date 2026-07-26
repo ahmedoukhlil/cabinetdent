@@ -6,13 +6,13 @@
     <title>@yield('title', 'Espace patient') — SysMedical</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('patient-auth.partials.pwa-head')
-    <script src="https://cdn.tailwindcss.com"></script>
+    @include('patient-auth.partials.tailwind-config')
 </head>
 <body class="bg-gray-50 min-h-screen pb-20">
     <div class="max-w-lg mx-auto p-4">
         <div class="flex items-center justify-between mb-4 pt-2">
             <a href="{{ route('patient.dashboard') }}" class="flex items-center gap-2 text-gray-800">
-                <span class="text-xl">🦷</span>
+                <i class="fas fa-tooth text-xl text-primary"></i>
                 <span class="font-bold">SysMedical</span>
             </a>
             <form method="POST" action="{{ route('patient.logout') }}">
@@ -32,20 +32,20 @@
 
     {{-- Navigation basse, style app mobile --}}
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 max-w-lg mx-auto">
-        <a href="{{ route('patient.dashboard') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.dashboard') ? 'text-blue-600' : 'text-gray-500' }}">
-            <span class="text-lg">🏠</span> Accueil
+        <a href="{{ route('patient.dashboard') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.dashboard') ? 'text-primary' : 'text-gray-500' }}">
+            <i class="fas fa-house text-lg"></i> Accueil
         </a>
-        <a href="{{ route('patient.plan-traitement') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.plan-traitement') ? 'text-blue-600' : 'text-gray-500' }}">
-            <span class="text-lg">🦷</span> Traitement
+        <a href="{{ route('patient.plan-traitement') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.plan-traitement') ? 'text-primary' : 'text-gray-500' }}">
+            <i class="fas fa-tooth text-lg"></i> Traitement
         </a>
-        <a href="{{ route('patient.factures') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.factures*') ? 'text-blue-600' : 'text-gray-500' }}">
-            <span class="text-lg">🧾</span> Factures
+        <a href="{{ route('patient.factures') }}" class="flex flex-col items-center text-xs px-3 py-1 {{ request()->routeIs('patient.factures*') ? 'text-primary' : 'text-gray-500' }}">
+            <i class="fas fa-file-invoice text-lg"></i> Factures
         </a>
-        <a href="{{ route('patient.paiements') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.paiements') ? 'text-blue-600' : 'text-gray-500' }}">
-            <span class="text-lg">💳</span> Paiements
+        <a href="{{ route('patient.paiements') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.paiements') ? 'text-primary' : 'text-gray-500' }}">
+            <i class="fas fa-credit-card text-lg"></i> Paiements
         </a>
-        <a href="{{ route('patient.file-attente') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.file-attente') ? 'text-blue-600' : 'text-gray-500' }}">
-            <span class="text-lg">⏱️</span> Attente
+        <a href="{{ route('patient.file-attente') }}" class="flex flex-col items-center text-xs px-2 py-1 {{ request()->routeIs('patient.file-attente') ? 'text-primary' : 'text-gray-500' }}">
+            <i class="fas fa-clock text-lg"></i> Attente
         </a>
     </nav>
 </body>
