@@ -50,13 +50,39 @@ class PatientAuthController extends Controller
             // choisir explicitement lequel, avant de statuer sur le mot de
             // passe — évite qu'un tiers accède au dossier d'un autre patient
             // simplement parce qu'il connaît le même numéro de téléphone.
-            return view('patient-auth.choisir-patient', [
-                'telephone' => $telephone,
-                'patients' => $patients,
-            ]);
+            //
+            // On redirige (plutôt que de retourner la vue directement) pour
+            // que l'URL affichée soit une vraie route GET : un rechargement
+            // de page ou un retour arrière du navigateur (fréquent sur
+            // mobile/Safari iOS) refait alors un GET valide au lieu de
+            // rejouer le POST initial, qui provoquerait une erreur 405.
+            request()->session()->put('patient_login_telephone', $telephone);
+            return redirect()->route('patient.login.choisir.show');
         }
 
         return $this->traiterPatientUnique($patients->first(), $telephone);
+    }
+
+    /**
+     * Affiche l'écran de choix du profil (numéro partagé) — GET dédié,
+     * pour qu'un rechargement de page ne rejoue jamais le POST initial.
+     */
+    public function showChoisirPatient(Request $request)
+    {
+        $telephone = $request->session()->get('patient_login_telephone');
+        if (!$telephone) {
+            return redirect()->route('patient.login');
+        }
+
+        $patients = Patient::where('Telephone1', $telephone)
+            ->orWhere('Telephone2', $telephone)
+            ->get();
+
+        if ($patients->count() <= 1) {
+            return redirect()->route('patient.login');
+        }
+
+        return view('patient-auth.choisir-patient', compact('telephone', 'patients'));
     }
 
     /**
@@ -92,8 +118,28 @@ class PatientAuthController extends Controller
 
         // Mot de passe déjà défini : le numéro seul ne suffit plus, il faut
         // le mot de passe (sécurité — voir décision actée avec l'utilisateur).
+        // Redirection vers un GET dédié pour la même raison que ci-dessus
+        // (éviter le replay du POST au rechargement de page).
+        request()->session()->put('patient_login_id', $patient->ID);
+        return redirect()->route('patient.login.mot-de-passe.show');
+    }
+
+    /**
+     * Affiche l'écran de saisie du mot de passe — GET dédié.
+     */
+    public function showMotDePasse(Request $request)
+    {
+        $patientId = $request->session()->get('patient_login_id');
+        if (!$patientId) {
+            return redirect()->route('patient.login');
+        }
+
+        $patient = Patient::find($patientId);
+        if (!$patient || !$patient->password) {
+            return redirect()->route('patient.login');
+        }
+
         return view('patient-auth.mot-de-passe', [
-            'telephone' => $telephone,
             'patient_id' => $patient->ID,
             'nom' => $patient->NomContact ?? trim(($patient->Prenom ?? '') . ' ' . ($patient->Nom ?? '')),
         ]);

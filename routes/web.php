@@ -194,7 +194,9 @@ Route::prefix('espace-patient')->name('patient.')->group(function () {
     Route::middleware('guest:patient')->group(function () {
         Route::get('/connexion', [App\Http\Controllers\Auth\PatientAuthController::class, 'showLoginForm'])->name('login');
         Route::post('/connexion/telephone', [App\Http\Controllers\Auth\PatientAuthController::class, 'rechercherParTelephone'])->name('login.telephone');
+        Route::get('/connexion/choisir', [App\Http\Controllers\Auth\PatientAuthController::class, 'showChoisirPatient'])->name('login.choisir.show');
         Route::post('/connexion/choisir', [App\Http\Controllers\Auth\PatientAuthController::class, 'selectionnerPatient'])->name('login.choisir');
+        Route::get('/connexion/mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'showMotDePasse'])->name('login.mot-de-passe.show');
         Route::post('/connexion/mot-de-passe', [App\Http\Controllers\Auth\PatientAuthController::class, 'verifierMotDePasse'])->name('login.mot-de-passe');
     });
 
