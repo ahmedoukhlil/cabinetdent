@@ -30,10 +30,15 @@ class ImpressionController extends Controller
     public function dossier(Patient $patient)
     {
         $patient->load('cabinet');
+        $dents = $patient->dents()->get()->keyBy('numero');
+        $planActif = app(\App\Services\DossierDentaireService::class)->planActif($patient)?->load('lignes');
+        $dentsPrevues = $planActif ? $planActif->lignes->where('statut', 'prevu')->pluck('dents')->filter()->flatten()->all() : [];
 
         return response()->view('impression.dossier', [
             'patient' => $patient,
-            'dents' => $patient->dents()->get()->keyBy('numero'),
+            'dents' => $dents,
+            // Mêmes couleurs que l'odontogramme anatomique de l'écran.
+            'conditions' => \App\Support\Odontologie::conditionsGraphe($dents, $dentsPrevues),
             'plans' => PlanTraitement::with('lignes')->where('patient_id', $patient->id)->where('statut', '!=', 'annule')->latest('id')->get(),
             'fichiers' => FichierPatient::where('patient_id', $patient->id)->latest('date_examen')->get(),
         ])->header('Cache-Control', 'private, no-store');
