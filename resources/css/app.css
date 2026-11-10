@@ -36,3 +36,11 @@
 @media (min-width: 1024px) {
     .odontogramme-sysdental [data-scene] svg { max-height: 430px; }
 }
+
+/* iOS Safari zoome automatiquement sur tout champ dont la police est < 16px.
+   Sur écrans tactiles, on force 16px pour garder la page à l'échelle au focus. */
+@media (pointer: coarse) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea { font-size: 16px !important; }
+}
