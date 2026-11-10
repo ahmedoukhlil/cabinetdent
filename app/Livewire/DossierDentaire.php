@@ -81,6 +81,24 @@ class DossierDentaire extends Component
         }
     }
 
+    /**
+     * Ajoute un groupe (arcade, hémi-arcade, sextant) à la sélection,
+     * ou le retire s'il est déjà entièrement sélectionné.
+     */
+    public function selectionnerGroupe(string $cle): void
+    {
+        $dents = Odontologie::groupes()[$cle][2] ?? null;
+        if (!$dents) {
+            return;
+        }
+
+        $selection = array_diff($dents, $this->selection) === []
+            ? array_diff($this->selection, $dents)
+            : array_merge($this->selection, $dents);
+
+        $this->definirSelection($selection);
+    }
+
     public function viderSelection(): void
     {
         $this->selection = [];
