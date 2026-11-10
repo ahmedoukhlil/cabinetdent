@@ -17,10 +17,10 @@
     </div>
 
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div class="card"><p class="text-sm text-slate-600">Encaissé</p><p class="text-2xl font-semibold">{{ $mru($totaux['encaisse']) }}</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Remboursé</p><p class="text-2xl font-semibold text-red-700">{{ $mru($totaux['rembourse']) }}</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Dépenses</p><p class="text-2xl font-semibold text-red-700">{{ $mru($totaux['depenses']) }}</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Solde (recettes − dépenses)</p><p @class(['text-2xl font-semibold', 'text-red-700' => $totaux['solde'] < 0])>{{ $mru($totaux['solde']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Encaissé</p><p class="text-xl font-semibold tabular-nums sm:text-2xl">{{ $mru($totaux['encaisse']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Remboursé</p><p class="text-xl font-semibold tabular-nums sm:text-2xl text-red-700">{{ $mru($totaux['rembourse']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Dépenses</p><p class="text-xl font-semibold tabular-nums sm:text-2xl text-red-700">{{ $mru($totaux['depenses']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Solde (recettes − dépenses)</p><p @class(['text-xl font-semibold tabular-nums sm:text-2xl', 'text-red-700' => $totaux['solde'] < 0])>{{ $mru($totaux['solde']) }}</p></div>
     </div>
 
     @if ($parMode->isNotEmpty())
@@ -35,7 +35,7 @@
     @endif
 
     <section class="card overflow-x-auto" aria-label="Journal des opérations">
-        <table class="w-full min-w-[600px] text-sm">
+        <table class="tableau-cartes w-full min-w-[600px] text-sm">
             <thead class="text-left text-xs text-slate-500">
                 <tr><th class="py-1 font-medium">Date</th><th class="py-1 font-medium">Patient</th><th class="py-1 font-medium">Facture</th><th class="py-1 font-medium">Opération</th><th class="py-1 font-medium">Par</th><th class="py-1 text-right font-medium">Montant</th></tr>
             </thead>

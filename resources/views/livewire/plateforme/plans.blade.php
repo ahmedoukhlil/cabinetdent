@@ -14,7 +14,7 @@
     </form>
 
     <section class="card overflow-x-auto">
-        <table class="w-full min-w-[520px] text-sm [&_td]:px-2 [&_th]:px-2">
+        <table class="tableau-cartes w-full min-w-[520px] text-sm [&_td]:px-2 [&_th]:px-2">
             <thead class="text-left text-xs text-slate-500"><tr><th class="py-1 font-medium">Formule</th><th class="py-1 text-right font-medium">Prix / mois</th><th class="py-1 text-right font-medium">Comptes</th><th class="py-1 text-right font-medium">Stockage</th><th class="py-1 text-right font-medium">Cabinets</th><th></th></tr></thead>
             <tbody class="divide-y divide-slate-100">
                 @forelse ($plans as $p)

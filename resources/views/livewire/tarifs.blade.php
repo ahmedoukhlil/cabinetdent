@@ -100,7 +100,7 @@
 
         {{-- Catalogue --}}
         <section class="card overflow-x-auto !p-0" aria-label="Catalogue des actes">
-            <table class="w-full text-sm">
+            <table class="tableau-cartes w-full text-sm">
                 <thead class="sticky top-0 bg-slate-50 text-left text-xs text-slate-500">
                     <tr>
                         <th class="px-3 py-2 font-medium">Code</th>
@@ -167,7 +167,7 @@
             </form>
 
             <section class="card overflow-x-auto !p-0 lg:col-span-2" aria-label="Assurances">
-                <table class="w-full text-sm">
+                <table class="tableau-cartes w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs text-slate-500">
                         <tr><th class="px-3 py-2 font-medium">Assurance</th><th class="px-3 py-2 text-right font-medium">Prise en charge</th><th class="px-3 py-2 text-right font-medium">Tarifs propres</th><th class="px-3 py-2 text-right font-medium">Patients</th><th class="px-3 py-2"><span class="sr-only">Actions</span></th></tr>
                     </thead>

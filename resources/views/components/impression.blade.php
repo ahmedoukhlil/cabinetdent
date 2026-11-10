@@ -22,6 +22,17 @@
         .actions button { padding: 8px 14px; border: 1px solid #0f4c81; background: #0f4c81; color: #fff; border-radius: 6px; cursor: pointer; }
         footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; }
         @media print { .actions { display: none; } .page { margin: 0 auto; } }
+        /* Consultation sur téléphone : marges et colonnes resserrées pour éviter le défilement horizontal. */
+        @media screen and (max-width: 640px) {
+            .page { margin: 12px auto; padding: 0 12px; }
+            header { flex-direction: column; gap: 8px; }
+            header .r { text-align: left; }
+            th, td { padding: 4px 2px; font-size: 11px; }
+            th { letter-spacing: 0; }
+            .totaux { width: 100%; }
+            /* Tableau trop large (8 colonnes) : il défile seul, la page reste fixe. */
+            table:not(.totaux) { display: block; overflow-x: auto; }
+        }
     </style>
 </head>
 <body>

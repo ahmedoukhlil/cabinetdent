@@ -1,6 +1,7 @@
 import './bootstrap';
 import './pwa';
 import './confirmation';
+import './tableaux';
 
 // Odontogramme anatomique : composant Alpine qui charge React à la demande.
 // Les données arrivent par l'attribut data-odontogramme d'un élément voisin, mis à jour par Livewire.

@@ -105,7 +105,7 @@
                         <p class="rounded-lg bg-red-50 p-3 text-sm text-red-800">Annulée le {{ $ouverte->annulee_at->format('d/m/Y') }} · {{ $ouverte->motif_annulation }}</p>
                     @endif
 
-                    <table class="w-full text-sm">
+                    <table class="tableau-cartes w-full text-sm">
                         <thead class="text-left text-xs text-slate-500">
                             <tr><th class="py-1 font-medium">Acte</th><th class="py-1 text-right font-medium">Qté</th><th class="py-1 text-right font-medium">Prix</th><th class="py-1 text-right font-medium">Montant</th>@if ($brouillon)<th></th>@endif</tr>
                         </thead>

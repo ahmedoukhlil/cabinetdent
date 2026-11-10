@@ -118,7 +118,7 @@
                         @foreach ($liste as $rdv)
                             <li wire:key="rdv-{{ $rdv->id }}" @class(['flex flex-wrap items-center gap-3 py-2 text-sm', 'opacity-60' => $rdv->statut === \App\Enums\StatutRdv::Annule])>
                                 <span class="w-12 font-medium">{{ $rdv->heure_courte }}</span>
-                                <span class="min-w-0 flex-1">
+                                <span class="min-w-[11rem] flex-1">
                                     <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="hover:underline">{{ $rdv->patient->nom_complet }}</a>
                                     @if ($rdv->acte_prevu)<span class="text-slate-500"> · {{ $rdv->acte_prevu }}</span>@endif
                                 </span>

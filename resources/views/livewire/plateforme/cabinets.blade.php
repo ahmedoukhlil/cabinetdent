@@ -51,7 +51,7 @@
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
         <section class="card overflow-x-auto lg:col-span-3" aria-label="Liste des cabinets">
-            <table class="w-full min-w-[560px] text-sm [&_td]:px-2 [&_th]:px-2">
+            <table class="tableau-cartes w-full min-w-[560px] text-sm [&_td]:px-2 [&_th]:px-2">
                 <thead class="text-left text-xs text-slate-500"><tr><th class="py-1 font-medium">Cabinet</th><th class="py-1 font-medium">Formule</th><th class="py-1 font-medium">Statut</th><th class="py-1 font-medium">Couvert jusqu'au</th><th class="py-1 text-right font-medium">Comptes</th></tr></thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($cabinets as $c)

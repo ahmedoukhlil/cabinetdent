@@ -19,7 +19,7 @@
             <ul class="divide-y divide-amber-200 border-t border-amber-200 px-4 text-sm">
                 @foreach ($lignes as $l)
                     <li wire:key="cnf-{{ $l['rdv']->id }}" class="flex flex-wrap items-center gap-2 py-2">
-                        <span class="min-w-0 flex-1 truncate">
+                        <span class="min-w-[11rem] flex-1">
                             {{ $l['rdv']->patient->nom_complet }}
                             <span class="text-xs text-amber-800">· Dr {{ $l['rdv']->dentiste->name }} · {{ $l['rdv']->statut->label() }}</span>
                         </span>

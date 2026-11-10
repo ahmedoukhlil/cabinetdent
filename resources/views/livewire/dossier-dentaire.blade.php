@@ -92,14 +92,14 @@
         </div>
     </section>
 
-    <nav class="sticky top-2 z-20 flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Sections du dossier" role="tablist">
+    <nav class="sticky top-2 z-20 grid grid-cols-2 gap-1 rounded-xl sm:flex sm:overflow-x-auto border border-slate-200 bg-white p-1 shadow-sm" aria-label="Sections du dossier" role="tablist">
         @foreach ([
             'etat' => ['État dentaire', 'ti-dental'],
             'plan' => ['Plan de traitement', 'ti-clipboard-list'],
             'documents' => ['Documents', 'ti-file-medical'],
             'historique' => ['Historique', 'ti-history'],
         ] as $cle => [$libelle, $icone])
-            <button type="button" x-on:click="onglet = '{{ $cle }}'" :aria-selected="onglet === '{{ $cle }}'" :class="onglet === '{{ $cle }}' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-100'" class="flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium" role="tab"><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</button>
+            <button type="button" x-on:click="onglet = '{{ $cle }}'" :aria-selected="onglet === '{{ $cle }}'" :class="onglet === '{{ $cle }}' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-100'" class="flex shrink-0 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium sm:justify-start" role="tab"><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</button>
         @endforeach
     </nav>
 
