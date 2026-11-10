@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\RendezVousService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -30,6 +31,11 @@ class Agenda extends Component
     public string $heure = '';
 
     public string $acte = '';
+
+    /** Création rapide d'un patient introuvable, directement depuis le formulaire de RDV. */
+    public bool $creation = false;
+
+    public array $nouveau = ['nom' => '', 'prenom' => '', 'telephone' => ''];
 
     public function mount(): void
     {
@@ -74,6 +80,27 @@ class Agenda extends Component
         $patient = Patient::findOrFail($id);
         $this->patientId = $patient->id;
         $this->recherchePatient = $patient->nom_complet;
+        $this->creation = false;
+    }
+
+    public function nouveauPatient(): void
+    {
+        $this->authorize('patient.create');
+        $this->creation = true;
+        $this->patientId = null;
+        // Pré-remplit avec la recherche tapée : un numéro va dans le téléphone, sinon dans le nom.
+        $terme = trim($this->recherchePatient);
+        if (preg_match('/^[\d\s+().-]+$/', $terme)) {
+            $this->nouveau['telephone'] = $this->nouveau['telephone'] ?: $terme;
+        } elseif ($this->nouveau['nom'] === '') {
+            $this->nouveau['nom'] = $terme;
+        }
+    }
+
+    public function annulerCreation(): void
+    {
+        $this->reset('creation', 'nouveau');
+        $this->resetValidation(['nouveau.nom', 'nouveau.prenom', 'nouveau.telephone']);
     }
 
     public function updatedRecherchePatient(): void
@@ -85,25 +112,37 @@ class Agenda extends Component
     {
         $this->authorize('rendez-vous.create');
 
-        $this->validate([
-            'patientId' => ['required', 'integer'],
+        $regles = $this->creation
+            ? ['nouveau.nom' => ['required', 'string', 'max:100'], 'nouveau.prenom' => ['nullable', 'string', 'max:100'], 'nouveau.telephone' => ['nullable', 'string', 'max:30']]
+            : ['patientId' => ['required', 'integer']];
+
+        $this->validate($regles + [
             'dentisteId' => ['required', 'integer'],
             'date' => ['required', 'date_format:Y-m-d', 'after_or_equal:today'],
             'heure' => ['required', 'date_format:H:i'],
             'acte' => ['nullable', 'string', 'max:150'],
         ], [
-            'patientId.required' => 'Choisissez un patient dans la liste.',
+            'patientId.required' => 'Choisissez un patient dans la liste, ou créez-le.',
             'date.after_or_equal' => 'Impossible de planifier un RDV dans le passé.',
-        ]);
+        ], ['nouveau.nom' => 'nom']);
 
         try {
-            $rdv = $service->creer(auth()->user(), [
-                'patient_id' => $this->patientId,
-                'dentiste_id' => $this->dentisteId,
-                'date' => $this->date,
-                'heure' => $this->heure,
-                'acte_prevu' => $this->acte ?: null,
-            ]);
+            // Transaction : si le RDV est refusé (créneau pris…), le nouveau patient n'est pas créé.
+            $rdv = DB::transaction(function () use ($service) {
+                $patientId = $this->patientId;
+                if ($this->creation) {
+                    $this->authorize('patient.create');
+                    $patientId = Patient::create(array_filter(array_map('trim', $this->nouveau), fn ($v) => $v !== ''))->id;
+                }
+
+                return $service->creer(auth()->user(), [
+                    'patient_id' => $patientId,
+                    'dentiste_id' => $this->dentisteId,
+                    'date' => $this->date,
+                    'heure' => $this->heure,
+                    'acte_prevu' => $this->acte ?: null,
+                ]);
+            });
         } catch (AuthorizationException $e) {
             $this->addError('dentisteId', $e->getMessage());
 
@@ -116,7 +155,7 @@ class Agenda extends Component
             return;
         }
 
-        $this->reset('patientId', 'recherchePatient', 'heure', 'acte');
+        $this->reset('patientId', 'recherchePatient', 'heure', 'acte', 'creation', 'nouveau');
         $this->dispatch('toast', message: "RDV planifié à {$rdv->heure_courte} · {$rdv->patient->nom_complet}", type: 'success');
     }
 
@@ -124,7 +163,7 @@ class Agenda extends Component
     {
         $user = auth()->user();
 
-        $suggestions = (!$this->patientId && mb_strlen(trim($this->recherchePatient)) >= 2)
+        $suggestions = (!$this->patientId && !$this->creation && mb_strlen(trim($this->recherchePatient)) >= 2)
             ? Patient::recherche($this->recherchePatient)->where('actif', true)->orderBy('nom')->limit(6)->get()
             : collect();
 

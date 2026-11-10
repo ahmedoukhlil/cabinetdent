@@ -132,4 +132,48 @@ class AgendaCreneauxTest extends TestCase
             ->call('creer')
             ->assertHasErrors('heure');
     }
+
+    public function test_creation_patient_introuvable_depuis_agenda()
+    {
+        Livewire::test(Agenda::class, ['date' => $this->lundi])
+            ->set('recherchePatient', '3852')
+            ->assertSee('Aucun patient trouvé')
+            ->call('nouveauPatient')
+            ->assertSet('nouveau.telephone', '3852')
+            ->set('nouveau.nom', 'Sall')
+            ->set('nouveau.prenom', 'Awa')
+            ->set('heure', '08:00')
+            ->call('creer')
+            ->assertHasNoErrors()
+            ->assertSet('creation', false);
+
+        $patient = Patient::where('nom', 'Sall')->firstOrFail();
+        $this->assertSame('3852', $patient->telephone);
+        $this->assertSame($this->dentiste->cabinet_id, $patient->cabinet_id);
+        $this->assertSame('08:00', $patient->rendezVous()->firstOrFail()->heure_courte);
+    }
+
+    public function test_patient_non_cree_si_rdv_refuse()
+    {
+        $this->rdv('08:00');
+
+        Livewire::test(Agenda::class, ['date' => $this->lundi])
+            ->set('recherchePatient', 'Kane')
+            ->call('nouveauPatient')
+            ->assertSet('nouveau.nom', 'Kane')
+            ->set('heure', '08:00')
+            ->call('creer')
+            ->assertHasErrors('heure');
+
+        $this->assertFalse(Patient::where('nom', 'Kane')->exists());
+    }
+
+    public function test_nom_obligatoire_pour_nouveau_patient()
+    {
+        Livewire::test(Agenda::class, ['date' => $this->lundi])
+            ->call('nouveauPatient')
+            ->set('heure', '08:00')
+            ->call('creer')
+            ->assertHasErrors('nouveau.nom');
+    }
 }
