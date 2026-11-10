@@ -1,82 +1,48 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToCabinet;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * Class Acte
- * 
- * @property int $ID
- * @property string|null $Acte
- * @property float $PrixRef
- * @property int $fkidTypeActe
- * @property int $nordre
- * @property string $user
- * @property int $fkidassureur
- * @property string $ActeArab
- * @property int $Masquer
- *
- * @package App\Models
- */
 class Acte extends Model
 {
-	protected $table = 'actes';
-	protected $primaryKey = 'ID';
-	public $timestamps = false;
+    use BelongsToCabinet;
 
-	protected $casts = [
-		'PrixRef' => 'float',
-		'fkidTypeActe' => 'int',
-		'nordre' => 'int',
-		'fkidassureur' => 'int',
-		'Masquer' => 'int'
-	];
+    protected $fillable = ['cabinet_id', 'code', 'libelle', 'type', 'prix', 'actif'];
 
-	protected $fillable = [
-		'Acte',
-		'PrixRef',
-		'fkidTypeActe',
-		'nordre',
-		'user',
-		'fkidassureur',
-		'ActeArab',
-		'Masquer',
-		'type_cible'
-	];
+    public const TYPES = ['soin' => 'Soin', 'consultation' => 'Consultation'];
 
-	// Accesseurs pour la compatibilité avec le composant Livewire
-	public function getActeNomAttribute()
-	{
-		return $this->Acte;
-	}
+    protected $attributes = ['type' => 'soin'];
 
-	public function setActeNomAttribute($value)
-	{
-		$this->Acte = $value;
-	}
+    protected $casts = ['prix' => 'float', 'actif' => 'boolean'];
 
-	public function getMontantAttribute()
-	{
-		return $this->PrixRef;
-	}
+    public function estConsultation(): bool
+    {
+        return $this->type === 'consultation';
+    }
 
-	public function setMontantAttribute($value)
-	{
-		$this->PrixRef = $value;
-	}
+    public function scopeConsultations($query)
+    {
+        return $query->where('type', 'consultation')->where('actif', true);
+    }
 
-	public function assureur()
-	{
-		return $this->belongsTo(Assureur::class, 'fkidassureur', 'IDAssureur');
-	}
+    public function tarifs(): HasMany
+    {
+        return $this->hasMany(ActeTarif::class);
+    }
 
-	public function typeActe()
-	{
-		return $this->belongsTo(Typeacte::class, 'fkidTypeActe', 'id');
-	}
+    /** Prix pour un assureur donné ; à défaut, prix sans assurance. */
+    public function prixPour(?int $assureurId): float
+    {
+        if (!$assureurId) {
+            return $this->prix;
+        }
+        $tarif = $this->relationLoaded('tarifs')
+            ? $this->tarifs->firstWhere('assureur_id', $assureurId)
+            : $this->tarifs()->where('assureur_id', $assureurId)->first();
+
+        return $tarif?->prix ?? $this->prix;
+    }
 }

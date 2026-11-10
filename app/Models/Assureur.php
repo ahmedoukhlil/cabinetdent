@@ -1,57 +1,36 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Models\Concerns\BelongsToCabinet;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Assureur
- * 
- * @property int $IDAssureur
- * @property string|null $LibAssurance
- * @property float|null $TauxdePEC
- * @property float $SeuilDevis
- * @property int $ISTP
- * @property Carbon|null $DtConvention
- * @property string|null $ContactAssureur
- * @property string|null $AdresseMail
- * @property string|null $user
- * @property string|null $Adresse
- * @property int $fkidtypeTiers
- *
- * @package App\Models
- */
 class Assureur extends Model
 {
-	protected $table = 'assureurs';
-	protected $primaryKey = 'IDAssureur';
-	public $incrementing = true;
-	public $keyType = 'int';
-	public $timestamps = false;
+    use BelongsToCabinet;
 
-	protected $casts = [
-		'TauxdePEC' => 'float',
-		'SeuilDevis' => 'float',
-		'ISTP' => 'int',
-		'DtConvention' => 'datetime',
-		'fkidtypeTiers' => 'int'
-	];
+    protected $fillable = ['cabinet_id', 'nom', 'taux_pec', 'actif'];
 
-	protected $fillable = [
-		'LibAssurance',
-		'TauxdePEC',
-		'SeuilDevis',
-		'ISTP',
-		'DtConvention',
-		'ContactAssureur',
-		'AdresseMail',
-		'user',
-		'Adresse',
-		'fkidtypeTiers'
-	];
+    protected $casts = ['taux_pec' => 'float', 'actif' => 'boolean'];
+
+    public function patients(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Patient::class);
+    }
+
+    /** Accepte 80 ou 0,8 et ramène toujours entre 0 et 1. */
+    public static function normaliserTaux(float $valeur): float
+    {
+        $taux = max(0, $valeur);
+        if ($taux > 1) {
+            $taux /= 100;
+        }
+
+        return round(min(1, $taux), 4);
+    }
+
+    public function getPourcentageAttribute(): string
+    {
+        return rtrim(rtrim(number_format($this->taux_pec * 100, 2, ',', ''), '0'), ',').' %';
+    }
 }

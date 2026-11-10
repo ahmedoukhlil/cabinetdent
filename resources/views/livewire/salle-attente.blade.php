@@ -1,130 +1,83 @@
-<div class="p-4" wire:poll.15s>
-
-    {{-- Filtres --}}
-    <div class="flex flex-wrap gap-3 mb-5 items-center">
-        <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-gray-600">Date :</label>
-            <input type="date" wire:model.live="date"
-                class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
-        </div>
-
-        @if(count($medecins) > 1)
-        <div class="flex items-center gap-2">
-            <label class="text-sm font-medium text-gray-600">Médecin :</label>
-            <select wire:model.live="medecinFiltre"
-                class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="">Tous les médecins</option>
-                @foreach($medecins as $med)
-                    <option value="{{ $med->idMedecin }}">Dr. {{ $med->Nom }}</option>
-                @endforeach
-            </select>
-        </div>
+<div wire:poll.30s class="space-y-4">
+    <div wire:loading.delay class="fixed top-4 left-1/2 z-[70] -translate-x-1/2 rounded-full bg-slate-900 px-4 py-2 text-sm text-white shadow-lg" role="status">Mise à jour de la salle…</div>
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-lg font-semibold">Salle d'attente</h1>
+        @if ($consultationsPossibles && $user->aPermission('facture.edit'))
+            <button type="button" x-on:click="$dispatch('consultation-sans-rdv')" class="btn-primary sm:order-last"><i class="ti ti-user-plus" aria-hidden="true"></i> Consultation sans RDV</button>
         @endif
-
-        <button wire:click="$refresh" class="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">
-            <i class="fas fa-sync-alt text-xs"></i> Actualiser
-        </button>
+        @if ($user->aPermission('rendez-vous.edit'))
+            <select wire:model.live="dentisteId" class="field !w-auto" aria-label="Filtrer par dentiste">
+                <option value="">Tous les dentistes</option>
+                @foreach ($dentistes as $d)<option value="{{ $d->id }}">Dr {{ $d->name }}</option>@endforeach
+            </select>
+        @endif
     </div>
 
-    {{-- Contenu --}}
-    @if($rdvParMedecin->isEmpty())
-        <div class="text-center py-16 text-gray-400">
-            <i class="fas fa-couch text-5xl mb-4 opacity-40"></i>
-            <p class="text-lg font-medium">Salle d'attente vide</p>
-            <p class="text-sm mt-1">Aucun rendez-vous pour ce jour</p>
-        </div>
-    @else
-        @foreach($rdvParMedecin as $medecinId => $rdvs)
-            @php $medecin = $rdvs->first()->medecin; @endphp
-            <div class="mb-6">
-                {{-- En-tête médecin --}}
-                <div class="flex items-center gap-2 mb-3 pb-2 border-b-2 border-primary/20">
-                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <i class="fas fa-user-md text-primary text-sm"></i>
-                    </div>
-                    <h3 class="font-semibold text-gray-800 text-sm">
-                        Dr. {{ $medecin->Nom ?? 'Médecin inconnu' }}
-                    </h3>
-                    <span class="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                        {{ $rdvs->count() }} patient(s)
-                    </span>
-                </div>
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="card" aria-labelledby="col-attendus">
+            <h2 id="col-attendus" class="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700"><i class="ti ti-calendar-time" aria-hidden="true"></i>Attendus · {{ $attendus->count() }}</h2>
+            <ul class="divide-y divide-slate-100">
+                @forelse ($attendus as $rdv)
+                    <li wire:key="a-{{ $rdv->id }}" class="flex items-center gap-2 py-2 text-sm">
+                        <span class="w-12 font-medium">{{ $rdv->heure_courte }}</span>
+                        <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="min-w-0 flex-1 hover:underline"><span class="block font-medium">{{ $rdv->patient->nom_complet }}</span><span class="block text-xs text-slate-500">Dr {{ $rdv->dentiste->name }}</span></a>
+                        <button type="button" wire:click="changerStatut({{ $rdv->id }}, 'arrive')" class="btn-secondary !px-3 !py-1.5 text-xs">Arrivé</button>
+                    </li>
+                @empty
+                    <li class="py-2 text-sm text-slate-600">Plus personne d'attendu.</li>
+                @endforelse
+            </ul>
+        </section>
 
-                {{-- Liste des patients --}}
-                <div class="space-y-2">
-                    @foreach($rdvs as $index => $rdv)
-                        @php
-                            $patient = $rdv->patient;
-                            $nomPatient = $patient ? ($patient->NomContact ?? ($patient->Prenom ?? 'Patient inconnu')) : 'Patient inconnu';
-                            $statut = $rdv->rdvConfirmer ?? 'Prévu';
-                            $enCours = strtolower($statut) === 'en cours';
-                        @endphp
-                        <div class="flex items-center gap-3 p-3 rounded-xl shadow-sm transition-all group border
-                            {{ $enCours
-                                ? 'bg-blue-50 border-blue-300 ring-2 ring-blue-200'
-                                : 'bg-white border-gray-100 hover:shadow-md hover:border-primary/30 cursor-pointer' }}"
-                            @if(!$enCours && $patient)
-                                wire:click="demarrerRdv({{ $rdv->IDRdv }})"
-                                title="Cliquer pour démarrer ce rendez-vous"
-                            @endif>
+        <section class="card" aria-labelledby="col-arrives">
+            <h2 id="col-arrives" class="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700"><i class="ti ti-armchair" aria-hidden="true"></i>En attente · {{ $arrives->count() }}</h2>
+            <ul class="divide-y divide-slate-100">
+                @forelse ($arrives as $rdv)
+                    @php($minutes = (int) $rdv->arrive_at?->diffInMinutes(now()))
+                    <li wire:key="w-{{ $rdv->id }}" class="flex items-center gap-2 py-2 text-sm">
+                        <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="min-w-0 flex-1 hover:underline"><span class="block font-medium">{{ $rdv->patient->nom_complet }}</span><span class="block text-xs text-slate-500">RDV {{ $rdv->heure_courte }} · Dr {{ $rdv->dentiste->name }}</span></a>
+                        @include('livewire.partials.puce-consultation')
+                        <span @class(['badge', 'bg-amber-100 text-amber-800' => $minutes >= 20, 'bg-slate-100 text-slate-600' => $minutes < 20])>{{ $minutes }} min</span>
+                        @if ($user->aPermission('soins.manage') && ($user->aPermission('rendez-vous.edit') || $rdv->dentiste_id === $user->id))
+                            <button type="button" wire:click="changerStatut({{ $rdv->id }}, 'en_cours')" class="btn-primary !px-3 !py-1.5 text-xs">Faire entrer</button>
+                        @endif
+                    </li>
+                @empty
+                    <li class="py-2 text-sm text-slate-600">Personne en attente.</li>
+                @endforelse
+            </ul>
+        </section>
 
-                            {{-- N° d'ordre --}}
-                            <div class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold flex-shrink-0
-                                {{ $enCours ? 'bg-blue-600 text-white' : 'bg-primary-light text-primary' }}">
-                                {{ $index + 1 }}
-                            </div>
+        <section class="card" aria-labelledby="col-soins">
+            <h2 id="col-soins" class="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700"><i class="ti ti-dental" aria-hidden="true"></i>En soins · {{ $enSoins->count() }}</h2>
+            <ul class="divide-y divide-slate-100">
+                @forelse ($enSoins as $rdv)
+                    <li wire:key="s-{{ $rdv->id }}" class="flex items-center gap-2 py-2 text-sm">
+                        <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="min-w-0 flex-1 hover:underline"><span class="block font-medium">{{ $rdv->patient->nom_complet }}</span><span class="block text-xs text-slate-500">Dr {{ $rdv->dentiste->name }} · depuis {{ (int) $rdv->debut_at?->diffInMinutes(now()) }} min</span></a>
+                        @include('livewire.partials.puce-consultation')
+                        @if ($user->aPermission('soins.manage') && ($user->aPermission('rendez-vous.edit') || $rdv->dentiste_id === $user->id))
+                            <button type="button" wire:click="changerStatut({{ $rdv->id }}, 'termine')" class="btn-secondary !px-3 !py-1.5 text-xs">Terminer</button>
+                        @endif
+                    </li>
+                @empty
+                    <li class="py-2 text-sm text-slate-600">Aucun patient au fauteuil.</li>
+                @endforelse
+            </ul>
+        </section>
 
-                            {{-- Nom du patient --}}
-                            <div class="flex-1 min-w-0">
-                                @if($patient)
-                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'select']) }})"
-                                    class="font-semibold text-sm truncate hover:underline text-left block w-full {{ $enCours ? 'text-blue-800' : 'text-primary' }}">
-                                    {{ $nomPatient }}
-                                </button>
-                                @else
-                                <p class="font-semibold text-gray-800 text-sm truncate">{{ $nomPatient }}</p>
-                                @endif
-                            </div>
+        <section class="card" aria-labelledby="col-termines">
+            <h2 id="col-termines" class="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700"><i class="ti ti-circle-check" aria-hidden="true"></i>Terminés · {{ $termines->count() }}</h2>
+            <ul class="divide-y divide-slate-100">
+                @forelse ($termines as $rdv)
+                    <li wire:key="t-{{ $rdv->id }}" class="flex items-center gap-2 py-2 text-sm">
+                        <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="min-w-0 flex-1 hover:underline"><span class="block font-medium">{{ $rdv->patient->nom_complet }}</span><span class="block text-xs text-slate-500">Dr {{ $rdv->dentiste->name }} · fini à {{ $rdv->fin_at?->format('H:i') }}</span></a>
+                        @include('livewire.partials.puce-consultation')
+                    </li>
+                @empty
+                    <li class="py-2 text-sm text-slate-600">Aucun patient terminé.</li>
+                @endforelse
+            </ul>
+        </section>
+    </div>
 
-                            {{-- Statut --}}
-                            @if($enCours)
-                            <span class="text-xs font-medium px-2 py-1 rounded-full border bg-blue-100 text-blue-700 border-blue-200 whitespace-nowrap">
-                                <i class="fas fa-spinner fa-spin mr-1 text-[10px]"></i>En cours
-                            </span>
-                            @endif
-
-                            {{-- Actions --}}
-                            @if($patient)
-                            <div class="flex items-center gap-2 flex-shrink-0">
-
-                                {{-- Bouton FIN (uniquement si en cours) --}}
-                                @if($enCours)
-                                <button wire:click.stop="terminerRdv({{ $rdv->IDRdv }})"
-                                    title="Terminer la consultation"
-                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 text-sm font-semibold">
-                                    <i class="fas fa-check"></i> Fin
-                                </button>
-                                @endif
-
-                                {{-- Dossier médical --}}
-                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'dossier', 'IDRdv' => $rdv->IDRdv]) }})"
-                                    title="Dossier médical"
-                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-sm font-semibold whitespace-nowrap">
-                                    <i class="fas fa-folder-open"></i> Dossier
-                                </button>
-
-                                {{-- Plan de traitement --}}
-                                <button wire:click.stop="selectionnerPatient({{ json_encode(['ID' => $patient->ID, 'NomContact' => $patient->NomContact, 'action' => 'plan-traitement', 'IDRdv' => $rdv->IDRdv]) }})"
-                                    title="Plan de traitement"
-                                    class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/15 text-primary hover:bg-primary/25 text-sm font-semibold whitespace-nowrap">
-                                    <i class="fas fa-tooth"></i> Plan
-                                </button>
-                            </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        @endforeach
-    @endif
 </div>

@@ -2,86 +2,59 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Role;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable;
 
-    protected $table = 't_user';
-    protected $primaryKey = 'Iduser';
+    protected $fillable = ['cabinet_id', 'name', 'email', 'password', 'role', 'actif'];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'login',
-        'password',
-        'NomComplet',
-        'IdClasseUser',
-        'fonction',
-        'fkidmedecin',
-        'DtCr',
-        'fkidcabinet'
-    ];
+    protected $hidden = ['password', 'remember_token'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
-
-    // Relation avec le type d'utilisateur
-    public function typeuser()
+    protected function casts(): array
     {
-        return $this->belongsTo(TypeUser::class, 'IdClasseUser', 'IdClasseUser0');
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'role' => Role::class,
+            'actif' => 'boolean',
+        ];
     }
 
-    // Relation avec le médecin
-    public function medecin()
+    public function cabinet(): BelongsTo
     {
-        return $this->belongsTo(Medecin::class, 'fkidmedecin', 'idMedecin');
+        return $this->belongsTo(Cabinet::class);
     }
 
-    // Relation avec le cabinet
-    public function cabinet()
+    public function aPermission(string $permission): bool
     {
-        return $this->belongsTo(Infocabinet::class, 'fkidcabinet', 'idEntete');
+        return in_array($permission, config('permissions.'.$this->role->value, []), true);
     }
 
-    // Méthodes de vérification des rôles
-    public function isDocteurProprietaire()
+    public function estDentiste(): bool
     {
-        return $this->typeuser && $this->typeuser->Libelle === 'Docteur Propriétaire';
+        return $this->role->estDentiste();
     }
 
-    public function isDocteur()
+    public function estProprietaire(): bool
     {
-        return $this->typeuser && $this->typeuser->Libelle === 'Docteur';
+        return $this->role === Role::Proprietaire;
     }
 
-    public function isSecretaire()
+    /** Dentistes du même cabinet que l'utilisateur donné. */
+    public function scopeDentistesDu(Builder $query, User $user): Builder
     {
-        return $this->typeuser && $this->typeuser->Libelle === 'Secrétaire';
+        return $query->where('cabinet_id', $user->cabinet_id)
+            ->whereIn('role', [Role::Proprietaire->value, Role::Dentiste->value])
+            ->where('actif', true)
+            ->orderBy('name');
     }
 }

@@ -2,28 +2,23 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
-        Schema::defaultStringLength(191);
+        Carbon::setLocale('fr');
+
+        // Les permissions de config/permissions.php sont utilisables via @can / Gate::allows.
+        Gate::before(fn (User $user, string $ability) => $user->aPermission($ability) ?: null);
     }
 }

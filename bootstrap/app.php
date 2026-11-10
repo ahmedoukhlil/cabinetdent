@@ -7,34 +7,14 @@ use Illuminate\Foundation\Configuration\Middleware;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        channels: __DIR__.'/../routes/channels.php',
         commands: __DIR__.'/../routes/console.php',
+        health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(at: []);
-
-        $middleware->use([
-            \App\Http\Middleware\TrustProxies::class,
-            \Illuminate\Http\Middleware\HandleCors::class,
-            \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-            \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-            \App\Http\Middleware\TrimStrings::class,
-            \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        ]);
-
-        $middleware->web(append: [
-            \App\Http\Middleware\EncryptCookies::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-        ]);
-
-        $middleware->alias([
-            'auth' => \App\Http\Middleware\Authenticate::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-            'permission' => \App\Http\Middleware\CheckPermission::class,
-            'role' => \App\Http\Middleware\CheckUserRole::class,
-        ]);
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias(['compte.actif' => \App\Http\Middleware\EnsureCompteActif::class]);
+        $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $r) => $r->is('plateforme', 'plateforme/*') ? route('plateforme.login') : route('login'));
+        $middleware->redirectUsersTo(fn (\Illuminate\Http\Request $r) => $r->is('plateforme', 'plateforme/*') ? route('plateforme.cabinets') : route('accueil'));
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

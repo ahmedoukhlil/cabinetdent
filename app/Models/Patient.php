@@ -1,124 +1,82 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\BelongsToCabinet;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
-/**
- * Class Patient
- * 
- * @property int $ID
- * @property string|null $Prenom
- * @property string|null $Nom
- * @property string|null $NNI
- * @property Carbon|null $DtNaissance
- * @property string|null $Genre
- * @property string|null $IdentifiantAssurance
- * @property int $Assureur
- * @property string|null $Telephone1
- * @property string|null $Telephone2
- * @property string|null $MatriculeFonct
- * @property string|null $NomContact
- * @property string|null $ClasserSous
- * @property bool|null $choix
- * @property string|null $user
- * @property float $IdentifiantPatient
- * @property Carbon|null $Dtajout
- * @property int|null $fkidUser
- * @property string|null $Adresse
- * @property Carbon|null $DerniereDtOper
- * @property int $DernDossierFermer
- * @property Carbon|null $DtDernFermeture
- * @property int $fkidtypeTiers
- * @property Carbon|null $DtDernierRDV
- * @property int $fkidcabinet
- *
- * @package App\Models
- */
-class Patient extends Authenticatable
+class Patient extends Model
 {
-	use Notifiable;
+    use BelongsToCabinet, HasFactory, SoftDeletes;
 
-	protected $table = 'patients';
-	protected $primaryKey = 'ID';
-	public $timestamps = false;
+    protected $fillable = [
+        'cabinet_id', 'numero_fiche', 'nom', 'prenom', 'sexe', 'date_naissance',
+        'telephone', 'nni', 'adresse', 'assureur_id', 'matricule_assure', 'notes', 'actif',
+    ];
 
-	protected $hidden = [
-		'password',
-		'remember_token',
-	];
+    protected $casts = ['date_naissance' => 'date', 'actif' => 'boolean'];
 
-	protected $casts = [
-		'DtNaissance' => 'datetime',
-		'Assureur' => 'int',
-		'choix' => 'bool',
-		'IdentifiantPatient' => 'float',
-		'Dtajout' => 'datetime',
-		'fkidUser' => 'int',
-		'DerniereDtOper' => 'datetime',
-		'DernDossierFermer' => 'int',
-		'DtDernFermeture' => 'datetime',
-		'fkidtypeTiers' => 'int',
-		'DtDernierRDV' => 'datetime',
-		'fkidcabinet' => 'int',
-		'mdp_defini_le' => 'datetime'
-	];
+    protected static function booted(): void
+    {
+        static::creating(function (Patient $patient) {
+            if (empty($patient->numero_fiche)) {
+                $patient->numero_fiche = (int) DB::table('patients')
+                    ->where('cabinet_id', $patient->cabinet_id)
+                    ->lockForUpdate()
+                    ->max('numero_fiche') + 1;
+            }
+        });
+    }
 
-	protected $fillable = [
-		'Prenom',
-		'Nom',
-		'NNI',
-		'DtNaissance',
-		'Genre',
-		'IdentifiantAssurance',
-		'Assureur',
-		'Telephone1',
-		'Telephone2',
-		'MatriculeFonct',
-		'NomContact',
-		'ClasserSous',
-		'choix',
-		'user',
-		'IdentifiantPatient',
-		'Dtajout',
-		'fkidUser',
-		'Adresse',
-		'DerniereDtOper',
-		'DernDossierFermer',
-		'DtDernFermeture',
-		'fkidtypeTiers',
-		'DtDernierRDV',
-		'fkidcabinet',
-		'password',
-		'mdp_defini_le'
-	];
+    public function rendezVous(): HasMany
+    {
+        return $this->hasMany(RendezVous::class);
+    }
 
-	/**
-	 * Relation avec l'assureur
-	 */
-	public function assureur()
-	{
-		return $this->belongsTo(\App\Models\Assureur::class, 'Assureur', 'IDAssureur');
-	}
+    public function assureur(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Assureur::class);
+    }
 
-	public function rendezvous()
-	{
-		return $this->hasMany(\App\Models\Rendezvou::class, 'fkidPatient', 'ID');
-	}
+    public function factures(): HasMany
+    {
+        return $this->hasMany(Facture::class);
+    }
 
-	public function factures()
-	{
-		return $this->hasMany(\App\Models\Facture::class, 'IDPatient', 'ID');
-	}
+    public function dents(): HasMany
+    {
+        return $this->hasMany(Dent::class);
+    }
 
-	public function pushSubscriptions()
-	{
-		return $this->hasMany(\App\Models\PushSubscription::class, 'patient_id', 'ID');
-	}
+    public function plansTraitement(): HasMany
+    {
+        return $this->hasMany(PlanTraitement::class);
+    }
+
+    public function getNomCompletAttribute(): string
+    {
+        return trim($this->prenom.' '.$this->nom);
+    }
+
+    public function scopeRecherche(Builder $query, ?string $terme): Builder
+    {
+        $terme = trim((string) $terme);
+        if ($terme === '') {
+            return $query;
+        }
+
+        return $query->where(function (Builder $q) use ($terme) {
+            $q->where('nom', 'like', "%{$terme}%")
+                ->orWhere('prenom', 'like', "%{$terme}%")
+                ->orWhere('telephone', 'like', "%{$terme}%");
+            if (ctype_digit($terme)) {
+                $q->orWhere('numero_fiche', (int) $terme);
+            }
+        });
+    }
 }

@@ -2,129 +2,29 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToCabinet;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * Class MouvementStock
- * 
- * @property int $idMouvement
- * @property int $fkidStock
- * @property int $fkidMedicament
- * @property int|null $fkidLot
- * @property string $typeMouvement
- * @property float $quantite
- * @property float $prixUnitaire
- * @property float $montantTotal
- * @property string|null $motif
- * @property int|null $fkidFacture
- * @property int|null $fkidDetailFacture
- * @property int|null $fkidPatient
- * @property int $fkidUser
- * @property \DateTime|null $dateMouvement
- * @property string|null $reference
- * @property string|null $notes
- *
- * @package App\Models
- */
 class MouvementStock extends Model
 {
+    use BelongsToCabinet;
+
+    public const TYPES = ['entree' => 'Entrée', 'sortie' => 'Sortie', 'ajustement' => 'Inventaire'];
+
     protected $table = 'mouvements_stock';
-    protected $primaryKey = 'idMouvement';
-    public $timestamps = false;
 
-    protected $casts = [
-        'fkidStock' => 'int',
-        'fkidMedicament' => 'int',
-        'fkidLot' => 'int',
-        'quantite' => 'float',
-        'prixUnitaire' => 'float',
-        'montantTotal' => 'float',
-        'fkidFacture' => 'int',
-        'fkidDetailFacture' => 'int',
-        'fkidPatient' => 'int',
-        'fkidUser' => 'int',
-        'dateMouvement' => 'datetime'
-    ];
+    protected $fillable = ['cabinet_id', 'consommable_id', 'type', 'quantite', 'stock_apres', 'prix_unitaire', 'peremption', 'motif', 'user_id'];
 
-    protected $fillable = [
-        'fkidStock',
-        'fkidMedicament',
-        'fkidLot',
-        'typeMouvement',
-        'quantite',
-        'prixUnitaire',
-        'montantTotal',
-        'motif',
-        'fkidFacture',
-        'fkidDetailFacture',
-        'fkidPatient',
-        'fkidUser',
-        'dateMouvement',
-        'reference',
-        'notes'
-    ];
+    protected $casts = ['quantite' => 'float', 'stock_apres' => 'float', 'prix_unitaire' => 'float', 'peremption' => 'date'];
 
-    // Relations
-    public function stock()
+    public function consommable(): BelongsTo
     {
-        return $this->belongsTo(StockMedicament::class, 'fkidStock', 'idStock');
+        return $this->belongsTo(Consommable::class);
     }
 
-    public function medicament()
+    public function auteur(): BelongsTo
     {
-        return $this->belongsTo(Medicament::class, 'fkidMedicament', 'IDMedic');
-    }
-
-    public function lot()
-    {
-        return $this->belongsTo(LotMedicament::class, 'fkidLot', 'idLot');
-    }
-
-    public function facture()
-    {
-        return $this->belongsTo(Facture::class, 'fkidFacture', 'Idfacture');
-    }
-
-    public function detailFacture()
-    {
-        return $this->belongsTo(Detailfacturepatient::class, 'fkidDetailFacture', 'idDetfacture');
-    }
-
-    public function patient()
-    {
-        return $this->belongsTo(Patient::class, 'fkidPatient', 'ID');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'fkidUser', 'Iduser');
-    }
-
-    // Scopes
-    public function scopeEntrees($query)
-    {
-        return $query->where('typeMouvement', 'ENTREE');
-    }
-
-    public function scopeSorties($query)
-    {
-        return $query->where('typeMouvement', 'SORTIE');
-    }
-
-    public function scopeAjustements($query)
-    {
-        return $query->where('typeMouvement', 'AJUSTEMENT');
-    }
-
-    public function scopeParPeriode($query, $dateDebut, $dateFin)
-    {
-        return $query->whereBetween('dateMouvement', [$dateDebut, $dateFin]);
-    }
-
-    public function scopeParMedicament($query, $medicamentId)
-    {
-        return $query->where('fkidMedicament', $medicamentId);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
-
