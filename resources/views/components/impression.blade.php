@@ -68,8 +68,10 @@
             .bloc, .encadre, tr { break-inside: avoid; }
             /* La page occupe toute la feuille (hauteur moins les marges @page) : la mention d'édition
                se place en bas. Un document plus long la reçoit en bas de son contenu, sur la dernière feuille. */
-            .page { display: flex; flex-direction: column; min-height: 271mm; }
-            html[data-format="a5"] .page { min-height: 192mm; }
+            /* 100vh = zone imprimable réelle (plus petite si le navigateur ajoute ses en-têtes/pieds,
+               comme Safari) ; plafonnée par sécurité pour ne jamais créer de page blanche. */
+            .page { display: flex; flex-direction: column; min-height: min(calc(100vh - 4mm), 255mm); }
+            html[data-format="a5"] .page { min-height: min(calc(100vh - 4mm), 178mm); }
             footer { margin-top: auto; padding-top: 12px; }
         }
         /* Consultation sur téléphone : marges et colonnes resserrées pour éviter le défilement horizontal. */
