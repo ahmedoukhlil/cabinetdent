@@ -283,6 +283,6 @@ class FacturationTest extends TestCase
         $this->patient = Patient::create(['cabinet_id' => $this->patient->cabinet_id, 'nom' => 'Sans assurance']);
         $f2 = $this->factureValidee(500);
         $this->get(route('factures.imprimer', $f2))->assertOk()
-            ->assertSee('la totalité est à la charge du patient')->assertDontSee("À la charge de l'assurance", false);
+            ->assertSee('totalité à la charge du patient')->assertSee('À la charge du patient · 100')->assertDontSee("À la charge de l'assurance", false);
     }
 }

@@ -16,6 +16,8 @@
         <tr><th style="width:40%">Patient</th><td>{{ $paiement->patient->nom_complet }} (fiche N° {{ $paiement->patient->numero_fiche }})</td></tr>
         @if ($f->assureur)
             <tr><th>Assurance</th><td>{{ $f->assureur->nom }}@if ($paiement->patient->matricule_assure) · matricule {{ $paiement->patient->matricule_assure }}@endif · prise en charge {{ $f->tauxLisible() }}</td></tr>
+        @else
+            <tr><th>Assurance</th><td>Aucune · totalité à la charge du patient</td></tr>
         @endif
         <tr><th>Facture</th><td>N° {{ $f->numero }} du {{ $f->date_facture->format('d/m/Y') }} · total {{ $mru($f->total) }}</td></tr>
     </table>
@@ -52,11 +54,17 @@
             <p class="muted">Le patient a réglé toute sa part. Le reste ({{ $mru($f->restePec()) }}) est dû par l'assurance.</p>
         @endif
     @else
-        <table class="totaux">
-            <tr><td>Total</td><td class="r">{{ $mru($f->total) }}</td></tr>
-            <tr><td>Déjà réglé</td><td class="r">{{ $mru($f->regle_patient) }}</td></tr>
-            <tr class="fort"><td>Reste à payer</td><td class="r">{{ $mru(max(0, $f->restePatient())) }}</td></tr>
-        </table>
+        <div class="repartition" style="grid-template-columns:1fr">
+            <div class="bloc patient" style="max-width:360px">
+                <h4>À la charge du patient · 100&nbsp;%</h4>
+                <table>
+                    <tr><td>À payer</td><td class="r">{{ $mru($f->part_patient) }}</td></tr>
+                    <tr><td>Déjà réglé</td><td class="r">{{ $mru($f->regle_patient) }}</td></tr>
+                    <tr class="fort"><td>Reste à payer</td><td class="r">{{ $mru(max(0, $f->restePatient())) }}</td></tr>
+                </table>
+            </div>
+        </div>
+        @if ($f->restePatient() <= 0)<p class="muted">Facture entièrement réglée.</p>@endif
     @endif
 
     <p class="muted" style="margin-top:24px">Encaissé par {{ $paiement->auteur?->name }} · signature et cachet</p>

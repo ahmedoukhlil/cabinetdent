@@ -22,7 +22,8 @@
         <strong>Patient :</strong> {{ $facture->patient->nom_complet }} (fiche N° {{ $facture->patient->numero_fiche }})<br>
         @if ($facture->patient->telephone)<span class="muted">Tél. {{ $facture->patient->telephone }}</span><br>@endif
         @if ($facture->assureur)<strong>Assurance :</strong> {{ $facture->assureur->nom }}@if ($facture->patient->matricule_assure) · matricule {{ $facture->patient->matricule_assure }}@endif
-            @if ($assuree) · prise en charge {{ $facture->tauxLisible() }}@endif<br>@endif
+            @if ($assuree) · prise en charge {{ $facture->tauxLisible() }}@endif<br>
+        @else<strong>Assurance :</strong> aucune · totalité à la charge du patient<br>@endif
         @if ($facture->dentiste)<strong>Praticien :</strong> Dr {{ $facture->dentiste->name }}@endif
     </p>
 
@@ -75,14 +76,20 @@
             </div>
         </div>
     @else
-        <table class="totaux">
-            <tr class="fort"><td>Total</td><td class="r">{{ $mru($facture->total) }}</td></tr>
-            @unless ($devis)
-                <tr><td>Réglé</td><td class="r">{{ $mru($facture->regle_patient) }}</td></tr>
-                <tr class="fort"><td>Reste à payer</td><td class="r">{{ $mru(max(0, $facture->restePatient())) }}</td></tr>
-            @endunless
-        </table>
-        <p class="muted" style="font-size:11px">Sans assurance : la totalité est à la charge du patient.</p>
+        <table class="totaux"><tr class="fort"><td>Total de la facture</td><td class="r">{{ $mru($facture->total) }}</td></tr></table>
+        <div class="repartition" style="grid-template-columns:1fr">
+            <div class="bloc patient" style="margin-left:auto;width:100%;max-width:360px">
+                <h4>À la charge du patient · 100&nbsp;%</h4>
+                <div class="muted" style="margin-bottom:4px">{{ $facture->patient->nom_complet }} · sans assurance</div>
+                <table>
+                    <tr><td>Montant à payer</td><td class="r">{{ $mru($facture->part_patient) }}</td></tr>
+                    @unless ($devis)
+                        <tr><td>Réglé par le patient</td><td class="r">{{ $mru($facture->regle_patient) }}</td></tr>
+                        <tr class="fort"><td>Reste à payer par le patient</td><td class="r">{{ $mru(max(0, $facture->restePatient())) }}</td></tr>
+                    @endunless
+                </table>
+            </div>
+        </div>
     @endif
 
     @if ($devis)
