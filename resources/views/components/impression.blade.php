@@ -60,6 +60,9 @@
         html[data-format="a5"] footer { font-size: 9px; }
         html[data-format="a5"] .odontogramme-impression svg { max-height: 250px; }
         footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; }
+        .mise-en-page { width: 100%; border-collapse: collapse; margin: 0; }
+        .mise-en-page > tbody > tr > td, .mise-en-page > tfoot > tr > td { padding: 0; border: 0; font-size: inherit; }
+        .reserve-pied { display: none; }
         /* À l'écran, la mention d'édition reste en bas de la page même si le document est court. */
         @media screen { .page { display: flex; flex-direction: column; min-height: calc(100vh - 48px); } footer { margin-top: auto; padding-top: 32px; } }
         @media print {
@@ -68,11 +71,13 @@
             .bloc, .encadre, tr { break-inside: avoid; }
             /* La page occupe toute la feuille (hauteur moins les marges @page) : la mention d'édition
                se place en bas. Un document plus long la reçoit en bas de son contenu, sur la dernière feuille. */
-            /* 100vh = zone imprimable réelle (plus petite si le navigateur ajoute ses en-têtes/pieds,
-               comme Safari) ; plafonnée par sécurité pour ne jamais créer de page blanche. */
-            .page { display: flex; flex-direction: column; min-height: min(calc(100vh - 4mm), 255mm); }
-            html[data-format="a5"] .page { min-height: min(calc(100vh - 4mm), 178mm); }
-            footer { margin-top: auto; padding-top: 12px; }
+            /* Mention d'édition en bas de chaque feuille (élément fixe, répété par le navigateur sur chaque
+               page). Le pied du tableau de mise en page, lui aussi répété, réserve la place correspondante :
+               le contenu ne passe jamais dessous, quelle que soit la zone imprimable (Safari, Chrome…). */
+            footer { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; padding: 0; }
+            .reserve-pied { display: block; height: 9mm; }
+            html[data-format="a5"] .reserve-pied { height: 7mm; }
+            .mise-en-page > tbody > tr { break-inside: auto; }
         }
         /* Consultation sur téléphone : marges et colonnes resserrées pour éviter le défilement horizontal. */
         @media screen and (max-width: 640px) {
@@ -105,6 +110,7 @@
             var url = new URL(location.href); url.searchParams.set('format', format); history.replaceState(null, '', url);
         }
     </script>
+    <table class="mise-en-page" role="presentation"><tbody><tr><td>
     <header>
         <div>
             <h1>{{ $cabinet->nom }}</h1>
@@ -113,6 +119,7 @@
         <div class="r">{{ $entete ?? '' }}</div>
     </header>
     {{ $slot }}
+    </td></tr></tbody><tfoot><tr><td><div class="reserve-pied"></div></td></tr></tfoot></table>
     <footer>Document édité le {{ now()->format('d/m/Y à H:i') }} avec Sysdental · montants en ouguiya (MRU)</footer>
 </div>
 </body>
