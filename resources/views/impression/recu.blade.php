@@ -28,7 +28,7 @@
         </table>
     </div>
 
-    <h3>Situation de la facture <span class="muted" style="font-weight:normal">· à la date d'impression</span></h3>
+    <h3>État de paiement de la facture N° {{ $f->numero }} <span class="muted" style="font-weight:normal">· au {{ now()->format('d/m/Y à H:i') }}, ce {{ $remboursement ? 'remboursement' : 'paiement' }} compris</span></h3>
     @if ($assuree)
         <div class="repartition">
             <div class="bloc patient">

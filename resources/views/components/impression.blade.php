@@ -57,13 +57,20 @@
         html[data-format="a5"] th { font-size: 9px; }
         html[data-format="a5"] .totaux { width: 220px; }
         html[data-format="a5"] .repartition { gap: 6px; }
-        html[data-format="a5"] footer { margin-top: 16px; font-size: 9px; }
+        html[data-format="a5"] footer { font-size: 9px; }
         html[data-format="a5"] .odontogramme-impression svg { max-height: 250px; }
         footer { margin-top: 32px; font-size: 11px; color: #64748b; text-align: center; }
+        /* À l'écran, la mention d'édition reste en bas de la page même si le document est court. */
+        @media screen { .page { display: flex; flex-direction: column; min-height: calc(100vh - 48px); } footer { margin-top: auto; padding-top: 32px; } }
         @media print {
             .actions { display: none; }
             .page, html[data-format="a5"] .page { margin: 0 auto; padding: 0; max-width: none; }
             .bloc, .encadre, tr { break-inside: avoid; }
+            /* La page occupe toute la feuille (hauteur moins les marges @page) : la mention d'édition
+               se place en bas. Un document plus long la reçoit en bas de son contenu, sur la dernière feuille. */
+            .page { display: flex; flex-direction: column; min-height: 271mm; }
+            html[data-format="a5"] .page { min-height: 192mm; }
+            footer { margin-top: auto; padding-top: 12px; }
         }
         /* Consultation sur téléphone : marges et colonnes resserrées pour éviter le défilement horizontal. */
         @media screen and (max-width: 640px) {
