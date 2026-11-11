@@ -2,7 +2,7 @@
 <div>
 @if ($etape)
     <div class="fixed inset-0 z-40 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="cs-titre"
-         x-data x-on:keydown.escape.window="$wire.fermer()">
+         x-data x-on:keydown.escape.window="document.querySelector('[data-patient-rapide]') || $wire.fermer()">
         <div class="max-h-[90vh] w-full max-w-md space-y-4 overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
             <div class="flex items-start justify-between gap-2">
                 <div>
@@ -40,9 +40,21 @@
                                 </ul>
                             @elseif (mb_strlen(trim($recherche)) >= 2)
                                 <p class="mt-1 text-sm text-slate-600">Aucun patient trouvé.</p>
+                                @if ($user->aPermission('patient.create') && mb_strlen(trim($recherche)) >= 3)
+                                    {{-- Ouverture automatique de la création, une fois la frappe arrêtée ; une seule fois par recherche. --}}
+                                    <span class="hidden" wire:key="cs-auto-{{ md5(trim($recherche)) }}"
+                                          x-data="{ terme: @js(trim($recherche)) }"
+                                          x-init="setTimeout(() => {
+                                              window.sysdentalTermesProposes ??= new Set();
+                                              const champ = document.getElementById('cs-recherche');
+                                              if (!champ || champ.value.trim() !== terme || window.sysdentalTermesProposes.has(terme)) return;
+                                              window.sysdentalTermesProposes.add(terme);
+                                              Livewire.dispatch('patient-rapide-ouvrir', { terme, source: 'consultation' });
+                                          }, 900)"></span>
+                                @endif
                             @endif
                             @if ($user->aPermission('patient.create'))
-                                <button type="button" wire:click="nouveauPatient" class="mt-2 text-sm text-primary hover:underline"><i class="ti ti-user-plus" aria-hidden="true"></i> Nouveau patient</button>
+                                <button type="button" x-on:click="Livewire.dispatch('patient-rapide-ouvrir', { terme: $wire.recherche, source: 'consultation' })" class="mt-2 text-sm text-primary hover:underline"><i class="ti ti-user-plus" aria-hidden="true"></i> Nouveau patient</button>
                             @endif
                         </div>
                     @else
@@ -141,4 +153,5 @@
         </div>
     </div>
 @endif
+<livewire:patient-rapide />
 </div>

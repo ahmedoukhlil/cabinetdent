@@ -192,4 +192,32 @@ class ConsultationTest extends TestCase
             ->assertSee('1 à encaisser (1 000 MRU)');
         $this->assertSame(1, RendezVous::count());
     }
+
+    public function test_modale_creation_patient_rapide()
+    {
+        $this->assertSame(['telephone' => '38523000'], \App\Livewire\PatientRapide::preRemplir(' 38523000 '));
+        $this->assertSame(['prenom' => 'Awa', 'nom' => 'Sall'], \App\Livewire\PatientRapide::preRemplir('Awa  Sall'));
+        $this->assertSame(['nom' => 'Kane'], \App\Livewire\PatientRapide::preRemplir('Kane'));
+
+        Livewire::test(\App\Livewire\PatientRapide::class)
+            ->dispatch('patient-rapide-ouvrir', terme: '38523000', source: 'consultation')
+            ->assertSet('ouvert', true)
+            ->assertSet('form.telephone', '38523000')
+            ->call('creer')
+            ->assertHasErrors('form.nom')
+            ->set('form.nom', 'Sall')
+            ->call('creer')
+            ->assertHasNoErrors()
+            ->assertSet('ouvert', false)
+            ->assertDispatched('patient-cree', source: 'consultation');
+
+        $patient = Patient::where('telephone', '38523000')->firstOrFail();
+        Livewire::test(ConsultationRapide::class)
+            ->dispatch('consultation-sans-rdv')
+            ->set('recherche', '38523000')
+            ->dispatch('patient-cree', id: $patient->id, source: 'consultation')
+            ->assertSet('patientId', $patient->id)
+            ->dispatch('patient-cree', id: 999, source: 'autre')
+            ->assertSet('patientId', $patient->id);
+    }
 }

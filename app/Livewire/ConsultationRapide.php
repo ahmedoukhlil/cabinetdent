@@ -89,6 +89,16 @@ class ConsultationRapide extends Component
         $this->creation = false;
     }
 
+    /** Patient créé depuis la modale de création rapide : il est sélectionné aussitôt. */
+    #[On('patient-cree')]
+    public function patientCree(int $id, string $source = ''): void
+    {
+        if ($source === 'consultation' && $this->etape === 'patient') {
+            $this->choisirPatient($id);
+            $this->recherche = '';
+        }
+    }
+
     public function nouveauPatient(): void
     {
         $this->creation = true;
