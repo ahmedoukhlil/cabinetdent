@@ -61,6 +61,39 @@ class Facture extends Model
         return round($this->part_pec - $this->regle_pec, 2);
     }
 
+    /** La facture comporte une part prise en charge par une assurance. */
+    public function estAssuree(): bool
+    {
+        return $this->part_pec > 0 && $this->taux_pec > 0;
+    }
+
+    /**
+     * Part assurance et part patient de chaque ligne, au taux de la facture.
+     * L'écart d'arrondi est porté par la dernière ligne pour retomber sur les totaux.
+     *
+     * @return array<int, array{pec: float, patient: float}> indexé par id de ligne
+     */
+    public function repartitionLignes(): array
+    {
+        $parts = [];
+        $cumul = 0.0;
+        $lignes = $this->lignes->values();
+        foreach ($lignes as $i => $ligne) {
+            $pec = $i === $lignes->count() - 1
+                ? round($this->part_pec - $cumul, 2)
+                : round($ligne->montant * $this->taux_pec, 2);
+            $cumul += $pec;
+            $parts[$ligne->id] = ['pec' => $pec, 'patient' => round($ligne->montant - $pec, 2)];
+        }
+
+        return $parts;
+    }
+
+    public function tauxLisible(): string
+    {
+        return rtrim(rtrim(number_format($this->taux_pec * 100, 2, ',', ''), '0'), ',')."\u{00A0}%";
+    }
+
     public function estSoldee(): bool
     {
         return $this->statut === 'validee' && $this->restePatient() <= 0 && $this->restePec() <= 0;

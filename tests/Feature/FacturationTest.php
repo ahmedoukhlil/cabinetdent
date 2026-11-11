@@ -256,4 +256,33 @@ class FacturationTest extends TestCase
         $facture = Facture::where('patient_id', $this->patient->id)->where('statut', 'brouillon')->firstOrFail();
         $composant->assertSet('facture', $facture->id);
     }
+
+    public function test_impressions_repartition_assurance_patient_et_formats()
+    {
+        $assureur = Assureur::create(['cabinet_id' => $this->patient->cabinet_id, 'nom' => 'Mutuelle', 'taux_pec' => 0.8]);
+        $this->patient->update(['assureur_id' => $assureur->id]);
+        $f = $this->service->brouillonPour($this->secretaire, $this->patient);
+        $this->service->ajouterLigne($this->secretaire, $f, ['libelle' => 'Consultation', 'quantite' => 1, 'prix_unitaire' => 1001]);
+        $this->service->ajouterLigne($this->secretaire, $f, ['libelle' => 'Détartrage', 'quantite' => 1, 'prix_unitaire' => 2503]);
+        $f = $this->service->valider($this->secretaire, $f)->load('lignes');
+
+        $parts = $f->repartitionLignes();
+        $this->assertEqualsWithDelta($f->part_pec, array_sum(array_column($parts, 'pec')), 0.001, 'Les parts par ligne retombent sur le total assurance.');
+        $this->assertEqualsWithDelta($f->part_patient, array_sum(array_column($parts, 'patient')), 0.001);
+
+        $p = $this->payer($f, $f->part_patient);
+        $this->actingAs($this->proprietaire);
+        $this->get(route('factures.imprimer', $f))->assertOk()
+            ->assertSee("À la charge de l'assurance", false)->assertSee('À la charge du patient')
+            ->assertSee('Part assurance')->assertSee('data-choix="a5"', false);
+        $this->get(route('paiements.recu', $p))->assertOk()
+            ->assertSee('Le patient')->assertSee('au titre de la part patient')
+            ->assertSee('Part assurance')->assertSee("dû par l'assurance", false);
+
+        // Sans assurance : tout est à la charge du patient, sans blocs de répartition.
+        $this->patient = Patient::create(['cabinet_id' => $this->patient->cabinet_id, 'nom' => 'Sans assurance']);
+        $f2 = $this->factureValidee(500);
+        $this->get(route('factures.imprimer', $f2))->assertOk()
+            ->assertSee('la totalité est à la charge du patient')->assertDontSee("À la charge de l'assurance", false);
+    }
 }

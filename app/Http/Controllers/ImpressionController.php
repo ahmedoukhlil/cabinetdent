@@ -59,7 +59,7 @@ class ImpressionController extends Controller
 
     public function recu(Paiement $paiement)
     {
-        $paiement->load(['facture', 'patient', 'auteur', 'cabinet']);
+        $paiement->load(['facture.assureur', 'patient', 'auteur', 'cabinet']);
 
         return response()->view('impression.recu', compact('paiement'))->header('Cache-Control', 'private, no-store');
     }
