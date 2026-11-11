@@ -74,9 +74,6 @@
                 </table>
             </div>
         </div>
-        @if ($devis)
-            <p class="muted">La part de l'assurance est estimée au taux de {{ $facture->tauxLisible() }} et dépend de son accord de prise en charge.</p>
-        @endif
     @else
         <table class="totaux">
             <tr class="fort"><td>Total</td><td class="r">{{ $mru($facture->total) }}</td></tr>
