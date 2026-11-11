@@ -191,7 +191,7 @@
                                     <select wire:model.live="paiement.payeur" class="field" aria-label="Payeur"><option value="patient">Patient</option><option value="assureur">Assureur</option></select>
                                 @endif
                                 <select wire:model="paiement.mode" class="field" aria-label="Mode de paiement">
-                                    @foreach ($modes as $valeur => $libelle)<option value="{{ $valeur }}">{{ $libelle }}</option>@endforeach
+                                    @foreach ($modesActifs as $valeur => $libelle)<option value="{{ $valeur }}">{{ $libelle }}</option>@endforeach
                                 </select>
                                 <input type="number" step="1" min="1" wire:model="paiement.montant" placeholder="Montant" class="field" aria-label="Montant en MRU">
                                 <input wire:model="paiement.reference" placeholder="Référence (facultatif)" class="field col-span-2" aria-label="Référence">
@@ -214,7 +214,7 @@
                                 @foreach ($ouverte->paiements as $p)
                                     <li class="flex flex-wrap items-center gap-2 py-1.5">
                                         <span class="w-28 text-slate-600">{{ $p->created_at->format('d/m/Y H:i') }}</span>
-                                        <span class="flex-1">{{ $p->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} {{ $p->payeur === 'assureur' ? 'assureur' : 'patient' }} · {{ $modes[$p->mode] }}@if ($p->reference) · {{ $p->reference }} @endif</span>
+                                        <span class="flex-1">{{ $p->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} {{ $p->payeur === 'assureur' ? 'assureur' : 'patient' }} · {{ $modes[$p->mode] ?? $p->mode }}@if ($p->reference) · {{ $p->reference }} @endif</span>
                                         <span @class(['font-medium', 'text-red-700' => $p->type === 'remboursement'])>{{ $mru($p->montant_signe) }}</span>
                                         <a href="{{ route('paiements.recu', $p) }}" target="_blank" class="text-primary hover:underline">Reçu</a>
                                     </li>

@@ -13,7 +13,7 @@
         <tr><th style="width:40%">Patient</th><td>{{ $paiement->patient->nom_complet }} (fiche N° {{ $paiement->patient->numero_fiche }})</td></tr>
         <tr><th>Facture</th><td>N° {{ $f->numero }} du {{ $f->date_facture->format('d/m/Y') }} · total {{ $mru($f->total) }}</td></tr>
         <tr><th>Payeur</th><td>{{ $paiement->payeur === 'assureur' ? 'Assureur' : 'Patient' }}</td></tr>
-        <tr><th>Mode</th><td>{{ \App\Models\Paiement::MODES[$paiement->mode] }}@if ($paiement->reference) · réf. {{ $paiement->reference }}@endif</td></tr>
+        <tr><th>Mode</th><td>{{ \App\Models\ModePaiement::libelles($paiement->cabinet_id)[$paiement->mode] ?? $paiement->mode }}@if ($paiement->reference) · réf. {{ $paiement->reference }}@endif</td></tr>
         <tr><th>{{ $remboursement ? 'Montant remboursé' : 'Montant reçu' }}</th><td style="font-size:18px;font-weight:600">{{ $mru($paiement->montant) }}</td></tr>
         <tr><th>Reste à payer sur la facture</th><td>{{ $mru(max(0, $f->restePatient()) + max(0, $f->restePec())) }} (situation actuelle)</td></tr>
         <tr><th>Encaissé par</th><td>{{ $paiement->auteur?->name }}</td></tr>

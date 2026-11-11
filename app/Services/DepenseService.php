@@ -20,7 +20,7 @@ class DepenseService
             'categorie' => ['required', Rule::in(array_keys(Depense::CATEGORIES))],
             'libelle' => ['required', 'string', 'max:150'],
             'montant' => ['required', 'numeric', 'gt:0', 'max:99999999'],
-            'mode' => ['required', Rule::in(array_keys(Paiement::MODES))],
+            'mode' => ['required', Rule::in(array_keys(\App\Models\ModePaiement::actifs($auteur->cabinet_id)))],
             'reference' => ['nullable', 'string', 'max:100'],
             'dentiste_id' => ['nullable', 'integer'],
         ], [], ['date_depense' => 'date', 'libelle' => 'libellé'])->validate();

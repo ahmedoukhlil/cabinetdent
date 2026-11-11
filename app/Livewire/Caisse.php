@@ -41,7 +41,7 @@ class Caisse extends Component
 
     private function depenseVide(): void
     {
-        $this->depense = ['date_depense' => today()->format('Y-m-d'), 'categorie' => 'fournitures', 'libelle' => '', 'montant' => '', 'mode' => 'especes', 'reference' => '', 'dentiste_id' => ''];
+        $this->depense = ['date_depense' => today()->format('Y-m-d'), 'categorie' => 'fournitures', 'libelle' => '', 'montant' => '', 'mode' => \App\Models\ModePaiement::parDefaut(), 'reference' => '', 'dentiste_id' => ''];
     }
 
     public function enregistrerDepense(DepenseService $service): void
@@ -121,7 +121,8 @@ class Caisse extends Component
             'parMode' => $operations->groupBy('mode')->map(fn ($ops) => $ops->sum('montant_signe'))->sortDesc(),
             'depenses' => $depenses,
             'categories' => Depense::CATEGORIES,
-            'modes' => Paiement::MODES,
+            'modes' => \App\Models\ModePaiement::libelles(),
+            'modesActifs' => \App\Models\ModePaiement::actifs(),
             'dentistes' => User::dentistesDu(auth()->user())->get(),
         ]);
     }

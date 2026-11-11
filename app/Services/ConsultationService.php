@@ -39,7 +39,7 @@ class ConsultationService
 
         $donnees = Validator::make($donnees, [
             'acte_id' => ['required', 'integer'],
-            'mode' => [$encaisser ? 'required' : 'nullable', Rule::in(array_keys(Paiement::MODES))],
+            'mode' => [$encaisser ? 'required' : 'nullable', Rule::in(array_keys(\App\Models\ModePaiement::actifs($auteur->cabinet_id)))],
             'reference' => ['nullable', 'string', 'max:100'],
         ], [], ['acte_id' => 'consultation', 'mode' => 'mode de paiement'])->validate();
 

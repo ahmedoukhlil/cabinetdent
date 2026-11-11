@@ -30,6 +30,7 @@
             'Gestion' => [
                 ['stock', 'Stock', 'ti-package', 'stock.manage'],
                 ['tarifs', 'Tarifs et assurances', 'ti-receipt-2', 'tarifs.manage'],
+                ['modes-paiement', 'Modes de paiement', 'ti-credit-card', 'tarifs.manage'],
                 ['equipe', 'Équipe et cabinet', 'ti-users-group', 'user.manage'],
             ],
         ];

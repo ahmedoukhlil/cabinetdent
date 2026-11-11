@@ -55,7 +55,7 @@ class ConsultationRapide extends Component
         $this->consultation = [
             'acte_id' => (string) (Acte::consultations()->orderBy('prix')->value('id') ?? ''),
             'encaisser' => auth()->user()->can('paiement.create'),
-            'mode' => 'especes',
+            'mode' => \App\Models\ModePaiement::parDefaut(),
             'reference' => '',
         ];
         $this->etape = 'facture';

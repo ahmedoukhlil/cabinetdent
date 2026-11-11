@@ -113,6 +113,9 @@ class Factures extends Component
     /** Propose le montant restant dû (ou déjà réglé pour un remboursement). */
     private function preparerPaiement(bool $choisirPayeur = false): void
     {
+        if (!array_key_exists($this->paiement['mode'], \App\Models\ModePaiement::actifs())) {
+            $this->paiement['mode'] = \App\Models\ModePaiement::parDefaut();
+        }
         $f = $this->facture ? Facture::find($this->facture) : null;
         if (!$f || $f->statut !== 'validee') {
             return;
@@ -229,7 +232,8 @@ class Factures extends Component
             'factures' => $factures,
             'ouverte' => $ouverte,
             'actes' => $ouverte?->statut === 'brouillon' ? Acte::with('tarifs')->where('actif', true)->orderBy('libelle')->get() : collect(),
-            'modes' => Paiement::MODES,
+            'modes' => \App\Models\ModePaiement::libelles(),
+            'modesActifs' => \App\Models\ModePaiement::actifs(),
             'user' => auth()->user(),
             'patientsProposes' => $patientsProposes,
         ]);

@@ -208,7 +208,7 @@ class FacturationService
         $donnees = Validator::make($donnees, [
             'payeur' => ['required', Rule::in(['patient', 'assureur'])],
             'type' => ['required', Rule::in(['encaissement', 'remboursement'])],
-            'mode' => ['required', Rule::in(array_keys(Paiement::MODES))],
+            'mode' => ['required', Rule::in(array_keys(\App\Models\ModePaiement::actifs($auteur->cabinet_id)))],
             'montant' => ['required', 'numeric', 'min:1', 'max:99999999'],
             'reference' => ['nullable', 'string', 'max:100'],
         ], [], ['montant' => 'montant'])->validate();

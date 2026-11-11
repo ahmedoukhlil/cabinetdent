@@ -47,6 +47,7 @@ Route::middleware(['auth', 'compte.actif'])->group(function () {
     Route::get('/parametres/tarifs/modele-actes', function (\App\Services\ActeImportService $service) {
         return response()->download($service->modele(), 'sysdental-actes-'.now()->format('Y-m-d').'.xlsx')->deleteFileAfterSend();
     })->middleware('can:tarifs.manage')->name('tarifs.modele');
+    Route::get('/parametres/modes-paiement', \App\Livewire\ModesPaiement::class)->middleware('can:tarifs.manage')->name('modes-paiement');
     Route::get('/parametres/equipe', Equipe::class)->middleware('can:user.manage')->name('equipe');
     Route::get('/parametres/export', [ImpressionController::class, 'export'])->middleware(['can:cabinet.manage', 'throttle:5,1'])->name('cabinet.export');
 

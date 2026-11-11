@@ -24,7 +24,7 @@
             <div class="col-span-3 sm:col-span-1">
                 <label class="label" for="dep-mode">Mode</label>
                 <select id="dep-mode" wire:model="depense.mode" class="field">
-                    @foreach ($modes as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
+                    @foreach ($modesActifs as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
                 </select>
             </div>
             <div class="col-span-3 sm:col-span-2">

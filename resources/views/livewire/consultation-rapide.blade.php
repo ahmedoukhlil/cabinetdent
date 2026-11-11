@@ -109,7 +109,7 @@
                             @if ($consultation['encaisser'])
                                 <div class="grid grid-cols-2 gap-2">
                                     <select wire:model="consultation.mode" class="field" aria-label="Mode de paiement">
-                                        @foreach (\App\Models\Paiement::MODES as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
+                                        @foreach (\App\Models\ModePaiement::actifs() as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
                                     </select>
                                     <input wire:model="consultation.reference" class="field" placeholder="Référence (optionnel)" aria-label="Référence du paiement">
                                 </div>
@@ -131,7 +131,7 @@
             @if ($etape === 'fait' && $paiement)
                 <div class="space-y-4 text-center">
                     <i class="ti ti-circle-check text-5xl text-emerald-600" aria-hidden="true"></i>
-                    <p class="text-sm">{{ $mru($paiement->montant) }} encaissés · {{ \App\Models\Paiement::MODES[$paiement->mode] ?? $paiement->mode }}<br><span class="text-slate-500">{{ $paiement->patient->nom_complet }} · facture {{ $paiement->facture->numero }}</span></p>
+                    <p class="text-sm">{{ $mru($paiement->montant) }} encaissés · {{ \App\Models\ModePaiement::libelles()[$paiement->mode] ?? $paiement->mode }}<br><span class="text-slate-500">{{ $paiement->patient->nom_complet }} · facture {{ $paiement->facture->numero }}</span></p>
                     <div class="flex justify-center gap-2">
                         <button type="button" wire:click="fermer" class="btn-secondary">Fermer</button>
                         <a href="{{ route('paiements.recu', $paiement) }}" target="_blank" rel="noopener" class="btn-primary" x-on:click="$wire.fermer()"><i class="ti ti-printer" aria-hidden="true"></i> Imprimer le reçu</a>

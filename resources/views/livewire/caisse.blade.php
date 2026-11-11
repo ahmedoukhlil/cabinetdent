@@ -45,7 +45,7 @@
                         <td class="py-2">{{ $op->created_at->format('d/m H:i') }}</td>
                         <td class="py-2">{{ $op->patient->nom_complet }}</td>
                         <td class="py-2"><a href="{{ route('factures', ['facture' => $op->facture_id]) }}" wire:navigate class="text-primary hover:underline">{{ $op->facture->numero }}</a></td>
-                        <td class="py-2">{{ $op->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} {{ $op->payeur === 'assureur' ? 'assureur' : '' }} · {{ $modes[$op->mode] }}</td>
+                        <td class="py-2">{{ $op->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} {{ $op->payeur === 'assureur' ? 'assureur' : '' }} · {{ $modes[$op->mode] ?? $op->mode }}</td>
                         <td class="py-2 text-slate-600">{{ $op->auteur?->name }}</td>
                         <td @class(['py-2 text-right font-medium', 'text-red-700' => $op->type === 'remboursement'])>{{ $mru($op->montant_signe) }}</td>
                     </tr>
