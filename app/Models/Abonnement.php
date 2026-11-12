@@ -45,6 +45,32 @@ class Abonnement extends Model
         return collect([$this->essai_fin, $this->periode_fin])->filter()->max();
     }
 
+    /**
+     * Échéance à surveiller pour le bandeau d'alerte : fin d'essai, fin de période payée
+     * ou date de suspension (impayé). Null si rien n'arrive dans les jours d'alerte.
+     *
+     * @return array{type: string, date: \Carbon\CarbonInterface, jours: int}|null
+     */
+    public function echeanceProche(?\Carbon\CarbonInterface $aujourdhui = null): ?array
+    {
+        $jour = ($aujourdhui ?? today())->copy()->startOfDay();
+        [$type, $date] = match ($this->statut) {
+            'essai' => ['essai', $this->essai_fin],
+            'actif' => ['periode', $this->periode_fin],
+            'impaye' => ['suspension', $this->finGrace()?->copy()->addDay()],
+            default => [null, null],
+        };
+        if (!$date) {
+            return null;
+        }
+        $jours = (int) $jour->diffInDays($date->copy()->startOfDay(), false);
+        if ($type !== 'suspension' && $jours > (int) config('abonnement.alerte_jours')) {
+            return null;
+        }
+
+        return ['type' => $type, 'date' => $date, 'jours' => max(0, $jours)];
+    }
+
     public function finGrace(): ?\Carbon\CarbonInterface
     {
         return $this->impaye_depuis?->copy()->addDays((int) config('abonnement.grace_jours'));

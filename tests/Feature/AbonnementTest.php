@@ -193,4 +193,36 @@ class AbonnementTest extends TestCase
         $this->actingAs($this->proprietaire)->get(route('accueil'))->assertOk()->assertSee('Abonnement impayé')->assertSee('17/01/2026');
         $this->actingAs($secretaire)->get(route('accueil'))->assertOk()->assertDontSee('Abonnement impayé');
     }
+
+    public function test_bande_flottante_avant_la_fin_de_la_periode_payee()
+    {
+        $a = $this->service->demarrerEssai($this->cabinet, $this->plan, 0);
+        $this->payer($a); // période jusqu'au 10/02/2026
+
+        // Hors fenêtre d'alerte (7 jours par défaut) : rien.
+        Carbon::setTestNow(Carbon::parse('2026-02-02 09:00'));
+        $this->actingAs($this->proprietaire)->get(route('accueil'))->assertOk()->assertDontSee('arrive à échéance');
+
+        Carbon::setTestNow(Carbon::parse('2026-02-05 09:00'));
+        $this->actingAs($this->proprietaire)->get(route('accueil'))->assertOk()
+            ->assertSee('arrive à échéance dans 5 jours', false)->assertSee('10/02/2026')->assertSee('J-5');
+
+        Carbon::setTestNow(Carbon::parse('2026-02-10 09:00'));
+        $this->actingAs($this->proprietaire)->get(route('accueil'))->assertOk()->assertSee("arrive à échéance aujourd'hui", false);
+
+        $secretaire = User::factory()->role(Role::Secretaire)->create(['cabinet_id' => $this->cabinet->id]);
+        $this->actingAs($secretaire)->get(route('accueil'))->assertOk()->assertDontSee('arrive à échéance');
+    }
+
+    public function test_echeance_proche_selon_le_statut()
+    {
+        $a = $this->service->demarrerEssai($this->cabinet, $this->plan, 3);
+        $this->assertSame(['essai', 3], [$a->echeanceProche()['type'], $a->echeanceProche()['jours']]);
+
+        config(['abonnement.alerte_jours' => 2]);
+        $this->assertNull($a->echeanceProche());
+
+        $a->update(['statut' => 'resilie']);
+        $this->assertNull($a->echeanceProche());
+    }
 }

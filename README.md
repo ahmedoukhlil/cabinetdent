@@ -138,7 +138,8 @@ php artisan plateforme:admin admin@exemple.com
 - Cabinets (`/plateforme`) : création d'un cabinet avec son dentiste propriétaire et un essai gratuit, paiements, changement de formule, résiliation, blocage manuel.
 - Cycle (`App\Services\AbonnementService`) : essai → actif → impayé (fin d'essai ou de période) → suspendu (après `SUBSCRIPTION_GRACE_DAYS`, 5 par défaut) ; un paiement réactive ; résilié est définitif, reprendre exige un nouvel abonnement.
 - Paiement : nouvelle fin = date la plus tardive entre aujourd'hui, fin de période et fin d'essai, plus les mois payés.
-- Suspendu ou résilié : connexion refusée et sessions ouvertes déconnectées pour tout le cabinet. Impayé : accès maintenu, bandeau d'alerte pour le propriétaire avec la date de suspension ; bandeau aussi 7 jours avant la fin de l'essai.
+- Suspendu ou résilié : connexion refusée et sessions ouvertes déconnectées pour tout le cabinet. Impayé : accès maintenu.
+- Bande flottante d'échéance (propriétaire uniquement, en bas de l'écran) : compte à rebours `J-n` avant la fin de l'essai ou de la période payée (`SUBSCRIPTION_ALERT_DAYS`, 7 par défaut), et date de suspension en cas d'impayé. Ambre à 3 jours ou moins et en impayé, bleue sinon. Réductible en pastille ; elle se rouvre chaque jour.
 - Quotas : comptes actifs (création et réactivation) et stockage des fichiers patients, suppressions logiques incluses.
 - Un cabinet sans abonnement (installation autonome) n'est pas limité.
 - Les échéances sont appliquées chaque nuit par `php artisan abonnements:verifier` : ajoutez la tâche planifiée système `php artisan schedule:run` chaque minute (cron ou Planificateur de tâches Windows). Le bouton « Appliquer les échéances » le fait à la demande.
