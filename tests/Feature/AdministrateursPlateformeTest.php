@@ -122,4 +122,17 @@ class AdministrateursPlateformeTest extends TestCase
         $this->admin->update(['actif' => false]);
         $this->actingAs($this->admin, 'plateforme')->get(route('plateforme.plans'))->assertRedirect(route('plateforme.login'));
     }
+
+    public function test_messages_de_validation_en_francais()
+    {
+        app()->setLocale('fr');
+        app('translator')->setFallback('fr'); // comme sur le serveur : aucune langue de secours
+
+        Livewire::actingAs($this->admin, 'plateforme')->test(Administrateurs::class)
+            ->call('nouveau')
+            ->set('form', ['id' => null, 'name' => 'Fatou', 'email' => 'fatou@exemple.test', 'password' => 'court'])
+            ->call('enregistrer')
+            ->assertSee('Le champ mot de passe doit contenir au moins 12 caractères.')
+            ->assertDontSee('validation.');
+    }
 }
