@@ -15,14 +15,14 @@
     </div>
 
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div class="card"><p class="text-sm text-slate-600">Facturé</p><p class="text-2xl font-semibold">{{ $mru($total['facture']) }}</p><p class="text-xs text-slate-500">{{ $total['actes'] }} actes</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Encaissé</p><p class="text-2xl font-semibold">{{ $mru($total['encaisse']) }}</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Dépenses</p><p class="text-2xl font-semibold text-red-700">{{ $mru($total['depenses']) }}</p></div>
-        <div class="card"><p class="text-sm text-slate-600">Bilan</p><p @class(['text-2xl font-semibold', 'text-red-700' => $total['bilan'] < 0])>{{ $mru($total['bilan']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Facturé</p><p class="text-xl font-semibold tabular-nums sm:text-2xl">{{ $mru($total['facture']) }}</p><p class="text-xs text-slate-500">{{ $total['actes'] }} actes</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Encaissé</p><p class="text-xl font-semibold tabular-nums sm:text-2xl">{{ $mru($total['encaisse']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Dépenses</p><p class="text-xl font-semibold tabular-nums sm:text-2xl text-red-700">{{ $mru($total['depenses']) }}</p></div>
+        <div class="card"><p class="text-sm text-slate-600">Bilan</p><p @class(['text-xl font-semibold tabular-nums sm:text-2xl', 'text-red-700' => $total['bilan'] < 0])>{{ $mru($total['bilan']) }}</p></div>
     </div>
 
     <section class="card overflow-x-auto" aria-label="Indicateurs par praticien">
-        <table class="w-full min-w-[720px] text-sm">
+        <table class="tableau-cartes w-full min-w-[720px] text-sm">
             <thead class="text-left text-xs text-slate-500">
                 <tr>
                     <th class="py-1 font-medium">Praticien</th>

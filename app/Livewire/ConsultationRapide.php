@@ -55,7 +55,7 @@ class ConsultationRapide extends Component
         $this->consultation = [
             'acte_id' => (string) (Acte::consultations()->orderBy('prix')->value('id') ?? ''),
             'encaisser' => auth()->user()->can('paiement.create'),
-            'mode' => 'especes',
+            'mode' => \App\Models\ModePaiement::parDefaut(),
             'reference' => '',
         ];
         $this->etape = 'facture';
@@ -87,6 +87,16 @@ class ConsultationRapide extends Component
     {
         $this->patientId = Patient::find($id)?->id;
         $this->creation = false;
+    }
+
+    /** Patient créé depuis la modale de création rapide : il est sélectionné aussitôt. */
+    #[On('patient-cree')]
+    public function patientCree(int $id, string $source = ''): void
+    {
+        if ($source === 'consultation' && $this->etape === 'patient') {
+            $this->choisirPatient($id);
+            $this->recherche = '';
+        }
     }
 
     public function nouveauPatient(): void

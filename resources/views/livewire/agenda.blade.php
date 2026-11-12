@@ -33,16 +33,39 @@
                 <h2 class="font-semibold">Nouveau rendez-vous</h2>
                 <div class="relative">
                     <label class="label" for="patient">Patient *</label>
-                    <input id="patient" type="search" wire:model.live.debounce.300ms="recherchePatient" placeholder="Nom, téléphone ou N° de fiche" class="field" autocomplete="off">
-                    @if ($patientId)
-                        <p class="mt-1 text-xs text-emerald-700"><i class="ti ti-check" aria-hidden="true"></i> Patient sélectionné</p>
-                    @endif
-                    @if ($suggestions->isNotEmpty())
-                        <ul class="absolute z-10 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
-                            @foreach ($suggestions as $patient)
-                                <li><button type="button" wire:click="choisirPatient({{ $patient->id }})" class="w-full px-3 py-2 text-left text-sm hover:bg-slate-50">{{ $patient->nom_complet }} <span class="text-slate-500">· N° {{ $patient->numero_fiche }}</span></button></li>
-                            @endforeach
-                        </ul>
+                    @if (!$creation)
+                        <input id="patient" type="search" wire:model.live.debounce.300ms="recherchePatient" placeholder="Nom, téléphone ou N° de fiche" class="field" autocomplete="off">
+                        @if ($patientId)
+                            <p class="mt-1 text-xs text-emerald-700"><i class="ti ti-check" aria-hidden="true"></i> Patient sélectionné</p>
+                        @endif
+                        @if ($suggestions->isNotEmpty())
+                            <ul class="absolute z-10 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                                @foreach ($suggestions as $patient)
+                                    <li><button type="button" wire:click="choisirPatient({{ $patient->id }})" class="w-full px-3 py-2 text-left text-sm hover:bg-slate-50">{{ $patient->nom_complet }} <span class="text-slate-500">· N° {{ $patient->numero_fiche }}</span></button></li>
+                                @endforeach
+                                @can('patient.create')
+                                    <li class="border-t border-slate-100"><button type="button" wire:click="nouveauPatient" class="w-full px-3 py-2 text-left text-sm text-primary hover:bg-slate-50"><i class="ti ti-user-plus" aria-hidden="true"></i> Nouveau patient</button></li>
+                                @endcan
+                            </ul>
+                        @elseif (!$patientId && mb_strlen(trim($recherchePatient)) >= 2)
+                            <div class="mt-1 flex flex-wrap items-center gap-x-3 text-sm">
+                                <span class="text-slate-600">Aucun patient trouvé.</span>
+                                @can('patient.create')
+                                    <button type="button" wire:click="nouveauPatient" class="font-medium text-primary hover:underline"><i class="ti ti-user-plus" aria-hidden="true"></i> Créer ce patient</button>
+                                @endcan
+                            </div>
+                        @endif
+                    @else
+                        <fieldset class="space-y-2 rounded-lg bg-slate-50 p-3">
+                            <legend class="px-1 text-sm font-medium text-slate-700">Nouveau patient <span class="font-normal text-slate-500">· complétez la fiche plus tard</span></legend>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input wire:model="nouveau.nom" class="field" placeholder="Nom *" aria-label="Nom" autocomplete="off">
+                                <input wire:model="nouveau.prenom" class="field" placeholder="Prénom" aria-label="Prénom" autocomplete="off">
+                                <input wire:model="nouveau.telephone" type="tel" class="field col-span-2" placeholder="Téléphone" aria-label="Téléphone" autocomplete="off">
+                            </div>
+                            @error('nouveau.nom')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+                            <button type="button" wire:click="annulerCreation" class="text-xs text-slate-600 hover:underline">Chercher un patient existant</button>
+                        </fieldset>
                     @endif
                     @error('patientId')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
@@ -95,7 +118,7 @@
                         @foreach ($liste as $rdv)
                             <li wire:key="rdv-{{ $rdv->id }}" @class(['flex flex-wrap items-center gap-3 py-2 text-sm', 'opacity-60' => $rdv->statut === \App\Enums\StatutRdv::Annule])>
                                 <span class="w-12 font-medium">{{ $rdv->heure_courte }}</span>
-                                <span class="min-w-0 flex-1">
+                                <span class="min-w-[11rem] flex-1">
                                     <a href="{{ route('patients', ['fiche' => $rdv->patient_id]) }}" wire:navigate class="hover:underline">{{ $rdv->patient->nom_complet }}</a>
                                     @if ($rdv->acte_prevu)<span class="text-slate-500"> · {{ $rdv->acte_prevu }}</span>@endif
                                 </span>

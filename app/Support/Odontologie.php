@@ -80,6 +80,31 @@ final class Odontologie
         ],
     ];
 
+    /**
+     * Groupes de dents sélectionnables d'un geste (FDI, côté patient).
+     * Clé => [libellé court, libellé complet, dents].
+     */
+    public static function groupes(): array
+    {
+        $q = fn (int $quadrant) => array_map(fn ($i) => $quadrant * 10 + $i, range(1, 8));
+
+        return [
+            'bouche' => ['Tout', 'Bouche entière', self::toutesLesDents()],
+            'sup' => ['Arcade sup.', 'Arcade supérieure', self::ARCADE_SUPERIEURE],
+            'inf' => ['Arcade inf.', 'Arcade inférieure', self::ARCADE_INFERIEURE],
+            'q1' => ['Q1', 'Hémi-arcade supérieure droite (11–18)', $q(1)],
+            'q2' => ['Q2', 'Hémi-arcade supérieure gauche (21–28)', $q(2)],
+            'q3' => ['Q3', 'Hémi-arcade inférieure gauche (31–38)', $q(3)],
+            'q4' => ['Q4', 'Hémi-arcade inférieure droite (41–48)', $q(4)],
+            's1' => ['S1', 'Sextant 1 : prémolaires et molaires sup. droites (14–18)', [18, 17, 16, 15, 14]],
+            's2' => ['S2', 'Sextant 2 : bloc incisivo-canin supérieur (13–23)', [13, 12, 11, 21, 22, 23]],
+            's3' => ['S3', 'Sextant 3 : prémolaires et molaires sup. gauches (24–28)', [24, 25, 26, 27, 28]],
+            's4' => ['S4', 'Sextant 4 : prémolaires et molaires inf. gauches (34–38)', [38, 37, 36, 35, 34]],
+            's5' => ['S5', 'Sextant 5 : bloc incisivo-canin inférieur (33–43)', [33, 32, 31, 41, 42, 43]],
+            's6' => ['S6', 'Sextant 6 : prémolaires et molaires inf. droites (44–48)', [44, 45, 46, 47, 48]],
+        ];
+    }
+
     public static function toutesLesDents(): array
     {
         return array_merge(self::ARCADE_SUPERIEURE, self::ARCADE_INFERIEURE);

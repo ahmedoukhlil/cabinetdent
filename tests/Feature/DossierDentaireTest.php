@@ -221,4 +221,21 @@ class DossierDentaireTest extends TestCase
         $libre = $this->service->ajouterLigne($this->dentiste, $this->patient, ['acte_id' => $acteEtranger->id, 'libelle' => 'Soin libre', 'quantite' => 1, 'prix_unitaire' => 100]);
         $this->assertNull($libre->acte_id);
     }
+
+    public function test_selection_rapide_par_groupe()
+    {
+        Livewire::test(DossierDentaire::class, ['patient' => $this->patient])
+            ->call('selectionnerGroupe', 'q1')
+            ->assertSet('selection', [11, 12, 13, 14, 15, 16, 17, 18])
+            ->call('selectionnerGroupe', 's2')
+            ->assertSet('selection', [11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23])
+            ->call('selectionnerGroupe', 'q1')
+            ->assertSet('selection', [21, 22, 23])
+            ->call('selectionnerGroupe', 'inconnu')
+            ->assertSet('selection', [21, 22, 23])
+            ->call('selectionnerGroupe', 'bouche')
+            ->assertCount('selection', 32)
+            ->call('selectionnerGroupe', 'bouche')
+            ->assertSet('selection', []);
+    }
 }

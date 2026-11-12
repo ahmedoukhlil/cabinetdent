@@ -1,6 +1,6 @@
 @php
     $mru = fn ($v) => number_format((float) $v, 0, ',', ' ').' MRU';
-    $modes = \App\Models\Paiement::MODES;
+    $modes = \App\Models\ModePaiement::libelles($cabinet->id);
 @endphp
 <x-impression titre="État de caisse" :cabinet="$cabinet">
     <x-slot:entete>
@@ -16,7 +16,7 @@
                     <td>{{ $op->created_at->format('d/m H:i') }}</td>
                     <td>{{ $op->patient->nom_complet }}</td>
                     <td>{{ $op->facture->numero }}</td>
-                    <td>{{ $op->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} · {{ $modes[$op->mode] }}</td>
+                    <td>{{ $op->type === 'remboursement' ? 'Remboursement' : 'Encaissement' }} · {{ $modes[$op->mode] ?? $op->mode }}</td>
                     <td class="r">{{ $mru($op->montant_signe) }}</td>
                 </tr>
             @empty
@@ -39,7 +39,7 @@
 
     <table class="totaux">
         @foreach ($operations->groupBy('mode') as $mode => $ops)
-            <tr><td>{{ $modes[$mode] }}</td><td class="r">{{ $mru($ops->sum('montant_signe')) }}</td></tr>
+            <tr><td>{{ $modes[$mode] ?? $mode }}</td><td class="r">{{ $mru($ops->sum('montant_signe')) }}</td></tr>
         @endforeach
         <tr><td>Remboursements</td><td class="r">{{ $mru(-$operations->where('type', 'remboursement')->sum('montant')) }}</td></tr>
         <tr><td>Recettes nettes</td><td class="r">{{ $mru($operations->sum('montant_signe')) }}</td></tr>

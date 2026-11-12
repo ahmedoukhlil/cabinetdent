@@ -10,6 +10,7 @@ class Paiement extends Model
 {
     use BelongsToCabinet;
 
+    /** Modes de la plateforme (abonnements). Les cabinets gèrent les leurs : voir ModePaiement. */
     public const MODES = [
         'especes' => 'Espèces',
         'mobile' => 'Paiement mobile',

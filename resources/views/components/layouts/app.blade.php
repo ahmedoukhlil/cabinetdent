@@ -30,6 +30,7 @@
             'Gestion' => [
                 ['stock', 'Stock', 'ti-package', 'stock.manage'],
                 ['tarifs', 'Tarifs et assurances', 'ti-receipt-2', 'tarifs.manage'],
+                ['modes-paiement', 'Modes de paiement', 'ti-credit-card', 'tarifs.manage'],
                 ['equipe', 'Équipe et cabinet', 'ti-users-group', 'user.manage'],
             ],
         ];
@@ -111,11 +112,14 @@
         @endforeach
     </nav>
 
-    <div x-data="{ messages: [] }"
-         x-on:toast.window="messages.push($event.detail); setTimeout(() => messages.shift(), 4000)"
-         class="fixed right-4 bottom-20 z-50 space-y-2 md:bottom-4" aria-live="polite">
-        <template x-for="(m, i) in messages" :key="i">
-            <div class="rounded-lg px-4 py-3 text-sm text-white shadow-lg" :class="m.type === 'error' ? 'bg-red-600' : 'bg-emerald-600'" x-text="m.message"></div>
+    <div x-data="{ messages: [], suivant: 0,
+                   ajouter(d) { const id = ++this.suivant; this.messages.push({ ...d, id }); setTimeout(() => this.retirer(id), 4000) },
+                   retirer(id) { this.messages = this.messages.filter((m) => m.id !== id) } }"
+         x-on:toast.window="ajouter($event.detail)"
+         class="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+1rem)] right-4 left-4 z-[70] flex flex-col items-end gap-2 sm:left-auto sm:w-96" aria-live="polite">
+        <template x-for="m in messages" :key="m.id">
+            <button type="button" x-on:click="retirer(m.id)" x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-x-4 opacity-0" x-transition:leave="transition duration-150 ease-in" x-transition:leave-end="opacity-0"
+                    class="pointer-events-auto max-w-full rounded-lg px-4 py-3 text-left text-sm text-white shadow-lg" :class="m.type === 'error' ? 'bg-red-600' : 'bg-emerald-600'" x-text="m.message" title="Fermer"></button>
         </template>
     </div>
     {{-- Fenêtre de confirmation (remplace la boîte native de wire:confirm, voir resources/js/confirmation.js) --}}

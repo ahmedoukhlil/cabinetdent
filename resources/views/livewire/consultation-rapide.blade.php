@@ -2,7 +2,7 @@
 <div>
 @if ($etape)
     <div class="fixed inset-0 z-40 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="cs-titre"
-         x-data x-on:keydown.escape.window="$wire.fermer()">
+         x-data x-on:keydown.escape.window="document.querySelector('[data-patient-rapide]') || $wire.fermer()">
         <div class="max-h-[90vh] w-full max-w-md space-y-4 overflow-y-auto rounded-xl bg-white p-5 shadow-xl">
             <div class="flex items-start justify-between gap-2">
                 <div>
@@ -40,9 +40,21 @@
                                 </ul>
                             @elseif (mb_strlen(trim($recherche)) >= 2)
                                 <p class="mt-1 text-sm text-slate-600">Aucun patient trouvé.</p>
+                                @if ($user->aPermission('patient.create') && mb_strlen(trim($recherche)) >= 3)
+                                    {{-- Ouverture automatique de la création, une fois la frappe arrêtée ; une seule fois par recherche. --}}
+                                    <span class="hidden" wire:key="cs-auto-{{ md5(trim($recherche)) }}"
+                                          x-data="{ terme: @js(trim($recherche)) }"
+                                          x-init="setTimeout(() => {
+                                              window.sysdentalTermesProposes ??= new Set();
+                                              const champ = document.getElementById('cs-recherche');
+                                              if (!champ || champ.value.trim() !== terme || window.sysdentalTermesProposes.has(terme)) return;
+                                              window.sysdentalTermesProposes.add(terme);
+                                              Livewire.dispatch('patient-rapide-ouvrir', { terme, source: 'consultation' });
+                                          }, 900)"></span>
+                                @endif
                             @endif
                             @if ($user->aPermission('patient.create'))
-                                <button type="button" wire:click="nouveauPatient" class="mt-2 text-sm text-primary hover:underline"><i class="ti ti-user-plus" aria-hidden="true"></i> Nouveau patient</button>
+                                <button type="button" x-on:click="Livewire.dispatch('patient-rapide-ouvrir', { terme: $wire.recherche, source: 'consultation' })" class="mt-2 text-sm text-primary hover:underline"><i class="ti ti-user-plus" aria-hidden="true"></i> Nouveau patient</button>
                             @endif
                         </div>
                     @else
@@ -109,7 +121,7 @@
                             @if ($consultation['encaisser'])
                                 <div class="grid grid-cols-2 gap-2">
                                     <select wire:model="consultation.mode" class="field" aria-label="Mode de paiement">
-                                        @foreach (\App\Models\Paiement::MODES as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
+                                        @foreach (\App\Models\ModePaiement::actifs() as $cle => $libelle)<option value="{{ $cle }}">{{ $libelle }}</option>@endforeach
                                     </select>
                                     <input wire:model="consultation.reference" class="field" placeholder="Référence (optionnel)" aria-label="Référence du paiement">
                                 </div>
@@ -131,7 +143,7 @@
             @if ($etape === 'fait' && $paiement)
                 <div class="space-y-4 text-center">
                     <i class="ti ti-circle-check text-5xl text-emerald-600" aria-hidden="true"></i>
-                    <p class="text-sm">{{ $mru($paiement->montant) }} encaissés · {{ \App\Models\Paiement::MODES[$paiement->mode] ?? $paiement->mode }}<br><span class="text-slate-500">{{ $paiement->patient->nom_complet }} · facture {{ $paiement->facture->numero }}</span></p>
+                    <p class="text-sm">{{ $mru($paiement->montant) }} encaissés · {{ \App\Models\ModePaiement::libelles()[$paiement->mode] ?? $paiement->mode }}<br><span class="text-slate-500">{{ $paiement->patient->nom_complet }} · facture {{ $paiement->facture->numero }}</span></p>
                     <div class="flex justify-center gap-2">
                         <button type="button" wire:click="fermer" class="btn-secondary">Fermer</button>
                         <a href="{{ route('paiements.recu', $paiement) }}" target="_blank" rel="noopener" class="btn-primary" x-on:click="$wire.fermer()"><i class="ti ti-printer" aria-hidden="true"></i> Imprimer le reçu</a>
@@ -141,4 +153,5 @@
         </div>
     </div>
 @endif
+<livewire:patient-rapide />
 </div>

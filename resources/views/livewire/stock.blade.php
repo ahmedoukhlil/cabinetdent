@@ -11,10 +11,10 @@
     </div>
 
     <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <div class="card"><p class="text-sm text-slate-600">Valeur du stock</p><p class="text-2xl font-semibold">{{ $mru($valeur) }}</p><p class="text-xs text-slate-500">{{ $nbArticles }} articles actifs</p></div>
-        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-red-300"><p class="text-sm text-slate-600">Ruptures</p><p @class(['text-2xl font-semibold', 'text-red-700' => $compteurs['rupture']])>{{ $compteurs['rupture'] }}</p></button>
-        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-amber-300"><p class="text-sm text-slate-600">Stock faible</p><p @class(['text-2xl font-semibold', 'text-amber-700' => $compteurs['faible']])>{{ $compteurs['faible'] }}</p></button>
-        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-red-300"><p class="text-sm text-slate-600">Périmés / péremption &lt; 30 j</p><p @class(['text-2xl font-semibold', 'text-red-700' => $compteurs['perime'] + $compteurs['peremption_proche']])>{{ $compteurs['perime'] }} / {{ $compteurs['peremption_proche'] }}</p></button>
+        <div class="card"><p class="text-sm text-slate-600">Valeur du stock</p><p class="text-xl font-semibold tabular-nums sm:text-2xl">{{ $mru($valeur) }}</p><p class="text-xs text-slate-500">{{ $nbArticles }} articles actifs</p></div>
+        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-red-300"><p class="text-sm text-slate-600">Ruptures</p><p @class(['text-xl font-semibold tabular-nums sm:text-2xl', 'text-red-700' => $compteurs['rupture']])>{{ $compteurs['rupture'] }}</p></button>
+        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-amber-300"><p class="text-sm text-slate-600">Stock faible</p><p @class(['text-xl font-semibold tabular-nums sm:text-2xl', 'text-amber-700' => $compteurs['faible']])>{{ $compteurs['faible'] }}</p></button>
+        <button type="button" wire:click="$set('filtre', 'alertes')" class="card text-left hover:border-red-300"><p class="text-sm text-slate-600">Périmés / péremption &lt; 30 j</p><p @class(['text-xl font-semibold tabular-nums sm:text-2xl', 'text-red-700' => $compteurs['perime'] + $compteurs['peremption_proche']])>{{ $compteurs['perime'] }} / {{ $compteurs['peremption_proche'] }}</p></button>
     </div>
 
     @if ($formulaireArticle)
@@ -88,7 +88,7 @@
             </select>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[760px] text-sm [&_td]:px-2 [&_th]:px-2">
+            <table class="tableau-cartes w-full min-w-[760px] text-sm [&_td]:px-2 [&_th]:px-2">
                 <thead class="text-left text-xs text-slate-500">
                     <tr><th class="py-1 font-medium">Article</th><th class="py-1 text-right font-medium">Stock</th><th class="py-1 text-right font-medium">Seuil</th><th class="py-1 font-medium">Péremption</th><th class="py-1 text-right font-medium">Valeur</th><th class="py-1 font-medium">Alertes</th><th></th></tr>
                 </thead>
@@ -99,7 +99,7 @@
                             <td class="py-2 text-right font-medium">{{ $qte($a->quantite) }} <span class="font-normal text-slate-500">{{ $a->unite }}</span></td>
                             <td class="py-2 text-right text-slate-500">{{ $qte($a->quantite_min) }}</td>
                             <td class="py-2">{{ $a->peremption?->format('d/m/Y') ?? '—' }}</td>
-                            <td class="py-2 text-right">{{ $mru($a->valeur()) }}</td>
+                            <td class="py-2 text-right whitespace-nowrap">{{ $mru($a->valeur()) }}</td>
                             <td class="py-2">
                                 @if ($a->actif)
                                     @foreach ($a->alertes() as $al)<span class="badge {{ Consommable::ALERTES[$al][1] }}">{{ Consommable::ALERTES[$al][0] }}</span> @endforeach

@@ -16,7 +16,7 @@
             @foreach ([['planifie', 'À venir', 'ti-calendar-time'], ['arrive', 'En attente', 'ti-armchair'], ['en_cours', 'En soins', 'ti-dental'], ['termine', 'Terminés', 'ti-check']] as [$statut, $libelle, $icone])
                 <a href="{{ route($statut === 'planifie' ? 'agenda' : 'salle-attente') }}" wire:navigate class="card hover:border-primary">
                     <p class="text-sm text-slate-600"><i class="ti {{ $icone }} mr-1" aria-hidden="true"></i>{{ $libelle }}</p>
-                    <p class="text-2xl font-semibold">{{ $jour[$statut] ?? 0 }}</p>
+                    <p class="text-xl font-semibold tabular-nums sm:text-2xl">{{ $jour[$statut] ?? 0 }}</p>
                 </a>
             @endforeach
         </div>

@@ -39,6 +39,21 @@
             </div>
         </div>
 
+        {{-- Sélection rapide par groupe : un appui ajoute le groupe, un second le retire --}}
+        <div class="mb-3 space-y-1.5" role="group" aria-label="Sélection rapide">
+            @php $groupes = Odontologie::groupes(); @endphp
+            @foreach ([['bouche', 'sup', 'inf'], ['q1', 'q2', 'q4', 'q3'], ['s1', 's2', 's3', 's6', 's5', 's4']] as $rangee)
+                <div class="flex flex-wrap gap-1.5">
+                    @foreach ($rangee as $cle)
+                        @php [$court, $long, $dentsGroupe] = $groupes[$cle]; $actif = array_diff($dentsGroupe, $selection) === []; @endphp
+                        <button type="button" wire:click="selectionnerGroupe('{{ $cle }}')" title="{{ $long }}" aria-label="{{ $long }}" aria-pressed="{{ $actif ? 'true' : 'false' }}"
+                            @class(['rounded-md border px-2.5 py-1 text-xs font-medium transition', 'border-primary bg-primary text-white' => $actif, 'border-slate-200 bg-white text-slate-700 hover:border-primary' => !$actif])>{{ $court }}</button>
+                    @endforeach
+                </div>
+            @endforeach
+            <p class="text-xs text-slate-500">Q1–Q4 : hémi-arcades · S1–S6 : sextants. Un second appui retire le groupe.</p>
+        </div>
+
         {{-- Vue anatomique : cliquer sur les dents pour les sélectionner (plusieurs possibles) --}}
         <div x-show="vue === 'arcade'" x-data="odontogramme(false)" class="odontogramme-sysdental">
             <span class="hidden" data-odontogramme="{{ json_encode($odontogramme) }}"></span>
@@ -77,14 +92,14 @@
         </div>
     </section>
 
-    <nav class="sticky top-2 z-20 flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Sections du dossier" role="tablist">
+    <nav class="sticky top-2 z-20 grid grid-cols-2 gap-1 rounded-xl sm:flex sm:overflow-x-auto border border-slate-200 bg-white p-1 shadow-sm" aria-label="Sections du dossier" role="tablist">
         @foreach ([
             'etat' => ['État dentaire', 'ti-dental'],
             'plan' => ['Plan de traitement', 'ti-clipboard-list'],
             'documents' => ['Documents', 'ti-file-medical'],
             'historique' => ['Historique', 'ti-history'],
         ] as $cle => [$libelle, $icone])
-            <button type="button" x-on:click="onglet = '{{ $cle }}'" :aria-selected="onglet === '{{ $cle }}'" :class="onglet === '{{ $cle }}' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-100'" class="flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium" role="tab"><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</button>
+            <button type="button" x-on:click="onglet = '{{ $cle }}'" :aria-selected="onglet === '{{ $cle }}'" :class="onglet === '{{ $cle }}' ? 'bg-primary text-white' : 'text-slate-700 hover:bg-slate-100'" class="flex shrink-0 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium sm:justify-start" role="tab"><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</button>
         @endforeach
     </nav>
 

@@ -19,6 +19,12 @@ class Cabinet extends Model
 
     protected $casts = ['actif' => 'boolean', 'duree_rdv_minutes' => 'integer', 'jours_ouverture' => 'array'];
 
+    protected static function booted(): void
+    {
+        // Chaque nouveau cabinet démarre avec les modes de paiement usuels, modifiables ensuite.
+        static::created(fn (Cabinet $cabinet) => ModePaiement::creerDefauts($cabinet));
+    }
+
     public function estOuvertLe(\Carbon\CarbonInterface $jour): bool
     {
         return in_array($jour->isoWeekday(), $this->jours_ouverture ?? self::JOURS_DEFAUT, true);

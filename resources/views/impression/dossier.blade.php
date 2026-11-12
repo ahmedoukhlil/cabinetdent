@@ -4,15 +4,6 @@
     use App\Models\PlanTraitement;
     $mru = fn ($v) => number_format((float) $v, 0, ',', ' ').' MRU';
     $constatations = collect(Odontologie::CONSTATATIONS)->collapse();
-    $couleurs = [
-        'saine' => ['#ffffff', '#cbd5e1', ''],
-        'a_traiter' => ['#fee2e2', '#dc2626', 'À traiter'],
-        'obturee' => ['#dbeafe', '#2563eb', 'Obturée'],
-        'endo' => ['#ede9fe', '#7c3aed', 'Endo'],
-        'prothese' => ['#fef3c7', '#d97706', 'Prothèse'],
-        'implant' => ['#dcfce7', '#16a34a', 'Implant'],
-        'absente' => ['#f1f5f9', '#94a3b8', 'Absente'],
-    ];
     $decrire = function ($dent) use ($constatations) {
         $e = $dent->etat();
         $parts = [];
@@ -41,27 +32,30 @@
         <p style="background:#fef3c7;padding:8px;border-radius:4px"><strong>Antécédents / alertes :</strong> {{ $patient->notes }}</p>
     @endif
 
-    <h3>Odontogramme <span class="muted" style="font-weight:normal">· notation FDI, vue praticien</span></h3>
-    <table style="table-layout:fixed;text-align:center">
-        @foreach ([Odontologie::ARCADE_SUPERIEURE, Odontologie::ARCADE_INFERIEURE] as $arcade)
-            <tr>
-                @foreach ($arcade as $n)
-                    @php
-                        $s = $dents->get($n)?->synthese() ?? 'saine';
-                        [$fond, $bord] = $couleurs[$s] ?? $couleurs['saine'];
-                    @endphp
-                    <td style="padding:2px;border:0">
-                        <div style="border:1.5px solid {{ $bord }};background:{{ $fond }};border-radius:4px;padding:4px 0;font-weight:600;font-size:11px">{{ $n }}</div>
-                    </td>
-                @endforeach
-            </tr>
-        @endforeach
-    </table>
-    <p class="muted" style="font-size:11px">
-        @foreach ($couleurs as $cle => [$fond, $bord, $libelle])
-            @if ($libelle)<span style="display:inline-block;width:10px;height:10px;background:{{ $fond }};border:1.5px solid {{ $bord }};vertical-align:middle"></span> {{ $libelle }}&nbsp;&nbsp;@endif
-        @endforeach
-    </p>
+    <h3>Odontogramme <span class="muted" style="font-weight:normal">· notation FDI</span></h3>
+    {{-- Odontogramme anatomique (le même qu'à l'écran), en lecture seule --}}
+    <div class="odontogramme-impression" data-odontogramme-impression="{{ json_encode(['conditions' => $conditions]) }}">
+        <div data-scene style="max-width:400px;margin:0 auto;min-height:260px">
+            <p class="muted" style="text-align:center;padding:60px 0">Chargement de l'odontogramme…</p>
+        </div>
+    </div>
+    <noscript>
+        <table style="table-layout:fixed;text-align:center">
+            @foreach ([Odontologie::ARCADE_SUPERIEURE, Odontologie::ARCADE_INFERIEURE] as $arcade)
+                <tr>
+                    @foreach ($arcade as $n)
+                        @php $c = Odontologie::CONDITIONS_GRAPHE[$dents->get($n)?->synthese()] ?? null; @endphp
+                        <td style="padding:2px;border:0"><div style="border:1.5px solid {{ $c['outlineColor'] ?? '#cbd5e1' }};background:{{ $c['fillColor'] ?? '#fff' }};border-radius:4px;padding:4px 0;font-weight:600;font-size:11px">{{ $n }}</div></td>
+                    @endforeach
+                </tr>
+            @endforeach
+        </table>
+    </noscript>
+    <style>
+        .odontogramme-impression svg { display: block; width: auto !important; max-width: 100%; max-height: 420px; margin-inline: auto; }
+        @media print { .odontogramme-impression svg { max-height: 340px; } .odontogramme-impression { break-inside: avoid; } }
+    </style>
+    @vite('resources/js/impression.js')
 
     @php
         $notables = $dents->sortKeys()->filter(fn ($d) => $d->synthese() !== 'saine' || $d->notes || $d->constatations);

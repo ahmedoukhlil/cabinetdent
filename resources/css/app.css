@@ -36,3 +36,38 @@
 @media (min-width: 1024px) {
     .odontogramme-sysdental [data-scene] svg { max-height: 430px; }
 }
+
+/* iOS Safari zoome automatiquement sur tout champ dont la police est < 16px.
+   Sur écrans tactiles, on force 16px pour garder la page à l'échelle au focus. */
+@media (pointer: coarse) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea { font-size: 16px !important; }
+}
+
+/*
+ * Tableaux lisibles sur mobile : sous 640 px, chaque ligne devient une fiche
+ * « libellé : valeur ». Les libellés (data-label) sont recopiés des en-têtes
+ * par resources/js/tableaux.js. Sur PC, le tableau reste inchangé.
+ */
+@media (max-width: 639px) {
+    .tableau-cartes { min-width: 0 !important; }
+    .tableau-cartes thead { display: none; }
+    .tableau-cartes, .tableau-cartes tbody, .tableau-cartes tfoot, .tableau-cartes tr { display: block; width: 100%; }
+    .tableau-cartes tr { padding: 0.625rem 0; }
+    .tableau-cartes td, .tableau-cartes th {
+        display: block; padding-top: 0.125rem !important; padding-bottom: 0.125rem !important;
+        text-align: right !important; border: 0 !important; white-space: normal; overflow-wrap: anywhere;
+    }
+    .tableau-cartes td::after { content: ''; display: table; clear: both; }
+    .tableau-cartes td::before, .tableau-cartes tfoot th::before {
+        content: attr(data-label); float: left; margin-right: 0.75rem; text-align: left;
+        font-size: 0.75rem; font-weight: 400; line-height: 1.5rem; color: var(--color-slate-500);
+    }
+    .tableau-cartes td:not([data-label])::before, .tableau-cartes td[data-label='']::before { content: none; }
+    /* Première colonne = titre de la fiche ; colonne sans en-tête (actions) alignée à gauche. */
+    .tableau-cartes td:first-child { text-align: left !important; font-weight: 500; }
+    .tableau-cartes td:first-child::before { content: none; }
+    .tableau-cartes td:not([data-label]):not(:first-child), .tableau-cartes td[data-label='']:not(:first-child) { text-align: left !important; padding-top: 0.375rem !important; }
+    .tableau-cartes td[colspan] { text-align: center !important; }
+}
