@@ -8,18 +8,19 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-    <header class="border-b border-slate-800 bg-slate-900 text-white">
-        <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-            <span class="flex items-center gap-2 font-semibold"><i class="ti ti-dental text-2xl" aria-hidden="true"></i> Sysdental <span class="rounded bg-white/15 px-2 py-0.5 text-xs font-medium">Plateforme</span></span>
-            <nav class="ml-auto flex items-center gap-1" aria-label="Navigation plateforme">
+<body class="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900 antialiased">
+    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900 text-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
+            <span class="flex min-w-0 items-center gap-2 font-semibold"><i class="ti ti-dental text-2xl" aria-hidden="true"></i> Sysdental <span class="rounded bg-white/15 px-2 py-0.5 text-xs font-medium">Plateforme</span></span>
+            {{-- Mobile : la navigation passe sur sa propre ligne, pleine largeur ; à partir de sm elle reste à droite du titre. --}}
+            <nav class="order-last grid w-full grid-cols-2 gap-1 sm:order-none sm:ml-auto sm:flex sm:w-auto" aria-label="Navigation plateforme">
                 @foreach ([['plateforme.cabinets', 'Cabinets', 'ti-building-hospital'], ['plateforme.plans', 'Formules', 'ti-list-details']] as [$route, $libelle, $icone])
-                    <a href="{{ route($route) }}" wire:navigate @class(['flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm', 'bg-white/15 font-medium' => request()->routeIs($route), 'text-slate-300 hover:bg-white/10' => !request()->routeIs($route)])><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</a>
+                    <a href="{{ route($route) }}" wire:navigate @if (request()->routeIs($route)) aria-current="page" @endif @class(['flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm whitespace-nowrap', 'bg-white/15 font-medium' => request()->routeIs($route), 'text-slate-300 hover:bg-white/10' => !request()->routeIs($route)])><i class="ti {{ $icone }}" aria-hidden="true"></i>{{ $libelle }}</a>
                 @endforeach
             </nav>
-            <form method="POST" action="{{ route('plateforme.logout') }}">
+            <form method="POST" action="{{ route('plateforme.logout') }}" class="ml-auto sm:ml-0">
                 @csrf
-                <button class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10" title="{{ auth('plateforme')->user()?->email }}"><i class="ti ti-logout" aria-hidden="true"></i><span class="hidden sm:inline">Déconnexion</span></button>
+                <button class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-slate-300 hover:bg-white/10" title="{{ auth('plateforme')->user()?->email }}" aria-label="Déconnexion"><i class="ti ti-logout text-lg" aria-hidden="true"></i><span class="hidden sm:inline">Déconnexion</span></button>
             </form>
         </div>
     </header>

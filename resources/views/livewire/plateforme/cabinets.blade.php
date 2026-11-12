@@ -5,15 +5,15 @@
 <div class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <h1 class="text-lg font-semibold">Cabinets</h1>
-        <div class="flex gap-2">
-            <button type="button" wire:click="verifierEcheances" class="btn-secondary" title="Normalement exécuté chaque nuit"><i class="ti ti-refresh" aria-hidden="true"></i>Appliquer les échéances</button>
-            <button type="button" wire:click="$toggle('creation')" class="btn-primary"><i class="ti ti-plus" aria-hidden="true"></i>Nouveau cabinet</button>
+        <div class="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
+            <button type="button" wire:click="verifierEcheances" class="btn-secondary whitespace-nowrap" title="Applique les échéances (normalement exécuté chaque nuit)"><i class="ti ti-refresh" aria-hidden="true"></i><span class="sm:hidden">Échéances</span><span class="hidden sm:inline">Appliquer les échéances</span></button>
+            <button type="button" wire:click="$toggle('creation')" class="btn-primary whitespace-nowrap"><i class="ti ti-plus" aria-hidden="true"></i>Nouveau cabinet</button>
         </div>
     </div>
 
-    <div class="flex flex-wrap gap-2 text-sm">
+    <div class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 text-sm sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         @foreach (['tous' => 'Tous'] + collect($statuts)->map(fn ($s) => $s[0])->all() as $cle => $libelle)
-            <button type="button" wire:click="$set('filtre', '{{ $cle }}')" @class(['rounded-full border px-3 py-1', 'border-slate-900 bg-slate-900 text-white' => $filtre === $cle, 'border-slate-200 bg-white hover:border-slate-400' => $filtre !== $cle])>
+            <button type="button" wire:click="$set('filtre', '{{ $cle }}')" @class(['shrink-0 whitespace-nowrap rounded-full border px-3 py-1', 'border-slate-900 bg-slate-900 text-white' => $filtre === $cle, 'border-slate-200 bg-white hover:border-slate-400' => $filtre !== $cle])>
                 {{ $libelle }}@if ($cle !== 'tous') · {{ $compteurs[$cle] ?? 0 }}@endif
             </button>
         @endforeach
@@ -50,13 +50,38 @@
     @endif
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
-        <section class="card overflow-x-auto lg:col-span-3" aria-label="Liste des cabinets">
+        <section class="card lg:col-span-3" aria-label="Liste des cabinets">
+            {{-- Mobile : une carte par cabinet. --}}
+            <ul class="-my-1 divide-y divide-slate-100 sm:hidden">
+                @forelse ($cabinets as $c)
+                    @php $a = $c->abonnement; @endphp
+                    <li wire:key="cm-{{ $c->id }}">
+                        <button type="button" wire:click="ouvrir({{ $c->id }})" x-on:click="if (innerWidth < 1024) setTimeout(() => document.getElementById('detail-cabinet')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 350)"
+                                @class(['-mx-2 flex w-[calc(100%+1rem)] items-center gap-3 rounded-lg px-2 py-3 text-left text-sm', 'bg-primary-light' => $cabinet === $c->id])>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate font-medium">{{ $c->nom }}@unless ($c->actif) <span class="badge bg-red-100 text-red-800">Bloqué</span>@endunless</span>
+                                <span class="block text-xs text-slate-500">
+                                    {{ $a?->plan?->nom ?? 'Sans abonnement' }}
+                                    @if ($a?->finCouverture()) · jusqu'au {{ $a->finCouverture()->format('d/m/Y') }}@endif
+                                    · {{ $c->utilisateurs_count }}{{ $a?->plan?->max_utilisateurs ? '/'.$a->plan->max_utilisateurs : '' }} comptes
+                                </span>
+                            </span>
+                            @if ($a)<span class="badge shrink-0 {{ $statuts[$a->statut][1] }}">{{ $statuts[$a->statut][0] }}</span>@endif
+                            <i class="ti ti-chevron-right shrink-0 text-slate-400" aria-hidden="true"></i>
+                        </button>
+                    </li>
+                @empty
+                    <li class="py-6 text-center text-sm text-slate-600">Aucun cabinet.</li>
+                @endforelse
+            </ul>
+
+            <div class="hidden overflow-x-auto sm:block">
             <table class="w-full min-w-[560px] text-sm [&_td]:px-2 [&_th]:px-2">
                 <thead class="text-left text-xs text-slate-500"><tr><th class="py-1 font-medium">Cabinet</th><th class="py-1 font-medium">Formule</th><th class="py-1 font-medium">Statut</th><th class="py-1 font-medium">Couvert jusqu'au</th><th class="py-1 text-right font-medium">Comptes</th></tr></thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse ($cabinets as $c)
                         @php $a = $c->abonnement; @endphp
-                        <tr wire:key="c-{{ $c->id }}" wire:click="ouvrir({{ $c->id }})" @class(['cursor-pointer hover:bg-slate-50', 'bg-primary-light' => $cabinet === $c->id])>
+                        <tr wire:key="c-{{ $c->id }}" wire:click="ouvrir({{ $c->id }})" x-on:click="if (innerWidth < 1024) setTimeout(() => document.getElementById('detail-cabinet')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 350)" @class(['cursor-pointer hover:bg-slate-50', 'bg-primary-light' => $cabinet === $c->id])>
                             <td class="py-2 font-medium">{{ $c->nom }}@unless ($c->actif) <span class="badge bg-red-100 text-red-800">Bloqué</span>@endunless</td>
                             <td class="py-2">{{ $a?->plan?->nom ?? '—' }}</td>
                             <td class="py-2">@if ($a)<span class="badge {{ $statuts[$a->statut][1] }}">{{ $statuts[$a->statut][0] }}</span>@else<span class="text-xs text-slate-500">Sans abonnement</span>@endif</td>
@@ -68,9 +93,10 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </section>
 
-        <section class="space-y-3 lg:col-span-2" aria-label="Détail du cabinet">
+        <section id="detail-cabinet" class="scroll-mt-28 space-y-3 lg:col-span-2" aria-label="Détail du cabinet">
             @if ($ouvert)
                 @php $a = $ouvert->abonnement; @endphp
                 <div class="card space-y-2 text-sm">
@@ -137,7 +163,7 @@
                     </div>
                 @endif
             @else
-                <div class="card text-sm text-slate-600">Sélectionnez un cabinet pour voir son abonnement.</div>
+                <div class="card hidden text-sm text-slate-600 lg:block">Sélectionnez un cabinet pour voir son abonnement.</div>
             @endif
         </section>
     </div>
