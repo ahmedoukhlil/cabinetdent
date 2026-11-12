@@ -19,7 +19,7 @@ use Livewire\Component;
 #[Title('Administrateurs')]
 class Administrateurs extends Component
 {
-    public const MOT_DE_PASSE_MIN = 12;
+    public const MOT_DE_PASSE_MIN = 8;
 
     public array $form = ['id' => null, 'name' => '', 'email' => '', 'password' => ''];
 

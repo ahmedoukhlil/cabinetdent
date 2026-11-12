@@ -132,7 +132,7 @@ class AdministrateursPlateformeTest extends TestCase
             ->call('nouveau')
             ->set('form', ['id' => null, 'name' => 'Fatou', 'email' => 'fatou@exemple.test', 'password' => 'court'])
             ->call('enregistrer')
-            ->assertSee('Le champ mot de passe doit contenir au moins 12 caractères.')
+            ->assertSee('Le champ mot de passe doit contenir au moins 8 caractères.')
             ->assertDontSee('validation.');
     }
 }

@@ -15,10 +15,10 @@ Artisan::command('abonnements:verifier', function (AbonnementService $service) {
 Schedule::command('abonnements:verifier')->dailyAt('00:10');
 
 Artisan::command('plateforme:admin {email} {--name=Administrateur}', function (string $email) {
-    $motDePasse = $this->secret('Mot de passe (12 caractères minimum)');
+    $motDePasse = $this->secret('Mot de passe (8 caractères minimum)');
     $v = Validator::make(['email' => $email, 'password' => $motDePasse], [
         'email' => ['required', 'email'],
-        'password' => ['required', 'string', 'min:12'],
+        'password' => ['required', 'string', 'min:'.\App\Livewire\Plateforme\Administrateurs::MOT_DE_PASSE_MIN],
     ]);
     if ($v->fails()) {
         $this->error($v->errors()->first());
