@@ -60,9 +60,10 @@ Route::prefix('plateforme')->name('plateforme.')->group(function () {
         Route::get('/connexion', [PlateformeLoginController::class, 'create'])->name('login');
         Route::post('/connexion', [PlateformeLoginController::class, 'store'])->middleware('throttle:5,1');
     });
-    Route::middleware('auth:plateforme')->group(function () {
+    Route::middleware(['auth:plateforme', 'plateforme.actif'])->group(function () {
         Route::get('/', App\Livewire\Plateforme\Cabinets::class)->name('cabinets');
         Route::get('/formules', App\Livewire\Plateforme\Plans::class)->name('plans');
+        Route::get('/administrateurs', App\Livewire\Plateforme\Administrateurs::class)->name('administrateurs');
         Route::post('/deconnexion', [PlateformeLoginController::class, 'destroy'])->name('logout');
     });
 });

@@ -9,12 +9,14 @@ class AdminPlateforme extends Authenticatable
 {
     protected $table = 'admins_plateforme';
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password', 'actif', 'derniere_connexion_at'];
 
     protected $hidden = ['password', 'remember_token'];
 
+    protected $attributes = ['actif' => true];
+
     protected function casts(): array
     {
-        return ['password' => 'hashed'];
+        return ['password' => 'hashed', 'actif' => 'boolean', 'derniere_connexion_at' => 'datetime'];
     }
 }

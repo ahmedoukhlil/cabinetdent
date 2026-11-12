@@ -25,6 +25,6 @@ Artisan::command('plateforme:admin {email} {--name=Administrateur}', function (s
 
         return 1;
     }
-    AdminPlateforme::updateOrCreate(['email' => $email], ['name' => $this->option('name'), 'password' => $motDePasse]);
+    AdminPlateforme::updateOrCreate(['email' => $email], ['name' => $this->option('name'), 'password' => $motDePasse, 'actif' => true]);
     $this->info("Administrateur plateforme {$email} enregistré.");
-})->purpose('Crée ou réinitialise un administrateur de la plateforme');
+})->purpose('Crée, réinitialise ou réactive un administrateur de la plateforme');
