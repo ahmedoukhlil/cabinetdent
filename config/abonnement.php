@@ -6,4 +6,11 @@ return [
 
     // Durée de l'essai gratuit à la création d'un abonnement.
     'essai_jours' => (int) env('SUBSCRIPTION_TRIAL_DAYS', 14),
+
+    // Identifiants utilisés uniquement par PlatformAdminSeeder.
+    'admin_plateforme' => [
+        'name' => env('PLATFORM_ADMIN_NAME', 'Administrateur Sysdental'),
+        'email' => env('PLATFORM_ADMIN_EMAIL'),
+        'password' => env('PLATFORM_ADMIN_PASSWORD'),
+    ],
 ];

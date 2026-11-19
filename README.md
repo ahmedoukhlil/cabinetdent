@@ -134,6 +134,17 @@ Espace séparé `/plateforme` (garde `plateforme`, table `admins_plateforme`) : 
 php artisan plateforme:admin admin@exemple.com
 ```
 
+Pour automatiser la création ou la réinitialisation de cet administrateur lors
+d'un déploiement, renseignez `PLATFORM_ADMIN_NAME`, `PLATFORM_ADMIN_EMAIL` et
+`PLATFORM_ADMIN_PASSWORD` dans le fichier `.env`, puis exécutez :
+
+```bash
+php artisan db:seed --class=PlatformAdminSeeder --force
+```
+
+Le mot de passe doit contenir au moins 12 caractères. Il est lu depuis
+l'environnement et haché par le modèle ; il ne doit jamais être versionné.
+
 - Formules (`/plateforme/formules`) : prix mensuel, nombre de comptes actifs et stockage maximum (vide = illimité).
 - Cabinets (`/plateforme`) : création d'un cabinet avec son dentiste propriétaire et un essai gratuit, paiements, changement de formule, résiliation, blocage manuel.
 - Cycle (`App\Services\AbonnementService`) : essai → actif → impayé (fin d'essai ou de période) → suspendu (après `SUBSCRIPTION_GRACE_DAYS`, 5 par défaut) ; un paiement réactive ; résilié est définitif, reprendre exige un nouvel abonnement.
